@@ -13,10 +13,11 @@ public:
 	~Fiber();
 	void runAndFree(Task &task);
 	bool isFiberFree();
-
-private:
 	void run(Task &task);
 	void free();
+private:
+	
+	
 
 	Task *currentTask;
 	std::atomic<bool> isFree = true;

@@ -10,6 +10,7 @@ Task::~Task(){
 }
 
 void Task::run(){
-	std::cout << "executing task" << std::endl;
+	std::cout << "executing task\n";
 	fn();
+	std::cout << " task completed\n";
 }

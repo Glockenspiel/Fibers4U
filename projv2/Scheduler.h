@@ -5,17 +5,27 @@
 #include <vector>
 #include <atomic>
 #include "Fiber.h"
+#include <thread>
+#include "SpinLock.h"
+
+using std::thread;
+using std::vector;
 
 class Scheduler{
 public:
-	Scheduler(unsigned const int fiberCount);
+	Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_COUNT);
 	~Scheduler();
 	void runTask(Task &task);
+	void close();
 	
 private:
-	std::vector<Fiber *> fibers;
-	std::vector<Task*> queuedTasks;
+	vector<Fiber *> fibers;
+	vector<Task*> queuedTasks;
 	atomic<int> counter=0;
+	vector<thread*> threads;
+	vector<SpinLock*> spinLocks;
+	unsigned const int  *N_FIBER_PTR, *N_THREAD_PTR;
+	Task *task;
 };
 
 #endif
