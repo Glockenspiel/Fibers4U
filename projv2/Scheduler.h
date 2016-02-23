@@ -17,15 +17,16 @@ public:
 	~Scheduler();
 	void runTask(Task &task);
 	void close();
-	
+	bool getIsConstructed();
 private:
 	vector<Fiber *> fibers;
 	vector<Task*> queuedTasks;
+	vector<Task *> tasks;
 	atomic<int> counter=0;
 	vector<thread*> threads;
 	vector<SpinLock*> spinLocks;
 	unsigned const int  *N_FIBER_PTR, *N_THREAD_PTR;
-	Task *task;
+	bool isConstructed = true;
 };
 
 #endif
