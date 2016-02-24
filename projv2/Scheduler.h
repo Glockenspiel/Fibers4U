@@ -7,9 +7,12 @@
 #include "Fiber.h"
 #include <thread>
 #include "SpinLock.h"
+#include "Global.h"
 
 using std::thread;
 using std::vector;
+
+static atomic<bool> isCompleted = false;
 
 class Scheduler{
 public:
@@ -18,6 +21,8 @@ public:
 	void runTask(Task &task);
 	void close();
 	bool getIsConstructed();
+	void waitForThreadsFreed();
+	
 private:
 	vector<Fiber *> fibers;
 	vector<Task*> queuedTasks;

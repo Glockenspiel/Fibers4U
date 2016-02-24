@@ -1,5 +1,6 @@
 #include "Player.h"
 #include <iostream>
+#include "global.h"
 
 Player::Player(){
 
@@ -10,7 +11,9 @@ Player::~Player(){
 }
 
 void Player::update(){
+	global::writeLock();
 	std::cout << "updating player" << std::endl;
+	global::writeUnlock();
 }
 
 void Player::addHp(int amount){
@@ -18,5 +21,5 @@ void Player::addHp(int amount){
 }
 
 void Player::printHp(){
-	std::cout << "player hp: " << hp << std::endl;
+	//std::cout << "player hp: " << hp << std::endl;
 }

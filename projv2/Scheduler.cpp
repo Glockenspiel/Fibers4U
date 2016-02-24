@@ -2,6 +2,7 @@
 #include <iostream>
 #include <functional>
 #include "Timer.h"
+//#include "Global.h"
 
 using namespace std::placeholders;
 
@@ -13,11 +14,14 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 	N_THREAD_PTR = &THREAD_COUNT;
 
 	if (FIBER_COUNT < THREAD_COUNT){
+		//global::writeLock();
+
 		std::cout << "Scheduler not started!" << std::endl <<
 			"Need more fibers: fibers >= threads" << std::endl <<
 			"Thread count: " << THREAD_COUNT << std::endl <<
 			"Fiber count: " << FIBER_COUNT << std::endl;
 
+		//global::writeUnlock();
 		isConstructed = false;
 		return;
 	}
@@ -27,33 +31,35 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 	}
 
 	for (unsigned int i = 0; i < THREAD_COUNT; i++){
+
 		//create the spin lock
 		spinLocks.push_back(new SpinLock());
 		std::function<void()> fn = std::bind(&SpinLock::lock, spinLocks[0]);
 
-		//decrement counter as std::bind creates a decayed copy
-		//while (counter == 0){}
-		//counter -= 1;
-
+		//create the task and push it onto the fiber
 		tasks.push_back(new Task(fn));
-		thread *t = new thread(&Fiber::runAndFree, fibers[0], *tasks[i]);
+		thread *t = new thread(&Fiber::runAndFree, fibers[i], *tasks[i]);
 		threads.push_back(t);
 	}
-
-
-	std::cout << "begin counter:" << counter << std::endl;
 	
+	global::writeLock();
+	std::cout << "Threads assgined to spin locks" << std::endl;
+	global::writeUnlock();
 	
+	//waitForThreadsFreed();
 
+	//spinLocks[0]->unlock();
+	/*
 	//wait till all spin lock starts
 	for(unsigned int index=0; index<THREAD_COUNT; index++){
 		if (spinLocks[index]->getIsLocked()){
 			spinLocks[index]->unlock();
 		}
 	}
+	*/
 	
-	std::cout << "constructor end, counter:" << counter << std::endl;
 }
+
 
 Scheduler::~Scheduler(){
 	//desrtuct fibers
@@ -67,31 +73,61 @@ Scheduler::~Scheduler(){
 	queuedTasks.clear();
 }
 
+
+
 void Scheduler::runTask(Task &task){
+	global::writeLock();
+	std::cout << "Assigning task" << std::endl;
+	global::writeUnlock();
+
 	//try find an available fiber
 	bool flag = true;
 	for (unsigned int i = 0; i<fibers.size() && flag; i++)
-		if (fibers[i]->isFiberFree()){
+		if (spinLocks[i]->getIsLocked()){ //must change this so it doesnt have to retruns to a spin lock to switch to a new task
+
+			spinLocks[i]->unlock();
+			//wait til unlock is completed
+			while (spinLocks[i]->getIsLocked()){}
+
+			//run new task
 			fibers[i]->runAndFree(task);
 			flag = false;
 		}
 
 	queuedTasks.push_back(&task);
+	//waitForThreadsFreed();
+
+	Timer *t = new Timer();
+	t->wait(2);
+	isCompleted = true;
+	close();
+	
+	system("pause");
 }
 
 void Scheduler::close(){
-
+	//unlocks all spin locks
 	for (unsigned int i = 0; i < spinLocks.size(); i++){
 		spinLocks[i]->unlock();
 	}
 	
+	//joins all the threads
 	for (unsigned int i = 0; i < threads.size(); i++){
 		threads[i]->join();
 	}
 
-	std::cout << "finished counter:" << counter << std::endl;
+	//isCompleted.store(true, std::memory_order_aquire);
 }
+
+
 
 bool Scheduler::getIsConstructed(){
 	return isConstructed;
+}
+
+//wait for all threads to reach spin locks, then return
+void Scheduler::waitForThreadsFreed(){
+	for (unsigned int index = 0; index<spinLocks.size(); index++){
+		while (spinLocks[index]->getIsLocked() == false){} 
+	}
 }

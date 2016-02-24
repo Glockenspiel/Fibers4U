@@ -74,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Fiber.h" />
+    <ClInclude Include="global.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Scheduler.h" />
     <ClInclude Include="SpinLock.h" />

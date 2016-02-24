@@ -13,10 +13,17 @@ Fiber::~Fiber(){
 void Fiber::run(Task &task){
 	*counterPtr += 1;
 	isFree = false;
-	std::cout << "running fiber: " << *counterPtr << std::endl;;
+
+	//global::writeLock();
+	//std::cout << "running fiber" << std::endl;
+	//global::writeUnlock();
+
 	currentTask = &task;
 	currentTask->run();
-	std::cout << "fiber::run completed\n";
+
+	//global::writeLock();
+	//std::cout << "fiber run completed" << std::endl;
+	//global::writeUnlock();
 }
 
 void Fiber::free(){
@@ -25,7 +32,11 @@ void Fiber::free(){
 	int i = *counterPtr;
 	*counterPtr -= 1;
 	while (i == *counterPtr){}
-	std::cout << "fiber::free completed: " << *counterPtr << std::endl;
+	global::writeLock();
+	std::cout << "Fiber freed" << std::endl;
+	global::writeUnlock();
+
+	//std::cout << "fiber::free completed: " << *counterPtr << std::endl;
 }
 
 bool Fiber::isFiberFree(){
