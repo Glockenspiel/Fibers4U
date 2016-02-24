@@ -10,6 +10,7 @@
 static std::mutex *mtx = new std::mutex;
 static std::atomic<int> RWCounter = 0;
 
+
 class global{
 public:
 	static void writeLock(){

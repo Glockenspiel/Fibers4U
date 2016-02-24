@@ -13,15 +13,16 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 	N_FIBER_PTR = &FIBER_COUNT;
 	N_THREAD_PTR = &THREAD_COUNT;
 
+	//display error msg
 	if (FIBER_COUNT < THREAD_COUNT){
-		//global::writeLock();
 
+		global::writeLock();
 		std::cout << "Scheduler not started!" << std::endl <<
 			"Need more fibers: fibers >= threads" << std::endl <<
 			"Thread count: " << THREAD_COUNT << std::endl <<
 			"Fiber count: " << FIBER_COUNT << std::endl;
+		global::writeUnlock();
 
-		//global::writeUnlock();
 		isConstructed = false;
 		return;
 	}
@@ -46,21 +47,11 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 	std::cout << "Threads assgined to spin locks" << std::endl;
 	global::writeUnlock();
 	
-	//waitForThreadsFreed();
-
-	//spinLocks[0]->unlock();
-	/*
-	//wait till all spin lock starts
-	for(unsigned int index=0; index<THREAD_COUNT; index++){
-		if (spinLocks[index]->getIsLocked()){
-			spinLocks[index]->unlock();
-		}
-	}
-	*/
-	
+	//wait until all spin locks have started
+	waitForThreadsFreed();
 }
 
-
+//destructor
 Scheduler::~Scheduler(){
 	//desrtuct fibers
 	for (std::vector< Fiber* >::iterator it = fibers.begin(); it != fibers.end(); ++it)
@@ -74,12 +65,13 @@ Scheduler::~Scheduler(){
 }
 
 
-
+//run the task given on a fiber
 void Scheduler::runTask(Task &task){
 	global::writeLock();
 	std::cout << "Assigning task" << std::endl;
 	global::writeUnlock();
 
+	Timer *t = new Timer();
 	//try find an available fiber
 	bool flag = true;
 	for (unsigned int i = 0; i<fibers.size() && flag; i++)
@@ -87,7 +79,7 @@ void Scheduler::runTask(Task &task){
 
 			spinLocks[i]->unlock();
 			//wait til unlock is completed
-			while (spinLocks[i]->getIsLocked()){}
+			while (fibers[i]->isFiberFree() == false){}
 
 			//run new task
 			fibers[i]->runAndFree(task);
@@ -95,20 +87,18 @@ void Scheduler::runTask(Task &task){
 		}
 
 	queuedTasks.push_back(&task);
-	//waitForThreadsFreed();
 
-	Timer *t = new Timer();
-	t->wait(2);
-	isCompleted = true;
-	close();
-	
+	//end process after first task is completed
 	system("pause");
+	close();
 }
 
+//end all the threads and notify main thread that the process has ended
 void Scheduler::close(){
-	//unlocks all spin locks
+	//unlocks all current spin locks
 	for (unsigned int i = 0; i < spinLocks.size(); i++){
-		spinLocks[i]->unlock();
+		if (spinLocks[i]->getIsLocked())
+			spinLocks[i]->unlock();
 	}
 	
 	//joins all the threads
@@ -116,11 +106,12 @@ void Scheduler::close(){
 		threads[i]->join();
 	}
 
-	//isCompleted.store(true, std::memory_order_aquire);
+	//tell the main thread that the process is ending
+	endProcess.store(true, std::memory_order_relaxed);
 }
 
 
-
+//returns true if schduler constructed correctly
 bool Scheduler::getIsConstructed(){
 	return isConstructed;
 }
@@ -130,4 +121,9 @@ void Scheduler::waitForThreadsFreed(){
 	for (unsigned int index = 0; index<spinLocks.size(); index++){
 		while (spinLocks[index]->getIsLocked() == false){} 
 	}
+}
+
+//returns the endProcess value
+bool Scheduler::getEndProcess(){
+	return endProcess.load(std::memory_order_relaxed);
 }

@@ -22,6 +22,7 @@ public:
 	void close();
 	bool getIsConstructed();
 	void waitForThreadsFreed();
+	bool getEndProcess();
 	
 private:
 	vector<Fiber *> fibers;
@@ -32,6 +33,7 @@ private:
 	vector<SpinLock*> spinLocks;
 	unsigned const int  *N_FIBER_PTR, *N_THREAD_PTR;
 	bool isConstructed = true;
+	atomic<bool> endProcess = false;
 };
 
 #endif
