@@ -16,7 +16,7 @@ static atomic<bool> isCompleted = false;
 
 class Scheduler{
 public:
-	Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_COUNT);
+	Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_COUNT, Task& startingTask);
 	~Scheduler();
 	void runTask(Task &task);
 	void close();
@@ -25,12 +25,12 @@ public:
 	bool getEndProcess();
 	
 private:
+
 	vector<Fiber *> fibers;
 	vector<Task*> queuedTasks;
 	vector<Task *> tasks;
 	atomic<int> counter=0;
 	vector<thread*> threads;
-	vector<SpinLock*> spinLocks;
 	unsigned const int  *N_FIBER_PTR, *N_THREAD_PTR;
 	bool isConstructed = true;
 	atomic<bool> endProcess = false;

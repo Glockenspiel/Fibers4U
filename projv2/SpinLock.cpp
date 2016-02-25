@@ -38,14 +38,7 @@ void SpinLock::lock(){
 
 //unlocks the spin lock
 void SpinLock::unlock(){
-	//lockflag.test_and_set(std::memory_order_acquire);
 	isLocked.store(false, std::memory_order_release);
-
-		global::writeLock();
-		std::cout << "Spin lock ended" << std::endl;
-		global::writeUnlock();
-
- 	//lockflag.clear(std::memory_order_release);
 }
 
 bool SpinLock::getIsLocked(){

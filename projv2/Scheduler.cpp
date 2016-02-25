@@ -9,7 +9,7 @@ using namespace std::placeholders;
 
 
 
-Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_COUNT){
+Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_COUNT, Task& startingTask){
 	N_FIBER_PTR = &FIBER_COUNT;
 	N_THREAD_PTR = &THREAD_COUNT;
 
@@ -28,18 +28,11 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 	}
 
 	for (unsigned int i = 0; i < FIBER_COUNT; i++){
-		fibers.push_back(new Fiber(counter));
+		fibers.push_back(new Fiber(counter, i));
 	}
 
 	for (unsigned int i = 0; i < THREAD_COUNT; i++){
-
-		//create the spin lock
-		spinLocks.push_back(new SpinLock());
-		std::function<void()> fn = std::bind(&SpinLock::lock, spinLocks[0]);
-
-		//create the task and push it onto the fiber
-		tasks.push_back(new Task(fn));
-		thread *t = new thread(&Fiber::runAndFree, fibers[i], *tasks[i]);
+		thread *t = new thread(&Fiber::runAndFree, fibers[i], startingTask);
 		threads.push_back(t);
 	}
 	
@@ -48,7 +41,7 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 	global::writeUnlock();
 	
 	//wait until all spin locks have started
-	waitForThreadsFreed();
+	//waitForThreadsFreed();
 }
 
 //destructor
@@ -73,34 +66,34 @@ void Scheduler::runTask(Task &task){
 
 	Timer *t = new Timer();
 	//try find an available fiber
-	bool flag = true;
-	for (unsigned int i = 0; i<fibers.size() && flag; i++)
-		if (spinLocks[i]->getIsLocked()){ //must change this so it doesnt have to retruns to a spin lock to switch to a new task
+	bool onceflag = true;
+	while(onceflag){
+		if (fibers[0]->isFiberFree())
+		{
+			//switching the fiber to a new fiber
+			Fiber *temp = fibers[0];
+			fibers[0] = new Fiber(counter,0);
+			fibers[0]->run(task); //note not run and free because this is thread 0
+			temp->switchOut();
+			//fibers[0]->switchOut();
 
-			spinLocks[i]->unlock();
 			//wait til unlock is completed
-			while (fibers[i]->isFiberFree() == false){}
+			//while (fibers[0]->isFiberFree() == false){}
 
-			//run new task
-			fibers[i]->runAndFree(task);
-			flag = false;
+
+			onceflag = false;
 		}
-
-	queuedTasks.push_back(&task);
+	}
+	//queuedTasks.push_back(&task);
 
 	//end process after first task is completed
+	//while(fibers[0]->isFiberFree() == false){}
 	system("pause");
 	close();
 }
 
 //end all the threads and notify main thread that the process has ended
 void Scheduler::close(){
-	//unlocks all current spin locks
-	for (unsigned int i = 0; i < spinLocks.size(); i++){
-		if (spinLocks[i]->getIsLocked())
-			spinLocks[i]->unlock();
-	}
-	
 	//joins all the threads
 	for (unsigned int i = 0; i < threads.size(); i++){
 		threads[i]->join();
@@ -118,9 +111,9 @@ bool Scheduler::getIsConstructed(){
 
 //wait for all threads to reach spin locks, then return
 void Scheduler::waitForThreadsFreed(){
-	for (unsigned int index = 0; index<spinLocks.size(); index++){
-		while (spinLocks[index]->getIsLocked() == false){} 
-	}
+	//for (unsigned int index = 0; index<spinLocks.size(); index++){
+	//	while (spinLocks[index]->getIsLocked() == false){} 
+	//}
 }
 
 //returns the endProcess value

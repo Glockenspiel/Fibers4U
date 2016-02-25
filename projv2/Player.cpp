@@ -21,5 +21,7 @@ void Player::addHp(int amount){
 }
 
 void Player::printHp(){
-	//std::cout << "player hp: " << hp << std::endl;
+	global::writeLock();
+	std::cout << "player hp: " << hp << std::endl;
+	global::writeUnlock();
 }

@@ -7,13 +7,17 @@
 using namespace std;
 
 int main(){
-	Scheduler *scheduler = new Scheduler(1,1);
+	Player *p = new Player();
+	std::function<void()> startfn = std::bind(&Player::printHp,p);
+	Task *startingTask = new Task(startfn);
+
+	Scheduler *scheduler = new Scheduler(1,1, *startingTask);
 	if (scheduler->getIsConstructed() == false){
 		system("pause");
 		return 0;
 	}
 
-	Player *p = new Player();
+	
 
 	function<void()> fn = std::bind(&Player::update, p);
 	Task *task1 = new Task(fn);
