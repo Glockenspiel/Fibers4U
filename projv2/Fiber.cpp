@@ -28,7 +28,7 @@ void Fiber::run(Task &task){
 
 void Fiber::free(){
 	//delete currentTask;
-	isFree = true;
+	
 	int i = *counterPtr;
 	*counterPtr -= 1;
 	while (i == *counterPtr){}
@@ -36,12 +36,14 @@ void Fiber::free(){
 	std::cout << "Fiber freed" << std::endl;
 	global::writeUnlock();
 
-	//std::cout << "fiber::free completed: " << *counterPtr << std::endl;
+	isFree = true;
 }
 
 bool Fiber::isFiberFree(){
-	//todo check to see if current task pointer can be reused
+	//todo check to see if current task pointer can be reused, use smart pointers
 	//delete currentTask;
+	//Task* taskptr = currentTask;
+	//delete taskptr;
 	return isFree.load(std::memory_order_relaxed);
 }
 
