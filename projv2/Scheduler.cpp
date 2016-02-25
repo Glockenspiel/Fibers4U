@@ -32,7 +32,12 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 	}
 
 	for (unsigned int i = 0; i < THREAD_COUNT; i++){
-		thread *t = new thread(&Fiber::runAndFree, fibers[i], startingTask);
+		locks.push_back(new SpinLock());
+		thread *t;
+		if (i == 0)
+			t = new thread(&Fiber::runAndFree, fibers[i], startingTask);
+		else
+			t = new thread(&SpinLock::lock, locks[i]);
 		threads.push_back(t);
 	}
 	
@@ -68,18 +73,20 @@ void Scheduler::runTask(Task &task){
 	//try find an available fiber
 	bool onceflag = true;
 	while(onceflag){
-		if (fibers[0]->isFiberFree())
+		if (fibers[1]->isFiberFree())
 		{
-			//switching the fiber to a new fiber
-			Fiber *temp = fibers[0];
-			fibers[0] = new Fiber(counter,0);
-			fibers[0]->run(task); //note not run and free because this is thread 0
-			temp->switchOut();
-			//fibers[0]->switchOut();
+			//unlock standard lock oofr this thread
+			if (locks[1]->getIsLocked())
+				locks[1]->unlock();
+			threads[1]->join();
 
-			//wait til unlock is completed
-			//while (fibers[0]->isFiberFree() == false){}
-
+			//set the next task on the fiber
+			fibers[1]->setTask(task);
+			
+			//in future version, make a wrapper for fibers instead of creating new threads
+			thread * temp = threads[1];
+			threads[1] = new thread(&Fiber::runAndFree, fibers[1], task);
+			delete temp;
 
 			onceflag = false;
 		}
@@ -88,7 +95,11 @@ void Scheduler::runTask(Task &task){
 
 	//end process after first task is completed
 	//while(fibers[0]->isFiberFree() == false){}
+	
+	switchOutAllFibers();
+	global::writeLock();
 	system("pause");
+	global::writeUnlock();
 	close();
 }
 
@@ -96,11 +107,25 @@ void Scheduler::runTask(Task &task){
 void Scheduler::close(){
 	//joins all the threads
 	for (unsigned int i = 0; i < threads.size(); i++){
-		threads[i]->join();
+
+		if (locks[i]->getIsLocked())
+			locks[i]->unlock();
+		if (threads[i]->joinable()){
+			
+			threads[i]->join();
+		}
 	}
 
 	//tell the main thread that the process is ending
 	endProcess.store(true, std::memory_order_relaxed);
+}
+
+//waits until all current tasks are completed and then ends all the spin locks in the fibers
+void Scheduler::switchOutAllFibers(){
+	for (unsigned int i = 0; i < fibers.size(); i++){
+		while (fibers[i]->isFiberFree() == false){}
+		fibers[i]->switchOut();
+	}
 }
 
 

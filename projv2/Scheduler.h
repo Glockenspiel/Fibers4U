@@ -23,9 +23,10 @@ public:
 	bool getIsConstructed();
 	void waitForThreadsFreed();
 	bool getEndProcess();
+	void Scheduler::switchOutAllFibers();
 	
 private:
-
+	vector<SpinLock*> locks;
 	vector<Fiber *> fibers;
 	vector<Task*> queuedTasks;
 	vector<Task *> tasks;

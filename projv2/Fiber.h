@@ -17,6 +17,8 @@ public:
 	void run(Task &task);
 	void free();
 	void switchOut();
+	void setTask(Task& task);
+	unsigned int getID();
 private:
 	SpinLock *spinLock;
 	unsigned int id;

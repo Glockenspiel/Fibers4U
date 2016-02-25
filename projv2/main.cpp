@@ -11,7 +11,7 @@ int main(){
 	std::function<void()> startfn = std::bind(&Player::printHp,p);
 	Task *startingTask = new Task(startfn);
 
-	Scheduler *scheduler = new Scheduler(1,1, *startingTask);
+	Scheduler *scheduler = new Scheduler(2,2, *startingTask);
 	if (scheduler->getIsConstructed() == false){
 		system("pause");
 		return 0;

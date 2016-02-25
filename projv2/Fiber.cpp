@@ -18,9 +18,7 @@ void Fiber::run(Task &task){
 	*counterPtr += 1;
 
 	//assign the current task and delete the old one
-	Task *temp = currentTask;
-	currentTask = &task;
-	delete temp;
+	setTask(task);
 	currentTask->run();
 }
 
@@ -46,6 +44,12 @@ void Fiber::switchOut(){
 	spinLock->unlock();
 }
 
+void Fiber::setTask(Task &task){
+	Task *temp = currentTask;
+	currentTask = &task;
+	delete temp;
+}
+
 //returns true if the fiber has finished its current task
 bool Fiber::isFiberFree(){
 	return isFree.load(std::memory_order_relaxed);
@@ -55,7 +59,8 @@ bool Fiber::isFiberFree(){
 void Fiber::runAndFree(Task &task){
 	run(task);
 	free();
-	global::writeLock();
-	std::cout << "Run and free completed on fiber: " << id << std::endl;
-	global::writeUnlock();
+}
+
+unsigned int Fiber::getID(){
+	return id;
 }
