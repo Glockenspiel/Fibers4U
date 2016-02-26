@@ -3,6 +3,7 @@
 
 #include "Fiber.h"
 #include <atomic>
+#include <mutex>
 
 
 class Worker{
@@ -18,6 +19,7 @@ private:
 	std::atomic<bool> running = false;
 	Task* nextTaskPtr;
 	Fiber* currentFiber;
+	std::mutex *mtx = new std::mutex();
 };
 
 #endif

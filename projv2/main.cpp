@@ -13,7 +13,6 @@ int main(){
 
 	Scheduler *scheduler = new Scheduler(2,2, *startingTask);
 	if (scheduler->getIsConstructed() == false){
-		system("pause");
 		return 0;
 	}
 
@@ -23,6 +22,8 @@ int main(){
 	Task *task1 = new Task(fn);
 	scheduler->runTask(*task1);
 
+	scheduler->close();
+	system("pause");
 
 	//wait until schduler ends (should use condiction variable here i think)
 	while (scheduler->getEndProcess() == false){}

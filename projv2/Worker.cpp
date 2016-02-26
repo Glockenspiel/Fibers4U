@@ -10,7 +10,8 @@ Worker::~Worker(){}
 void Worker::run(){
 	running = true;
 	while (running.load(std::memory_order_relaxed)){
-		currentFiber->runAndFree(*nextTaskPtr);
+		if (currentFiber->inState(Fiber::State::prepared))
+			currentFiber->runAndFree(*nextTaskPtr);
 	}
 }
 

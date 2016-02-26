@@ -2,7 +2,6 @@
 #include <iostream>
 #include <functional>
 #include "Timer.h"
-#include "Worker.h"
 //#include "Global.h"
 
 using namespace std::placeholders;
@@ -15,14 +14,17 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 	N_THREAD_PTR = &THREAD_COUNT;
 
 	//display error msg
-	if (FIBER_COUNT < THREAD_COUNT){
+	if (FIBER_COUNT < THREAD_COUNT && FIBER_COUNT>0){
 
 		global::writeLock();
 		std::cout << "Scheduler not started!" << std::endl <<
-			"Need more fibers: fibers >= threads" << std::endl <<
+			"Need more fibers" << std::endl <<
 			"Thread count: " << THREAD_COUNT << std::endl <<
-			"Fiber count: " << FIBER_COUNT << std::endl;
+			"Fiber count: " << FIBER_COUNT << std::endl <<
+			"Fiber count is less than thread count or else there's no fibers" << std::endl;
 		global::writeUnlock();
+
+		system("pause");
 
 		isConstructed = false;
 		return;
@@ -34,18 +36,28 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 
 	for (unsigned int i = 0; i < THREAD_COUNT; i++){
 		locks.push_back(new SpinLock());
+		workers.push_back(new Worker());
+		
 		thread *t;
 		if (i == 0){
-			fibers[i]->setPrepared();
-			t = new thread(&Fiber::runAndFree, fibers[i], startingTask);
+			workers[i]->set(startingTask, *fibers[i]);
+			//t = new thread(&Fiber::runAndFree, fibers[i], startingTask);
 		}
-		else
-			t = new thread(&SpinLock::lock, locks[i]);
+		else{
+			function<void()> emptyFunc = std::bind(&Scheduler::workerThreadStart, this);
+			Task *emptyTask = new Task(emptyFunc);
+			workers[i]->set(*emptyTask, *fibers[i]);			
+			//t = new thread(&SpinLock::lock, locks[i]);
+		}
+		t = new thread(&Worker::run, workers[i]);
+		fibers[i]->setPrepared();
 		threads.push_back(t);
 	}
+
+
 	
 	global::writeLock();
-	std::cout << "Threads assgined to spin locks" << std::endl;
+	std::cout << "Threads assgined" << std::endl;
 	global::writeUnlock();
 }
 
@@ -70,59 +82,37 @@ void Scheduler::runTask(Task &task){
 	global::writeUnlock();
 
 	Timer *t = new Timer();
-	//try find an available fiber
-	bool onceflag = true;
+	//todo: try find an available fiber
 
 	fibers[1]->waitUntilFree();
 
-	//unlock starting spint lock for this thread
-	if (locks[1]->getIsLocked())
-		locks[1]->unlock();
-	threads[1]->join();
-
-	//set the next task on the fiber
-	fibers[1]->setTask(task);
-	
-	//in future version, make a wrapper for fibers instead of creating new threads
-	thread * temp = threads[1];
-
-	fibers[1]->setPrepared();
-	threads[1] = new thread(&Fiber::runAndFree, fibers[1], task);
-	delete temp;
-
-	//wait for task to complete
-	fibers[1]->waitUntilFree();
-	global::writeLock();
-	system("pause");
-	global::writeUnlock();
-	//close();
-
-	//this is the worker object
-	Worker *fw = new Worker();
 	//set values then run, must be in prepared state to change to run state
-	fw->set(task, *fibers[0]);
-	thread *tr = new thread(&Worker::run, fw);
-	fibers[0]->setPrepared();
+	workers[1]->set(task, *fibers[1]);
+	fibers[1]->setPrepared();
 
 	//end worker
-	fw->close();
-
+	/*
+	waitAllFibersFree();
 	global::writeLock();
 	system("pause");
 	global::writeUnlock();
 
 	close();
+	*/
 }
 
 //end all the threads and notify main thread that the process has ended
 void Scheduler::close(){
-	switchOutAllFibers();
+	waitAllFibersFree();
 
 	//joins all the threads
 	for (unsigned int i = 0; i < threads.size(); i++){
+		
+		workers[i]->close();
 
 		if (locks[i]->getIsLocked())
 			locks[i]->unlock();
+
 		if (threads[i]->joinable()){
 			threads[i]->join();
 		}
@@ -133,7 +123,7 @@ void Scheduler::close(){
 }
 
 //waits until all current tasks are completed and then ends all the spin locks in the fibers
-void Scheduler::switchOutAllFibers(){
+void Scheduler::waitAllFibersFree(){
 	for (unsigned int i = 0; i < fibers.size(); i++){
 		fibers[i]->waitUntilFree();
 	}
@@ -155,4 +145,8 @@ void Scheduler::waitForThreadsFreed(){
 //returns the endProcess value
 bool Scheduler::getEndProcess(){
 	return endProcess.load(std::memory_order_relaxed);
+}
+
+void Scheduler::workerThreadStart(){
+	//do nothing
 }

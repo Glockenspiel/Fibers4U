@@ -72,3 +72,7 @@ void Fiber::setState(State s){
 void Fiber::waitUntilFree(){
 	while (state.load(std::memory_order_relaxed) != freed){}
 }
+
+bool Fiber::inState(Fiber::State s){
+	return state.load(std::memory_order_relaxed) == s;
+}

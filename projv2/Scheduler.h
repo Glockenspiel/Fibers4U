@@ -8,6 +8,7 @@
 #include <thread>
 #include "SpinLock.h"
 #include "Global.h"
+#include "Worker.h"
 
 using std::thread;
 using std::vector;
@@ -23,18 +24,20 @@ public:
 	bool getIsConstructed();
 	void waitForThreadsFreed();
 	bool getEndProcess();
-	void Scheduler::switchOutAllFibers();
+	void Scheduler::waitAllFibersFree();
 	
 private:
 	vector<SpinLock*> locks;
 	vector<Fiber *> fibers;
 	vector<Task*> queuedTasks;
 	vector<Task *> tasks;
+	vector<Worker *> workers;
 	atomic<int> counter=0;
 	vector<thread*> threads;
 	unsigned const int  *N_FIBER_PTR, *N_THREAD_PTR;
 	bool isConstructed = true;
 	atomic<bool> endProcess = false;
+	void workerThreadStart();
 };
 
 #endif

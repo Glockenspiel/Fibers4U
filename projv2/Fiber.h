@@ -21,6 +21,7 @@ public:
 	unsigned int getID();
 	void setPrepared();
 	void waitUntilFree();
+	bool inState(State s);
 private:
 	void waitForState(State);
 	void setState(State);
