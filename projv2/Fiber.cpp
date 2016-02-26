@@ -14,6 +14,9 @@ Fiber::~Fiber(){
 
 //run the task given
 void Fiber::run(Task &task){
+	//wait prepared state
+	waitForState(prepared);
+	setState(running);
 	isFree = false;
 	*counterPtr += 1;
 
@@ -32,22 +35,23 @@ void Fiber::free(){
 	global::writeUnlock();
 
 	isFree.store(true, std::memory_order_release);
-
+	setState(freed);
 	//wait in a spin lock until the fiber is switched out
-	spinLock->lock();
+	//spinLock->lock();
 }
 
 //atm this ends the thread
 void Fiber::switchOut(){
 	//wait until locked then unlock
-	while (spinLock->getIsLocked() == false){}
+	//while (spinLock->getIsLocked() == false){}
 	spinLock->unlock();
 }
 
 void Fiber::setTask(Task &task){
 	Task *temp = currentTask;
 	currentTask = &task;
-	delete temp;
+	//can uncomment this later. using this for testing with fiber wrapper
+	//delete temp;
 }
 
 //returns true if the fiber has finished its current task
@@ -63,4 +67,24 @@ void Fiber::runAndFree(Task &task){
 
 unsigned int Fiber::getID(){
 	return id;
+}
+
+//wait until fiber is freed and set state to prepared
+void Fiber::setPrepared(){
+	//wait free state
+	while (state == running || state == prepared){}
+
+	state = prepared;
+}
+
+void Fiber::waitForState(State s){
+	while (state.load(std::memory_order_relaxed) != s){}
+}
+
+void Fiber::setState(State s){
+	state.store(s, std::memory_order_release);
+}
+
+void Fiber::waitUntilFree(){
+	while (state.load(std::memory_order_relaxed) != freed){}
 }

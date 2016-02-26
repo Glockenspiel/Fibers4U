@@ -2,6 +2,7 @@
 #include <iostream>
 #include <functional>
 #include "Timer.h"
+#include "FiberWrapper.h"
 //#include "Global.h"
 
 using namespace std::placeholders;
@@ -29,6 +30,7 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 
 	for (unsigned int i = 0; i < FIBER_COUNT; i++){
 		fibers.push_back(new Fiber(counter, i));
+		fibers[i]->setPrepared();
 	}
 
 	for (unsigned int i = 0; i < THREAD_COUNT; i++){
@@ -85,6 +87,8 @@ void Scheduler::runTask(Task &task){
 			
 			//in future version, make a wrapper for fibers instead of creating new threads
 			thread * temp = threads[1];
+
+			//fibers[1]->setPrepared();
 			threads[1] = new thread(&Fiber::runAndFree, fibers[1], task);
 			delete temp;
 
@@ -94,24 +98,36 @@ void Scheduler::runTask(Task &task){
 	//queuedTasks.push_back(&task);
 
 	//end process after first task is completed
-	//while(fibers[0]->isFiberFree() == false){}
-	
-	switchOutAllFibers();
+	fibers[1]->waitUntilFree();
+	//switchOutAllFibers();
 	global::writeLock();
 	system("pause");
 	global::writeUnlock();
+	//close();
+
+	FiberWrapper *fw = new FiberWrapper();
+	thread *tr = new thread(&FiberWrapper::run, fw);
+	fw->set(task, *fibers[0]);
+	fibers[0]->setPrepared();
+	fw->close();
+
+	global::writeLock();
+	system("pause");
+	global::writeUnlock();
+
 	close();
 }
 
 //end all the threads and notify main thread that the process has ended
 void Scheduler::close(){
+	switchOutAllFibers();
+
 	//joins all the threads
 	for (unsigned int i = 0; i < threads.size(); i++){
 
 		if (locks[i]->getIsLocked())
 			locks[i]->unlock();
 		if (threads[i]->joinable()){
-			
 			threads[i]->join();
 		}
 	}
