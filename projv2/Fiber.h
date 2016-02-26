@@ -10,7 +10,7 @@ using std::atomic;
 
 class Fiber{
 public:
-	enum State { running, freed, prepared };
+	enum State { running, freed, prepared, acquired };
 	Fiber(atomic<int>& counter, unsigned short id);
 	~Fiber();
 	void runAndFree(Task &task);
@@ -22,6 +22,7 @@ public:
 	void setPrepared();
 	void waitUntilFree();
 	bool inState(State s);
+	bool tryAcquire();
 private:
 	void waitForState(State);
 	void setState(State);

@@ -15,12 +15,23 @@ void Worker::run(){
 	}
 }
 
+//switches fiber
 void Worker::switchFiber(Fiber& fiber){
-	if (currentFiber != nullptr)
-		currentFiber->waitUntilFree();
-	currentFiber = &fiber;
+	if (currentFiber == nullptr){
+		currentFiber = &fiber;
+		return;
+	}
+	//no change in fiber
+	else if (currentFiber->getID() == fiber.getID()){
+		return;
+	}
+	else
+	{
+		currentFiber = &fiber;
+	}
 }
 
+//ends worker
 void Worker::close(){
 	//wait for current fiber to be set
 	while (currentFiber == nullptr){}
@@ -29,10 +40,12 @@ void Worker::close(){
 	running.store(false, std::memory_order_release);
 }
 
+//sets next task
 void Worker::nextTask(Task& task){
 	nextTaskPtr = &task;
 }
 
+//set task and fiber
 void Worker::set(Task& task, Fiber& fiber){
 	switchFiber(fiber);
 	nextTask(task);

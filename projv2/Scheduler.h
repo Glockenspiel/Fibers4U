@@ -38,6 +38,7 @@ private:
 	bool isConstructed = true;
 	atomic<bool> endProcess = false;
 	void workerThreadStart();
+	int acquireFreeFiber();
 };
 
 #endif

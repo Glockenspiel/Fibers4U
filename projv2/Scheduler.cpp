@@ -7,14 +7,15 @@
 using namespace std::placeholders;
 
 
-
-
 Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_COUNT, Task& startingTask){
 	N_FIBER_PTR = &FIBER_COUNT;
 	N_THREAD_PTR = &THREAD_COUNT;
 
 	//display error msg
+
 	if (FIBER_COUNT < THREAD_COUNT && FIBER_COUNT>0){
+
+	#pragma message ("Sceduler won't start, you must set more fibers");
 
 		global::writeLock();
 		std::cout << "Scheduler not started!" << std::endl <<
@@ -32,6 +33,7 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 
 	for (unsigned int i = 0; i < FIBER_COUNT; i++){
 		fibers.push_back(new Fiber(counter, i));
+		fibers[i]->tryAcquire();
 	}
 
 	for (unsigned int i = 0; i < THREAD_COUNT; i++){
@@ -53,12 +55,6 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 		fibers[i]->setPrepared();
 		threads.push_back(t);
 	}
-
-
-	
-	global::writeLock();
-	std::cout << "Threads assgined" << std::endl;
-	global::writeUnlock();
 }
 
 //destructor
@@ -77,28 +73,22 @@ Scheduler::~Scheduler(){
 
 //run the task given on a fiber
 void Scheduler::runTask(Task &task){
-	global::writeLock();
-	std::cout << "Assigning task" << std::endl;
-	global::writeUnlock();
+	//find available fiber
+	int index;
+	//instead of loop use the taskQueue
+	do{
+		index = acquireFreeFiber();
+	} while (index < 0);
 
-	Timer *t = new Timer();
-	//todo: try find an available fiber
-
-	fibers[1]->waitUntilFree();
+	if (index < 0){
+		return;
+	}
 
 	//set values then run, must be in prepared state to change to run state
-	workers[1]->set(task, *fibers[1]);
-	fibers[1]->setPrepared();
-
-	//end worker
-	/*
-	waitAllFibersFree();
-	global::writeLock();
-	system("pause");
-	global::writeUnlock();
-
-	close();
-	*/
+	workers[index]->set(task, *fibers[index]);
+	
+	//finished setting values so now prepare for running
+	fibers[index]->setPrepared();
 }
 
 //end all the threads and notify main thread that the process has ended
@@ -149,4 +139,12 @@ bool Scheduler::getEndProcess(){
 
 void Scheduler::workerThreadStart(){
 	//do nothing
+}
+
+int Scheduler::acquireFreeFiber(){
+	for (unsigned int i = 0; i < fibers.size(); i++){
+			if(fibers[i]->tryAcquire()) //try acquire
+				return i;
+	}
+	return -1;
 }
