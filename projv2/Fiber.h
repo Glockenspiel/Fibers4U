@@ -14,10 +14,9 @@ public:
 	Fiber(atomic<int>& counter, unsigned short id);
 	~Fiber();
 	void runAndFree(Task &task);
-	bool isFiberFree();
+	//bool isFiberFree();
 	void run(Task &task);
 	void free();
-	void switchOut();
 	void setTask(Task& task);
 	unsigned int getID();
 	void setPrepared();
@@ -29,7 +28,7 @@ private:
 	unsigned int id;
 	atomic<State> state = freed;
 	Task *currentTask;
-	std::atomic<bool> isFree = true;
+	//std::atomic<bool> isFree = true;
 	atomic<int>* counterPtr;
 };
 

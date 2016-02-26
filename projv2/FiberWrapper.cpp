@@ -10,44 +10,26 @@ FiberWrapper::~FiberWrapper(){}
 void FiberWrapper::run(){
 	running = true;
 	while (running.load(std::memory_order_relaxed)){
-
-		//wait until fiber switched and the next task was set
-		if (switched.load(std::memory_order_relaxed) && 
-			setNextTask.load(std::memory_order_relaxed)){
-
-			//run next task
-			currentFiber->runAndFree(*nextTaskPtr);
-			
-			//currentFiber->switchOut();
-			//reset flags
-			setNextTask.store(false, std::memory_order_release);
-			switched.store(false, std::memory_order_release);
-
-			
-		}
+		currentFiber->runAndFree(*nextTaskPtr);
 	}
 }
 
 void FiberWrapper::switchFiber(Fiber& fiber){
-	if (currentFiber!=nullptr)
-		currentFiber->switchOut();
+	if (currentFiber != nullptr)
+		currentFiber->waitUntilFree();
 	currentFiber = &fiber;
-
-	switched.store(true, std::memory_order_release);
 }
 
 void FiberWrapper::close(){
-	//while (currentFiber->isFiberFree() == false){}
-	//currentFiber->switchOut();
+	//wait for current fiber to be set
+	while (currentFiber == nullptr){}
 
-	
 	currentFiber->waitUntilFree();
 	running.store(false, std::memory_order_release);
 }
 
 void FiberWrapper::nextTask(Task& task){
 	nextTaskPtr = &task;
-	setNextTask.store(true, std::memory_order_release);
 }
 
 void::FiberWrapper::set(Task& task, Fiber& fiber){

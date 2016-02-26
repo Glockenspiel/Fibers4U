@@ -16,8 +16,6 @@ public:
 	void set(Task& task, Fiber& fiber);
 private:
 	std::atomic<bool> running = false;
-	std::atomic<bool> switched = false;
-	std::atomic<bool> setNextTask = false;
 	Task* nextTaskPtr;
 	Fiber* currentFiber;
 };

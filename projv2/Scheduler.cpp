@@ -30,14 +30,15 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 
 	for (unsigned int i = 0; i < FIBER_COUNT; i++){
 		fibers.push_back(new Fiber(counter, i));
-		fibers[i]->setPrepared();
 	}
 
 	for (unsigned int i = 0; i < THREAD_COUNT; i++){
 		locks.push_back(new SpinLock());
 		thread *t;
-		if (i == 0)
+		if (i == 0){
+			fibers[i]->setPrepared();
 			t = new thread(&Fiber::runAndFree, fibers[i], startingTask);
+		}
 		else
 			t = new thread(&SpinLock::lock, locks[i]);
 		threads.push_back(t);
@@ -46,9 +47,6 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 	global::writeLock();
 	std::cout << "Threads assgined to spin locks" << std::endl;
 	global::writeUnlock();
-	
-	//wait until all spin locks have started
-	//waitForThreadsFreed();
 }
 
 //destructor
@@ -74,41 +72,39 @@ void Scheduler::runTask(Task &task){
 	Timer *t = new Timer();
 	//try find an available fiber
 	bool onceflag = true;
-	while(onceflag){
-		if (fibers[1]->isFiberFree())
-		{
-			//unlock standard lock oofr this thread
-			if (locks[1]->getIsLocked())
-				locks[1]->unlock();
-			threads[1]->join();
 
-			//set the next task on the fiber
-			fibers[1]->setTask(task);
-			
-			//in future version, make a wrapper for fibers instead of creating new threads
-			thread * temp = threads[1];
-
-			//fibers[1]->setPrepared();
-			threads[1] = new thread(&Fiber::runAndFree, fibers[1], task);
-			delete temp;
-
-			onceflag = false;
-		}
-	}
-	//queuedTasks.push_back(&task);
-
-	//end process after first task is completed
 	fibers[1]->waitUntilFree();
-	//switchOutAllFibers();
+
+	//unlock starting spint lock for this thread
+	if (locks[1]->getIsLocked())
+		locks[1]->unlock();
+	threads[1]->join();
+
+	//set the next task on the fiber
+	fibers[1]->setTask(task);
+	
+	//in future version, make a wrapper for fibers instead of creating new threads
+	thread * temp = threads[1];
+
+	fibers[1]->setPrepared();
+	threads[1] = new thread(&Fiber::runAndFree, fibers[1], task);
+	delete temp;
+
+	//wait for task to complete
+	fibers[1]->waitUntilFree();
 	global::writeLock();
 	system("pause");
 	global::writeUnlock();
 	//close();
 
+	//this is the worker object
 	FiberWrapper *fw = new FiberWrapper();
-	thread *tr = new thread(&FiberWrapper::run, fw);
+	//set values then run, must be in prepared state to change to run state
 	fw->set(task, *fibers[0]);
+	thread *tr = new thread(&FiberWrapper::run, fw);
 	fibers[0]->setPrepared();
+
+	//end worker
 	fw->close();
 
 	global::writeLock();
@@ -139,8 +135,7 @@ void Scheduler::close(){
 //waits until all current tasks are completed and then ends all the spin locks in the fibers
 void Scheduler::switchOutAllFibers(){
 	for (unsigned int i = 0; i < fibers.size(); i++){
-		while (fibers[i]->isFiberFree() == false){}
-		fibers[i]->switchOut();
+		fibers[i]->waitUntilFree();
 	}
 }
 
