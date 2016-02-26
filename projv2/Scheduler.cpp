@@ -2,7 +2,7 @@
 #include <iostream>
 #include <functional>
 #include "Timer.h"
-#include "FiberWrapper.h"
+#include "Worker.h"
 //#include "Global.h"
 
 using namespace std::placeholders;
@@ -98,10 +98,10 @@ void Scheduler::runTask(Task &task){
 	//close();
 
 	//this is the worker object
-	FiberWrapper *fw = new FiberWrapper();
+	Worker *fw = new Worker();
 	//set values then run, must be in prepared state to change to run state
 	fw->set(task, *fibers[0]);
-	thread *tr = new thread(&FiberWrapper::run, fw);
+	thread *tr = new thread(&Worker::run, fw);
 	fibers[0]->setPrepared();
 
 	//end worker

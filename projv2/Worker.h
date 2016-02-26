@@ -1,14 +1,14 @@
-#ifndef FIBER_WRAPPER_H
-#define FIBER_WRAPPER_H
+#ifndef WORKER_H
+#define WORKER_H
 
 #include "Fiber.h"
 #include <atomic>
 
 
-class FiberWrapper{
+class Worker{
 public:
-	FiberWrapper();
-	~FiberWrapper();
+	Worker();
+	~Worker();
 	void run();
 	void nextTask(Task& task);
 	void switchFiber(Fiber& fiber);

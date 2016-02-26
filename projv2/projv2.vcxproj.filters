@@ -36,7 +36,7 @@
     <ClCompile Include="Timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FiberWrapper.cpp">
+    <ClCompile Include="Worker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -62,7 +62,7 @@
     <ClInclude Include="global.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="FiberWrapper.h">
+    <ClInclude Include="Worker.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

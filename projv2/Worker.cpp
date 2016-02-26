@@ -1,26 +1,26 @@
-#include "FiberWrapper.h"
+#include "Worker.h"
 #include <iostream>
 
-FiberWrapper::FiberWrapper(){
+Worker::Worker(){
 
 }
 
-FiberWrapper::~FiberWrapper(){}
+Worker::~Worker(){}
 
-void FiberWrapper::run(){
+void Worker::run(){
 	running = true;
 	while (running.load(std::memory_order_relaxed)){
 		currentFiber->runAndFree(*nextTaskPtr);
 	}
 }
 
-void FiberWrapper::switchFiber(Fiber& fiber){
+void Worker::switchFiber(Fiber& fiber){
 	if (currentFiber != nullptr)
 		currentFiber->waitUntilFree();
 	currentFiber = &fiber;
 }
 
-void FiberWrapper::close(){
+void Worker::close(){
 	//wait for current fiber to be set
 	while (currentFiber == nullptr){}
 
@@ -28,11 +28,11 @@ void FiberWrapper::close(){
 	running.store(false, std::memory_order_release);
 }
 
-void FiberWrapper::nextTask(Task& task){
+void Worker::nextTask(Task& task){
 	nextTaskPtr = &task;
 }
 
-void::FiberWrapper::set(Task& task, Fiber& fiber){
+void Worker::set(Task& task, Fiber& fiber){
 	switchFiber(fiber);
 	nextTask(task);
 }
