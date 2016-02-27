@@ -23,6 +23,7 @@ public:
 	void waitUntilFree();
 	bool inState(State s);
 	bool tryAcquire();
+	atomic<State>& getState();
 private:
 	void waitForState(State);
 	void setState(State);

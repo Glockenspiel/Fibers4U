@@ -5,9 +5,11 @@
 #include <atomic>
 #include <mutex>
 
+using std::atomic;
 
 class Worker{
 public:
+	enum State {free,aquired, prepared};
 	Worker();
 	~Worker();
 	void run();
@@ -15,11 +17,13 @@ public:
 	void switchFiber(Fiber& fiber);
 	void close();
 	void set(Task& task, Fiber& fiber);
+	bool tryAcquire();
 private:
-	std::atomic<bool> running = false;
+	atomic<bool> running = false;
 	Task* nextTaskPtr;
 	Fiber* currentFiber;
-	std::mutex *mtx = new std::mutex();
+	atomic<State> state = free;
+	void setState(State s);
 };
 
 #endif

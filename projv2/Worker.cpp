@@ -1,5 +1,6 @@
 #include "Worker.h"
 #include <iostream>
+#include "global.h"
 
 Worker::Worker(){
 
@@ -10,21 +11,25 @@ Worker::~Worker(){}
 void Worker::run(){
 	running = true;
 	while (running.load(std::memory_order_relaxed)){
-		if (currentFiber->inState(Fiber::State::prepared))
+		if (state.load(std::memory_order_relaxed) == State::prepared){
 			currentFiber->runAndFree(*nextTaskPtr);
+			setState(State::free);
+		}
 	}
 }
 
-//switches fiber
+//switches fiber pointer
 void Worker::switchFiber(Fiber& fiber){
+	//if nullptr assign it
 	if (currentFiber == nullptr){
 		currentFiber = &fiber;
 		return;
 	}
-	//no change in fiber
+	//no change in fiber pointer
 	else if (currentFiber->getID() == fiber.getID()){
 		return;
 	}
+	//assign fiber pointer
 	else
 	{
 		currentFiber = &fiber;
@@ -49,4 +54,20 @@ void Worker::nextTask(Task& task){
 void Worker::set(Task& task, Fiber& fiber){
 	switchFiber(fiber);
 	nextTask(task);
+	setState(State::prepared);
+}
+
+//Returns true if this worker has been acquired
+//The worker state must be free to acquire it
+bool Worker::tryAcquire(){
+	if (state.load(std::memory_order_relaxed)==State::free){
+		setState(State::aquired);
+		return true;
+	}
+	return false;
+}
+
+//sets the state of the worker
+void Worker::setState(State s){
+	state.store(s, std::memory_order_release);
 }

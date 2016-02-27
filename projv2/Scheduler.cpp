@@ -15,7 +15,7 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 
 	if (FIBER_COUNT < THREAD_COUNT && FIBER_COUNT>0){
 
-	#pragma message ("Sceduler won't start, you must set more fibers");
+	//#pragma message ("Sceduler won't start, you must set more fibers");
 
 		global::writeLock();
 		std::cout << "Scheduler not started!" << std::endl <<
@@ -73,22 +73,29 @@ Scheduler::~Scheduler(){
 
 //run the task given on a fiber
 void Scheduler::runTask(Task &task){
-	//find available fiber
-	int index;
-	//instead of loop use the taskQueue
-	do{
-		index = acquireFreeFiber();
-	} while (index < 0);
+	//find available worker
+	Fiber* fbr;
+	Worker* wkr;
 
-	if (index < 0){
-		return;
-	}
+	//find available fiber
+	//todo:instead of loop use the taskQueue
+	do{
+		fbr = acquireFreeFiber();
+	} while (fbr==nullptr);
+
+	do{
+		wkr = acquireFreeWorker();
+	} while (wkr == nullptr);
+
+	global::writeLock();
+	std::cout << "Using fiber: " << fbr->getID()<< std::endl;
+	global::writeUnlock();
 
 	//set values then run, must be in prepared state to change to run state
-	workers[index]->set(task, *fibers[index]);
+	wkr->set(task, *fbr);
 	
 	//finished setting values so now prepare for running
-	fibers[index]->setPrepared();
+	fbr->setPrepared();
 }
 
 //end all the threads and notify main thread that the process has ended
@@ -141,10 +148,19 @@ void Scheduler::workerThreadStart(){
 	//do nothing
 }
 
-int Scheduler::acquireFreeFiber(){
+Fiber* Scheduler::acquireFreeFiber(){
 	for (unsigned int i = 0; i < fibers.size(); i++){
 			if(fibers[i]->tryAcquire()) //try acquire
-				return i;
+				return fibers[i];
 	}
-	return -1;
+	return nullptr;
+}
+
+Worker* Scheduler::acquireFreeWorker(){
+	for (unsigned int i = 0; i < workers.size(); i++){
+		if (workers[i]->tryAcquire())
+			return workers[i];
+	}
+
+	return nullptr;
 }

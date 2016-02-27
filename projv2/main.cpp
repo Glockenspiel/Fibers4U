@@ -11,7 +11,7 @@ int main(){
 	std::function<void()> startfn = std::bind(&Player::printHp,p);
 	Task *startingTask = new Task(startfn);
 
-	Scheduler *scheduler = new Scheduler(3,3, *startingTask);
+	Scheduler *scheduler = new Scheduler(2,2, *startingTask);
 	if (scheduler->getIsConstructed() == false){
 		return 0;
 	}
@@ -20,6 +20,9 @@ int main(){
 	Task *task1 = new Task(fn);
 	scheduler->runTask(*task1);
 
+	global::writeLock();
+	std::cout << "BACK IN MAIN THREAD" << std::endl;
+	global::writeUnlock();
 
 	scheduler->close();
 	system("pause");
