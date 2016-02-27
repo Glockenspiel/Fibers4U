@@ -23,7 +23,7 @@ public:
 	void waitUntilFree();
 	bool inState(State s);
 	bool tryAcquire();
-	atomic<State>& getState();
+	
 private:
 	void waitForState(State);
 	void setState(State);
@@ -31,7 +31,6 @@ private:
 	unsigned int id;
 	atomic<State> state = freed;
 	Task *currentTask;
-	//std::atomic<bool> isFree = true;
 	atomic<int>* counterPtr;
 };
 

@@ -91,7 +91,3 @@ bool Fiber::tryAcquire(){
 	}
 	return false;
 }
-
-atomic<Fiber::State>& Fiber::getState(){
-	return state;
-}

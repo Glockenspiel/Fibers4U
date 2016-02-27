@@ -20,13 +20,13 @@ int main(){
 	Task *task1 = new Task(fn);
 	scheduler->runTask(*task1);
 
-	global::writeLock();
-	std::cout << "BACK IN MAIN THREAD" << std::endl;
-	global::writeUnlock();
+	
 
 	scheduler->close();
 	system("pause");
 
 	//wait until schduler ends (should use condiction variable here i think)
-	while (scheduler->getEndProcess() == false){}
+	while (scheduler->getEndProcess() == false){
+		std::this_thread::yield();
+	}
 }
