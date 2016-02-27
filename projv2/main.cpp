@@ -11,15 +11,17 @@ int main(){
 	std::function<void()> startfn = std::bind(&Player::printHp,p);
 	Task *startingTask = new Task(startfn);
 
-	Scheduler *scheduler = new Scheduler(2,2, *startingTask);
+	Scheduler *scheduler = new Scheduler(3,2, *startingTask);
 	if (scheduler->getIsConstructed() == false){
 		return 0;
 	}
 
+	scheduler->waitAllFibersFree();
+
 	function<void()> fn = std::bind(&Player::update, p);
 	Task *task1 = new Task(fn);
 	scheduler->runTask(*task1);
-
+	scheduler->runTask(*task1);
 	
 
 	scheduler->close();

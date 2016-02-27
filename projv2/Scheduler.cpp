@@ -2,6 +2,7 @@
 #include <iostream>
 #include <functional>
 #include "Timer.h"
+#include "Player.h"
 //#include "Global.h"
 
 using namespace std::placeholders;
@@ -14,8 +15,6 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 	//display error msg
 
 	if (FIBER_COUNT < THREAD_COUNT && FIBER_COUNT>0){
-
-	//#pragma message ("Sceduler won't start, you must set more fibers");
 
 		global::writeLock();
 		std::cout << "Scheduler not started!" << std::endl <<
@@ -33,23 +32,21 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 
 	for (unsigned int i = 0; i < FIBER_COUNT; i++){
 		fibers.push_back(new Fiber(counter, i));
-		fibers[i]->tryAcquire();
 	}
 
 	for (unsigned int i = 0; i < THREAD_COUNT; i++){
 		locks.push_back(new SpinLock());
 		workers.push_back(new Worker());
 		
+		fibers[i]->tryAcquire();
 		thread *t;
 		if (i == 0){
 			workers[i]->set(startingTask, *fibers[i]);
-			//t = new thread(&Fiber::runAndFree, fibers[i], startingTask);
 		}
 		else{
-			function<void()> emptyFunc = std::bind(&Scheduler::workerThreadStart, this);
+			function<void()> emptyFunc = std::bind(&Scheduler::empty, this);
 			Task *emptyTask = new Task(emptyFunc);
-			workers[i]->set(*emptyTask, *fibers[i]);			
-			//t = new thread(&SpinLock::lock, locks[i]);
+			workers[i]->set(*emptyTask, *fibers[i]);
 		}
 		t = new thread(&Worker::run, workers[i]);
 		fibers[i]->setPrepared();
@@ -76,23 +73,32 @@ void Scheduler::runTask(Task &task){
 	//find available worker
 	Fiber* fbr;
 	Worker* wkr;
+	Task* nextTask;
 
 	//find available fiber
 	//todo:instead of loop use the taskQueue
 	do{
 		fbr = acquireFreeFiber();
+		if (fbr == nullptr){
+			global::writeLock();
+			std::cout << "Require more fibers" << std::endl;
+			global::writeUnlock();
+		}
 	} while (fbr==nullptr);
 
 	do{
 		wkr = acquireFreeWorker();
 	} while (wkr == nullptr);
 
+	nextTask = &task;
+
 	global::writeLock();
-	std::cout << "Using fiber: " << fbr->getID()<< std::endl;
+	std::cout << "Using fiber: " << fbr->getID() << std::endl <<
+		"Counter:" << counter.load(std::memory_order_relaxed) << std::endl;
 	global::writeUnlock();
 
 	//set values then run, must be in prepared state to change to run state
-	wkr->set(task, *fbr);
+	wkr->set(*nextTask, *fbr);
 	
 	//finished setting values so now prepare for running
 	fbr->setPrepared();
@@ -119,11 +125,9 @@ void Scheduler::close(){
 	endProcess.store(true, std::memory_order_relaxed);
 }
 
-//waits until all current tasks are completed and then ends all the spin locks in the fibers
+//waits until all current tasks are completed i.e. when the counter reaches zero
 void Scheduler::waitAllFibersFree(){
-	for (unsigned int i = 0; i < fibers.size(); i++){
-		fibers[i]->waitUntilFree();
-	}
+	while (counter.load(std::memory_order_relaxed) != 0){}
 }
 
 
@@ -131,21 +135,9 @@ void Scheduler::waitAllFibersFree(){
 bool Scheduler::getIsConstructed(){
 	return isConstructed;
 }
-
-//wait for all threads to reach spin locks, then return
-void Scheduler::waitForThreadsFreed(){
-	//for (unsigned int index = 0; index<spinLocks.size(); index++){
-	//	while (spinLocks[index]->getIsLocked() == false){} 
-	//}
-}
-
 //returns the endProcess value
 bool Scheduler::getEndProcess(){
 	return endProcess.load(std::memory_order_relaxed);
-}
-
-void Scheduler::workerThreadStart(){
-	//do nothing
 }
 
 Fiber* Scheduler::acquireFreeFiber(){
@@ -163,4 +155,8 @@ Worker* Scheduler::acquireFreeWorker(){
 	}
 
 	return nullptr;
+}
+
+void Scheduler::empty(){
+
 }

@@ -7,6 +7,7 @@ public:
 	void update();
 	void addHp(int amount);
 	void printHp();
+	void empty();
 	~Player();
 private:
 	int hp=0;

@@ -17,7 +17,7 @@ void Fiber::run(Task &task){
 	//wait prepared state
 	waitForState(prepared);
 	setState(running);
-	*counterPtr += 1;
+	//*counterPtr += 1;
 
 	//assign the current task and delete the old one
 	setTask(task);
@@ -87,6 +87,7 @@ bool Fiber::inState(Fiber::State s){
 bool Fiber::tryAcquire(){
 	if (state.load(std::memory_order_relaxed) == freed){
 		setState(acquired);
+		*counterPtr += 1;
 		return true;
 	}
 	return false;

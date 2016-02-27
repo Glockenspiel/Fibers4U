@@ -25,3 +25,5 @@ void Player::printHp(){
 	std::cout << "player hp: " << hp << std::endl;
 	global::writeUnlock();
 }
+
+void Player::empty(){}

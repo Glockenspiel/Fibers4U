@@ -22,7 +22,6 @@ public:
 	void runTask(Task &task);
 	void close();
 	bool getIsConstructed();
-	void waitForThreadsFreed();
 	bool getEndProcess();
 	void Scheduler::waitAllFibersFree();
 	
@@ -37,7 +36,7 @@ private:
 	unsigned const int  *N_FIBER_PTR, *N_THREAD_PTR;
 	bool isConstructed = true;
 	atomic<bool> endProcess = false;
-	void workerThreadStart();
+	void empty();
 	Fiber* acquireFreeFiber();
 	Worker* acquireFreeWorker();
 };
