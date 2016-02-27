@@ -35,7 +35,6 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 	}
 
 	for (unsigned int i = 0; i < THREAD_COUNT; i++){
-		locks.push_back(new SpinLock());
 		workers.push_back(new Worker());
 		
 		fibers[i]->tryAcquire();
@@ -56,15 +55,13 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 
 //destructor
 Scheduler::~Scheduler(){
-	//desrtuct fibers
-	for (std::vector< Fiber* >::iterator it = fibers.begin(); it != fibers.end(); ++it)
-		delete (*it);
-	fibers.clear();
+	//delete all fibers
+	for (Fiber* f : fibers)
+		delete f;
 
-	//destruct queued tasks
-	for (std::vector< Task* >::iterator it = queuedTasks.begin(); it != queuedTasks.end(); ++it)
-		delete (*it);
-	queuedTasks.clear();
+	//delete all the threads
+	for (thread* t : threads)
+		delete t;
 }
 
 
@@ -81,7 +78,8 @@ void Scheduler::runTask(Task &task){
 		fbr = acquireFreeFiber();
 		if (fbr == nullptr){
 			global::writeLock();
-			std::cout << "Require more fibers" << std::endl;
+			std::cout << "Warning!: Task waiting for free fiber" << std::endl <<
+				"Create more fibers to prevent unessasary waiting" << std::endl;
 			global::writeUnlock();
 		}
 	} while (fbr==nullptr);
@@ -112,9 +110,6 @@ void Scheduler::close(){
 	for (unsigned int i = 0; i < threads.size(); i++){
 		
 		workers[i]->close();
-
-		if (locks[i]->getIsLocked())
-			locks[i]->unlock();
 
 		if (threads[i]->joinable()){
 			threads[i]->join();
@@ -148,6 +143,7 @@ Fiber* Scheduler::acquireFreeFiber(){
 	return nullptr;
 }
 
+//trys to acequire a free worker
 Worker* Scheduler::acquireFreeWorker(){
 	for (unsigned int i = 0; i < workers.size(); i++){
 		if (workers[i]->tryAcquire())
@@ -157,6 +153,5 @@ Worker* Scheduler::acquireFreeWorker(){
 	return nullptr;
 }
 
-void Scheduler::empty(){
-
-}
+//empty function for initialising worker threads
+void Scheduler::empty(){}

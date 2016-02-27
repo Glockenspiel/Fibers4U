@@ -21,8 +21,6 @@ int main(){
 	function<void()> fn = std::bind(&Player::update, p);
 	Task *task1 = new Task(fn);
 	scheduler->runTask(*task1);
-	scheduler->runTask(*task1);
-	
 
 	scheduler->close();
 	system("pause");
@@ -31,4 +29,10 @@ int main(){
 	while (scheduler->getEndProcess() == false){
 		std::this_thread::yield();
 	}
+
+	delete scheduler;
+	std::cout << "Scheduler deleted" << std::endl;
+	Timer *timer = new Timer();
+	timer->wait(1);
+	delete timer;
 }

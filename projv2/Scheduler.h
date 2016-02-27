@@ -26,13 +26,10 @@ public:
 	void Scheduler::waitAllFibersFree();
 	
 private:
-	vector<SpinLock*> locks;
 	vector<Fiber *> fibers;
-	vector<Task*> queuedTasks;
-	vector<Task *> tasks;
 	vector<Worker *> workers;
-	atomic<int> counter=0;
 	vector<thread*> threads;
+	atomic<int> counter=0;
 	unsigned const int  *N_FIBER_PTR, *N_THREAD_PTR;
 	bool isConstructed = true;
 	atomic<bool> endProcess = false;

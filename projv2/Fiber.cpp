@@ -10,6 +10,7 @@ Fiber::Fiber(atomic<int>& counter, unsigned short id){
 
 Fiber::~Fiber(){
 	delete currentTask;
+	delete spinLock;
 }
 
 //run the task given
@@ -47,8 +48,8 @@ void Fiber::free(){
 void Fiber::setTask(Task &task){
 	Task *temp = currentTask;
 	currentTask = &task;
-	//can uncomment this later. using this for testing with fiber wrapper
-	//delete temp;
+
+	delete temp;
 }
 
 //call both run() and free()
