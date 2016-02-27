@@ -7,12 +7,15 @@
 
 using namespace std::placeholders;
 
+//varaible used in lambda expression to notify main thread to wake up
+bool mainAwake = false;
 
-Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_COUNT, Task& startingTask){
+
+Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_COUNT, 
+	Task& startingTask){
 	N_FIBER_PTR = &FIBER_COUNT;
 	N_THREAD_PTR = &THREAD_COUNT;
-
-	//display error msg
+	mtx = new std::mutex();
 
 	if (FIBER_COUNT < THREAD_COUNT && FIBER_COUNT>0){
 
@@ -115,9 +118,6 @@ void Scheduler::close(){
 			threads[i]->join();
 		}
 	}
-
-	//tell the main thread that the process is ending
-	endProcess.store(true, std::memory_order_relaxed);
 }
 
 //waits until all current tasks are completed i.e. when the counter reaches zero
@@ -129,10 +129,6 @@ void Scheduler::waitAllFibersFree(){
 //returns true if schduler constructed correctly
 bool Scheduler::getIsConstructed(){
 	return isConstructed;
-}
-//returns the endProcess value
-bool Scheduler::getEndProcess(){
-	return endProcess.load(std::memory_order_relaxed);
 }
 
 Fiber* Scheduler::acquireFreeFiber(){
@@ -155,3 +151,17 @@ Worker* Scheduler::acquireFreeWorker(){
 
 //empty function for initialising worker threads
 void Scheduler::empty(){}
+
+void Scheduler::wakeUpMain(){
+	std::lock_guard<std::mutex> lk(*mtx);
+	mainAwake = true;
+
+	//wake up main thread
+	mainCV.notify_one();
+}
+
+void Scheduler::waitMain(){
+	std::unique_lock<std::mutex> lk(*mtx);
+	mainCV.wait(lk, []{return mainAwake; });
+	lk.unlock();
+}
