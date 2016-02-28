@@ -6,6 +6,8 @@ public:
 	Player();
 	void update();
 	void addHp(int amount);
+	void damage(int amount, bool isMagic);
+	void move(int x, int y, int z);
 	void printHp();
 	void empty();
 	~Player();

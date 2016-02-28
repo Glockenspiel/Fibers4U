@@ -4,6 +4,7 @@
 #include "Scheduler.h"
 #include "Global.h"
 #include "TaskArg.h"
+#include "TaskDynArgs.h"
 //#include "WaitVars.h"
 using namespace std;
 
@@ -16,8 +17,18 @@ int main(){
 	Task *startingTask = new Task(&Player::printHp, p);
 
 	TaskArg<int> *taskArg = new TaskArg<int>(&Player::addHp, p);
-	int a = 10;
+	int a = 20;
 	taskArg->setArg(a);
+
+	TaskDynArgs<int, bool> *test = new TaskDynArgs<int, bool>(&Player::damage, p);
+	int b = 5;
+	bool isMagic=false;
+	test->setArgs(b, isMagic);
+
+	TaskDynArgs<int, int, int> *move = new TaskDynArgs<int, int, int>(&Player::move, p);
+	int c = 0;
+	move->setArgs(a, b, c);
+	move->run();
 
 
 	Scheduler *scheduler = new Scheduler(5,2, taskArg);

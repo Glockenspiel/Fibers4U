@@ -27,3 +27,16 @@ void Player::printHp(){
 }
 
 void Player::empty(){}
+
+void Player::damage(int amount, bool isMagic){
+	if (isMagic)
+		hp -= amount * 2;
+	else 
+		hp -= amount;
+}
+
+void Player::move(int x, int y, int z){
+	global::writeLock();
+	std::cout << "x:" << x << " y:" << y << " z:" << z << std::endl;
+	global::writeUnlock();
+}

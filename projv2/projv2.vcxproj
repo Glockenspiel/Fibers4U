@@ -66,6 +66,7 @@
   <ItemGroup>
     <ClCompile Include="Fiber.cpp" />
     <ClCompile Include="TaskArg.cpp" />
+    <ClCompile Include="TaskDynArgs.h" />
     <ClCompile Include="Worker.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
