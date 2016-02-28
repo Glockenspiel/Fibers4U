@@ -9,11 +9,18 @@ Worker::Worker(unsigned int id){
 
 Worker::~Worker(){}
 
+/*
+Starts the spin lock for this worker thread
+if the state is prepared, the spin will call
+runAndFree() on the currentFiber
+the state of the worker will return to free
+the task queue will be notified of the free
+*/
 void Worker::run(){
 	running = true;
 	while (running.load(std::memory_order_relaxed)){
 		if (state.load(std::memory_order_relaxed) == State::prepared){
-			currentFiber->runAndFree(*nextTaskPtr);
+			currentFiber->runAndFree();
 			setState(State::free);
 			Scheduler::workerBeenFreed(this);
 		}
@@ -47,22 +54,19 @@ void Worker::close(){
 	running.store(false, std::memory_order_release);
 }
 
-//sets next task
-void Worker::nextTask(Task& task){
-	nextTaskPtr = &task;
-}
-
-//set task and fiber
+//set the task to the fiber and switches the fiber in fiber
+//moves state to prepared
 void Worker::set(Task& task, Fiber& fiber){
+	fiber.setTask(task);
 	switchFiber(fiber);
-	nextTask(task);
+	//nextTask(task);
 	setState(State::prepared);
 }
 
-//set switch to new fiber
+//switch in the fiber, use fibers current task
+//moves state to prepared
 void Worker::set(Fiber& fiber){
 	switchFiber(fiber);
-	nextTask(*fiber.currentTask);
 	setState(State::prepared);
 }
 

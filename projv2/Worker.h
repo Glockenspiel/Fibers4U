@@ -13,7 +13,6 @@ public:
 	Worker(unsigned int id);
 	~Worker();
 	void run();
-	void nextTask(Task& task);
 	void switchFiber(Fiber& fiber);
 	void close();
 	void set(Task& task, Fiber& fiber);
@@ -23,7 +22,6 @@ public:
 	void forceAcquire();
 private:
 	atomic<bool> running = false;
-	Task* nextTaskPtr;
 	Fiber* currentFiber;
 	atomic<State> state = free;
 	void setState(State s);
