@@ -12,7 +12,7 @@ using namespace std::placeholders;
 bool mainAwake = false;
 
 //static queue for fibers not yet set to workers
-static vector<Fiber*> queuedFibers;
+static queue<Fiber*> fiberQueue;
 
 //atomic spinlock flag, used for accessing the queue atomically
 static std::atomic_flag queueLock = ATOMIC_FLAG_INIT;
@@ -103,10 +103,10 @@ void Scheduler::runTask(Task &task){
 	wkr = acquireFreeWorker();
 
 	//add the task queue
-	if (wkr == nullptr || queuedFibers.size()>0){
+	if (wkr == nullptr || fiberQueue.size()>0){
 
 		fbr->setTask(task);
-		queuedFibers.push_back(fbr);
+		fiberQueue.push(fbr);
 	}
 	//no queuing needed
 	else{
@@ -193,13 +193,13 @@ void Scheduler::workerBeenFreed(Worker* worker){
 	while (queueLock.test_and_set(std::memory_order_acquire));
 
 	//check if there is any queued fibers
-	if (queuedFibers.size() > 0){
+	if (fiberQueue.empty() == false){
 		//acquire worker
 		worker->forceAcquire();
 
-		//get next fiber with FIFO(first in first out)
-		Fiber* nextFiber = queuedFibers.front();
-		queuedFibers.erase(queuedFibers.begin());
+		//get next fiber in the queue using FIFO(first in first out)
+		Fiber* nextFiber = fiberQueue.front();
+		fiberQueue.pop();
 
 		//run fiber on the worker
 		worker->set(*nextFiber);

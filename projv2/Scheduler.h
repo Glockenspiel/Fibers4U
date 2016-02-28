@@ -11,12 +11,13 @@
 #include "Worker.h"
 #include <mutex>
 #include <condition_variable>
+#include <queue>
 
 
 using std::thread;
 using std::vector;
 using std::mutex;
-
+using std::queue;
 
 static atomic<bool> isCompleted = false;
 
