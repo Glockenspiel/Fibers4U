@@ -1,19 +1,19 @@
-﻿Build started 28/02/2016 12:46:02.
-     1>Project "C:\Users\Jeoff\fyp\fibers4u\projv2\projv2.vcxproj" on node 2 (Rebuild target(s)).
+﻿Build started 28/02/2016 15:20:31.
+     1>Project "C:\Users\Jeoff\fyp\fibers4u\projv2\projv2.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Fiber.cpp Worker.cpp main.cpp Player.cpp Scheduler.cpp SpinLock.cpp Task.cpp Timer.cpp
-         Timer.cpp
-         Task.cpp
-         SpinLock.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Fiber.cpp FiberPool.cpp Scheduler.cpp Worker.cpp main.cpp
          Scheduler.cpp
-         Player.cpp
+         Generating Code...
+         Compiling...
          main.cpp
-     1>c:\users\jeoff\fyp\fibers4u\projv2\nothing.h(5): warning C4091: 'static ' : ignored on left of 'nothingSpace::nothing' when no variable is declared
+     1>c:\users\jeoff\fyp\fibers4u\projv2\nothing.h(6): warning C4091: 'static ' : ignored on left of 'nothingSpace::nothing' when no variable is declared
          Worker.cpp
+         FiberPool.cpp
          Fiber.cpp
          Generating Code...
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Jeoff\fyp\fibers4u\Debug\projv2.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Jeoff\fyp\fibers4u\Debug\projv2.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Jeoff\fyp\fibers4u\Debug\projv2.lib" /MACHINE:X86 Debug\Fiber.obj
+         Debug\FiberPool.obj
          Debug\Worker.obj
          Debug\main.obj
          Debug\Player.obj
@@ -22,8 +22,8 @@
          Debug\Task.obj
          Debug\Timer.obj
          projv2.vcxproj -> C:\Users\Jeoff\fyp\fibers4u\Debug\projv2.exe
-     1>Done Building Project "C:\Users\Jeoff\fyp\fibers4u\projv2\projv2.vcxproj" (Rebuild target(s)).
+     1>Done Building Project "C:\Users\Jeoff\fyp\fibers4u\projv2\projv2.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:04.24
+Time Elapsed 00:00:03.03

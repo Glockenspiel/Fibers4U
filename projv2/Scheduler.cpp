@@ -8,16 +8,8 @@
 
 using namespace std::placeholders;
 
-
 //varaible used in lambda expression to notify main thread to wake up
 bool mainAwake = false;
-
-//static queue for fibers not yet set to workers
-static queue<Fiber*> fiberQueue;
-
-//atomic spinlock flag, used for accessing the queue atomically
-static std::atomic_flag queueLock = ATOMIC_FLAG_INIT;
-
 
 Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_COUNT, 
 	BaseTask* startingTask){
@@ -42,50 +34,46 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 	}
 
 	//create fibers
-	for (unsigned int i = 0; i < FIBER_COUNT; i++){
-		fibers.push_back(new Fiber(counter, i));
-	}
+	//for (unsigned int i = 0; i < FIBER_COUNT; i++){
+	//	fibers.push_back(new Fiber(counter, i));
+	//}
+	fiberPool = new FiberPool(FIBER_COUNT, counter);
 
 	//create worker threads
 	for (unsigned int i = 0; i < THREAD_COUNT; i++){
 		workers.push_back(new Worker(i));
 		
-		fibers[i]->tryAcquire();
+		fiberPool->fibers[i]->tryAcquire();
 		thread *t;
 		//assign starting task the the first worker thread
 		if (i == 0){
-			workers[i]->set(startingTask, *fibers[i]);
+			workers[i]->set(startingTask, *fiberPool->fibers[i]);
 		}
 		//assign empty tasks to the rest of the worker threads
 		else{
 			BaseTask *emptyTask = new Task(&Scheduler::empty, this);
-			workers[i]->set(emptyTask, *fibers[i]);
+			workers[i]->set(emptyTask, *fiberPool->fibers[i]);
 		}
 		t = new thread(&Worker::run, workers[i]);
-		fibers[i]->setPrepared();
+		fiberPool->fibers[i]->setPrepared();
 		threads.push_back(t);
 	}
 }
 
 //destructor
 Scheduler::~Scheduler(){
-	//delete all fibers
-	for (Fiber* f : fibers)
-		delete f;
+	delete fiberPool;
 
 	//delete all the threads
 	for (thread* t : threads)
 		delete t;
+	threads.clear();
 
 	for (Worker* w : workers)
 		delete w;
+	workers.clear();
 
 	delete mtx;
-
-	while (fiberQueue.empty() == false){
-		delete fiberQueue.front();
-		fiberQueue.pop();
-	}
 }
 
 
@@ -98,7 +86,7 @@ void Scheduler::runTask(BaseTask *task){
 
 	//aquire free fiber
 	do{
-		fbr = acquireFreeFiber();
+		fbr = fiberPool->acquireFreeFiber();
 
 		//display warinign if spining for a free fiber
 		if (fbr == nullptr){
@@ -163,13 +151,6 @@ bool Scheduler::getIsConstructed(){
 	return isConstructed;
 }
 
-Fiber* Scheduler::acquireFreeFiber(){
-	for (unsigned int i = 0; i < fibers.size(); i++){
-			if(fibers[i]->tryAcquire()) //try acquire
-				return fibers[i];
-	}
-	return nullptr;
-}
 
 //trys to acequire a free worker
 Worker* Scheduler::acquireFreeWorker(){
@@ -212,7 +193,8 @@ void Scheduler::workerBeenFreed(Worker* worker){
 		worker->forceAcquire();
 
 		//get next fiber in the queue using FIFO(first in first out)
-		Fiber* nextFiber = fiberQueue.front();
+		Fiber* nextFiber;
+		nextFiber= fiberQueue.front();
 		fiberQueue.pop();
 
 		//run fiber on the worker

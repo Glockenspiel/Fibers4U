@@ -12,6 +12,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <queue>
+#include "FiberPool.h"
 
 
 using std::thread;
@@ -34,15 +35,14 @@ public:
 	void waitMain();
 	static void workerBeenFreed(Worker* worker);
 private:
-	vector<Fiber *> fibers;
 	vector<Worker *> workers;
 	vector<thread*> threads;
+	FiberPool* fiberPool;
 	
 	atomic<int> counter=0;
 	unsigned const int  *N_FIBER_PTR, *N_THREAD_PTR;
 	bool isConstructed = true;
 	void empty();
-	Fiber* acquireFreeFiber();
 	Worker* acquireFreeWorker();
 	mutex *mtx;
 	

@@ -59,6 +59,6 @@ int main(){
 	delete scheduler;
 	std::cout << "Scheduler deleted" << std::endl;
 	Timer *timer = new Timer();
-	timer->wait(1);
+	timer->wait(2);
 	delete timer;
 }

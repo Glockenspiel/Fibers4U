@@ -6,9 +6,15 @@
 #include <string>
 #include <atomic>
 #include <thread>
+#include <string>
+#include <iostream>
+#include <stdarg.h>
+
+using std::string;
 
 static std::mutex *mtx = new std::mutex;
 static std::atomic<int> RWCounter = 0;
+
 
 
 class global{
