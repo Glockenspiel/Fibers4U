@@ -24,8 +24,8 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 	N_THREAD_PTR = &THREAD_COUNT;
 	mtx = new mutex();
 
+	//do check on fiber and thread count, display error message if true
 	if (FIBER_COUNT < THREAD_COUNT && FIBER_COUNT>0){
-
 		global::writeLock();
 		std::cout << "Scheduler not started!" << std::endl <<
 			"Need more fibers" << std::endl <<
@@ -40,18 +40,22 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 		return;
 	}
 
+	//create fibers
 	for (unsigned int i = 0; i < FIBER_COUNT; i++){
 		fibers.push_back(new Fiber(counter, i));
 	}
 
+	//create worker threads
 	for (unsigned int i = 0; i < THREAD_COUNT; i++){
 		workers.push_back(new Worker(i));
 		
 		fibers[i]->tryAcquire();
 		thread *t;
+		//assign starting task the the first worker thread
 		if (i == 0){
 			workers[i]->set(startingTask, *fibers[i]);
 		}
+		//assign empty tasks to the rest of the worker threads
 		else{
 			function<void()> emptyFunc = std::bind(&Scheduler::empty, this);
 			Task *emptyTask = new Task(emptyFunc);
@@ -72,6 +76,16 @@ Scheduler::~Scheduler(){
 	//delete all the threads
 	for (thread* t : threads)
 		delete t;
+
+	for (Worker* w : workers)
+		delete w;
+
+	delete mtx;
+
+	while (fiberQueue.empty() == false){
+		delete fiberQueue.front();
+		fiberQueue.pop();
+	}
 }
 
 
@@ -123,7 +137,7 @@ void Scheduler::runTask(Task &task){
 	queueLock.clear(std::memory_order_release);
 }
 
-//end all the threads and notify main thread that the process has ended
+//end all the threads and notify main thread
 void Scheduler::close(){
 	waitAllFibersFree();
 
