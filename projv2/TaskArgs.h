@@ -1,21 +1,22 @@
-#ifndef TASK_DYN_ARGS
-#define TASK_DYN_ARGS
+#ifndef TASK_ARGS_H
+#define TASK_ARGS_H
 
 #include "BaseTask.h"
 #include <functional>
 #include "Nothing.h"
 
 using namespace aaa;
+using namespace std::placeholders;
 
-template<class A=nothing, class B=nothing, class C=nothing>
-class TaskDynArgs : public BaseTask{
+template<class A = nothing, class B = nothing, class C = nothing>
+class TaskArgs : public BaseTask{
 public:
 	template <class Func, class Obj>
-	TaskDynArgs(Func func, Obj obj){
+	TaskArgs(Func func, Obj obj){
 		fn = std::bind(func, obj, _1, _2, _3);
 	}
 
-	~TaskDynArgs(){
+	~TaskArgs(){
 		delete aPtr;
 		delete bPtr;
 		delete cPtr;
@@ -32,21 +33,21 @@ public:
 	}
 private:
 	std::function<void(A, B, C)> fn;
-	
+
 	A* aPtr;
 	B* bPtr;
 	C* cPtr;
 };
 
 template<class A, class B>
-class TaskDynArgs<A, B, nothing> : public BaseTask{
+class TaskArgs<A, B, nothing> : public BaseTask{
 public:
 	template <class Func, class Obj>
-	TaskDynArgs(Func func, Obj obj){
+	TaskArgs(Func func, Obj obj){
 		fn = std::bind(func, obj, _1, _2);
 	}
 
-	~TaskDynArgs(){
+	~TaskArgs(){
 		delete aPtr;
 		delete bPtr;
 	}
@@ -60,20 +61,20 @@ public:
 		fn(*aPtr, *bPtr);
 	}
 private:
-	std::function<void(A,B)> fn;
+	std::function<void(A, B)> fn;
 	A *aPtr;
 	B *bPtr;
 };
 
 template<class A>
-class TaskDynArgs<A, nothing, nothing> : public BaseTask{
+class TaskArgs<A, nothing, nothing> : public BaseTask{
 public:
 	template <class Func, class Obj>
-	TaskDynArgs(Func func, Obj obj){
+	TaskArgs(Func func, Obj obj){
 		fn = std::bind(func, obj, _1);
 	}
 
-	~TaskDynArgs(){
+	~TaskArgs(){
 		delete aPtr;
 	}
 
@@ -82,7 +83,7 @@ public:
 	}
 
 	void run(){
-		fn(*aPtr, *bPtr);
+		fn(*aPtr);
 	}
 private:
 	std::function<void(A)> fn;
@@ -90,14 +91,14 @@ private:
 };
 
 template<>
-class TaskDynArgs<nothing, nothing, nothing> : public BaseTask{
+class TaskArgs<nothing, nothing, nothing> : public BaseTask{
 public:
 	template <class Func, class Obj>
-	TaskDynArgs(Func func, Obj obj){
+	TaskArgs(Func func, Obj obj){
 		fn = std::bind(func, obj);
 	}
 
-	~TaskDynArgs(){}
+	~TaskArgs(){}
 
 	void run(){
 		fn();

@@ -3,9 +3,8 @@
 #include "Player.h"
 #include "Scheduler.h"
 #include "Global.h"
-#include "TaskArg.h"
-#include "TaskDynArgs.h"
-#include "TaskArgCopy.h"
+#include "TaskArgs.h"
+#include "TaskArgsCopy.h"
 //#include "WaitVars.h"
 using namespace std;
 
@@ -15,18 +14,18 @@ using namespace std;
 //condition_variable cv;
 int main(){
 	Player *p = new Player();
-	BaseTask *startingTask = new TaskDynArgs<>(&Player::printHp, p);
+	BaseTask *startingTask = new TaskArgs<>(&Player::printHp, p);
 
-	TaskArg<int> *taskArg = new TaskArg<int>(&Player::addHp, p);
+	TaskArgs<int> *taskArg = new TaskArgs<int>(&Player::addHp, p);
 	int a = 20;
-	taskArg->setArg(a);
+	taskArg->setArgs(a);
 
-	TaskDynArgs<int, bool> *test = new TaskDynArgs<int, bool>(&Player::damage, p);
+	TaskArgs<int, bool> *test = new TaskArgs<int, bool>(&Player::damage, p);
 	int b = 5;
 	bool isMagic=false;
 	test->setArgs(b, isMagic);
 
-	TaskArgCopy<int, int, int> *move = new TaskArgCopy<int, int, int>(&Player::move, p);
+	TaskArgsCopy<int, int, int> *move = new TaskArgsCopy<int, int, int>(&Player::move, p);
 	int c = 0;
 	move->setArgs(54, c, 3);
 	move->run();

@@ -1,18 +1,22 @@
+#ifndef TASK_ARGS_COPY_H
+#define TASK_ARGS_COPY_H
+
 #include "BaseTask.h"
 #include <functional>
 #include "Nothing.h"
 
 using namespace aaa;
+using namespace std::placeholders;
 
 template<class A, class B = nothing, class C = nothing>
-class TaskArgCopy : public BaseTask{
+class TaskArgsCopy : public BaseTask{
 public:
 	template <class Func, class Obj>
-	TaskArgCopy(Func func, Obj obj){
+	TaskArgsCopy(Func func, Obj obj){
 		fn = std::bind(func, obj, _1, _2, _3);
 	}
 
-	~TaskArgCopy(){}
+	~TaskArgsCopy(){}
 
 	void setArgs(A a, B b, C c){
 		this->a = a;
@@ -32,14 +36,14 @@ private:
 };
 
 template<class A, class B>
-class TaskArgCopy<A, B, nothing> : public BaseTask{
+class TaskArgsCopy<A, B, nothing> : public BaseTask{
 public:
 	template <class Func, class Obj>
-	TaskArgCopy(Func func, Obj obj){
+	TaskArgsCopy(Func func, Obj obj){
 		fn = std::bind(func, obj, _1, _2);
 	}
 
-	~TaskArgCopy(){}
+	~TaskArgsCopy(){}
 
 	void setArgs(A a, B b){
 		this->a = a;
@@ -56,14 +60,14 @@ private:
 };
 
 template<class A>
-class TaskArgCopy<A, nothing, nothing> : public BaseTask{
+class TaskArgsCopy<A, nothing, nothing> : public BaseTask{
 public:
 	template <class Func, class Obj>
-	TaskArgCopy(Func func, Obj obj){
+	TaskArgsCopy(Func func, Obj obj){
 		fn = std::bind(func, obj, _1);
 	}
 
-	~TaskArgCopy(){}
+	~TaskArgsCopy(){}
 
 	void setArgs(A a){
 		this->a = a;
@@ -76,3 +80,5 @@ private:
 	std::function<void(A)> fn;
 	A a;
 };
+
+#endif

@@ -39,9 +39,6 @@
     <ClCompile Include="Worker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TaskDynArgs.h">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Task.h">
@@ -68,17 +65,17 @@
     <ClInclude Include="Worker.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="TaskArg.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="BaseTask.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Nothing.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="TaskArgCopy.h">
-      <Filter>Resource Files</Filter>
+    <ClInclude Include="TaskArgs.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskArgsCopy.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
