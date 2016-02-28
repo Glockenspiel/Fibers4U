@@ -5,6 +5,7 @@
 #include "Global.h"
 #include "TaskArg.h"
 #include "TaskDynArgs.h"
+#include "TaskArgCopy.h"
 //#include "WaitVars.h"
 using namespace std;
 
@@ -14,7 +15,7 @@ using namespace std;
 //condition_variable cv;
 int main(){
 	Player *p = new Player();
-	Task *startingTask = new Task(&Player::printHp, p);
+	BaseTask *startingTask = new TaskDynArgs<>(&Player::printHp, p);
 
 	TaskArg<int> *taskArg = new TaskArg<int>(&Player::addHp, p);
 	int a = 20;
@@ -25,9 +26,9 @@ int main(){
 	bool isMagic=false;
 	test->setArgs(b, isMagic);
 
-	TaskDynArgs<int, int, int> *move = new TaskDynArgs<int, int, int>(&Player::move, p);
+	TaskArgCopy<int, int, int> *move = new TaskArgCopy<int, int, int>(&Player::move, p);
 	int c = 0;
-	move->setArgsCopy(a, b, c);
+	move->setArgs(54, c, 3);
 	move->run();
 
 

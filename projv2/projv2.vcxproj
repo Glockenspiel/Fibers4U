@@ -65,7 +65,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Fiber.cpp" />
-    <ClCompile Include="TaskArg.cpp" />
     <ClCompile Include="TaskDynArgs.h" />
     <ClCompile Include="Worker.cpp" />
     <ClCompile Include="main.cpp" />
@@ -80,6 +79,7 @@
     <ClInclude Include="Fiber.h" />
     <ClInclude Include="Nothing.h" />
     <ClInclude Include="TaskArg.h" />
+    <ClInclude Include="TaskArgCopy.h" />
     <ClInclude Include="Worker.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="Player.h" />
