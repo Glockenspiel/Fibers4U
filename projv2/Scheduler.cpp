@@ -10,8 +10,12 @@ using namespace std::placeholders;
 
 //varaible used in lambda expression to notify main thread to wake up
 bool mainAwake = false;
+
+//static queue for fibers not yet set to workers
 static vector<Fiber*> queuedFibers;
-static mutex *queueMutex;
+
+//atomic spinlock flag, used for accessing the queue atomically
+static std::atomic_flag queueLock = ATOMIC_FLAG_INIT;
 
 
 Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_COUNT, 
@@ -19,7 +23,6 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 	N_FIBER_PTR = &FIBER_COUNT;
 	N_THREAD_PTR = &THREAD_COUNT;
 	mtx = new mutex();
-	queueMutex = new mutex();
 
 	if (FIBER_COUNT < THREAD_COUNT && FIBER_COUNT>0){
 
@@ -94,7 +97,7 @@ void Scheduler::runTask(Task &task){
 
 
 	//lock when accessing queue
-	queueMutex->lock();
+	while (queueLock.test_and_set(std::memory_order_acquire));
 
 	//try find a free worker
 	wkr = acquireFreeWorker();
@@ -115,9 +118,9 @@ void Scheduler::runTask(Task &task){
 		//finished setting values so now prepare for running
 		fbr->setPrepared();
 	}
-
+	
 	//release access to queue
-	queueMutex->unlock();
+	queueLock.clear(std::memory_order_release);
 }
 
 //end all the threads and notify main thread that the process has ended
@@ -187,7 +190,7 @@ void Scheduler::waitMain(){
 void Scheduler::workerBeenFreed(Worker* worker){
 
 	//access the queue
-	queueMutex->lock();
+	while (queueLock.test_and_set(std::memory_order_acquire));
 
 	//check if there is any queued fibers
 	if (queuedFibers.size() > 0){
@@ -204,5 +207,5 @@ void Scheduler::workerBeenFreed(Worker* worker){
 	}
 
 	//release the queue
-	queueMutex->unlock();
+	queueLock.clear(std::memory_order_release);
 }
