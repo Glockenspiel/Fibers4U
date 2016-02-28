@@ -15,6 +15,7 @@
 
 using std::thread;
 using std::vector;
+using std::mutex;
 
 
 static atomic<bool> isCompleted = false;
@@ -30,17 +31,20 @@ public:
 	void Scheduler::waitAllFibersFree();
 	void wakeUpMain();
 	void waitMain();
+	static void workerBeenFreed(Worker* worker);
 private:
 	vector<Fiber *> fibers;
 	vector<Worker *> workers;
 	vector<thread*> threads;
+	
 	atomic<int> counter=0;
 	unsigned const int  *N_FIBER_PTR, *N_THREAD_PTR;
 	bool isConstructed = true;
 	void empty();
 	Fiber* acquireFreeFiber();
 	Worker* acquireFreeWorker();
-	std::mutex *mtx;
+	mutex *mtx;
+	
 	std::condition_variable mainCV;
 };
 

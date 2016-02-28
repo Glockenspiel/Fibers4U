@@ -1,9 +1,10 @@
 #include "Worker.h"
 #include <iostream>
 #include "global.h"
+#include "Scheduler.h"
 
-Worker::Worker(){
-
+Worker::Worker(unsigned int id){
+	this->id = id;
 }
 
 Worker::~Worker(){}
@@ -14,6 +15,7 @@ void Worker::run(){
 		if (state.load(std::memory_order_relaxed) == State::prepared){
 			currentFiber->runAndFree(*nextTaskPtr);
 			setState(State::free);
+			Scheduler::workerBeenFreed(this);
 		}
 	}
 }
@@ -57,17 +59,36 @@ void Worker::set(Task& task, Fiber& fiber){
 	setState(State::prepared);
 }
 
+//set switch to new fiber
+void Worker::set(Fiber& fiber){
+	switchFiber(fiber);
+	nextTask(*fiber.currentTask);
+	setState(State::prepared);
+}
+
 //Returns true if this worker has been acquired
 //The worker state must be free to acquire it
 bool Worker::tryAcquire(){
-	if (state.load(std::memory_order_relaxed)==State::free){
+	if (state.load(std::memory_order_acquire)==State::free){
 		setState(State::aquired);
 		return true;
 	}
 	return false;
 }
 
+//spin locks until the workers goes to free state and 
+//then the fiber changed to acquired state
+void Worker::forceAcquire(){
+	while (state.load(std::memory_order_relaxed) != free){
+		setState(State::aquired);
+	}
+}
+
 //sets the state of the worker
 void Worker::setState(State s){
 	state.store(s, std::memory_order_release);
+}
+
+unsigned int Worker::getID(){
+	return id;
 }

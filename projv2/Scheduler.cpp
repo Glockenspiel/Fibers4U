@@ -7,15 +7,19 @@
 
 using namespace std::placeholders;
 
+
 //varaible used in lambda expression to notify main thread to wake up
 bool mainAwake = false;
+static vector<Fiber*> queuedFibers;
+static mutex *queueMutex;
 
 
 Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_COUNT, 
 	Task& startingTask){
 	N_FIBER_PTR = &FIBER_COUNT;
 	N_THREAD_PTR = &THREAD_COUNT;
-	mtx = new std::mutex();
+	mtx = new mutex();
+	queueMutex = new mutex();
 
 	if (FIBER_COUNT < THREAD_COUNT && FIBER_COUNT>0){
 
@@ -38,7 +42,7 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 	}
 
 	for (unsigned int i = 0; i < THREAD_COUNT; i++){
-		workers.push_back(new Worker());
+		workers.push_back(new Worker(i));
 		
 		fibers[i]->tryAcquire();
 		thread *t;
@@ -75,10 +79,11 @@ void Scheduler::runTask(Task &task){
 	Worker* wkr;
 	Task* nextTask;
 
-	//find available fiber
-	//todo:instead of loop use the taskQueue
+	//aquire free fiber
 	do{
 		fbr = acquireFreeFiber();
+
+		//display warinign if spining for a free fiber
 		if (fbr == nullptr){
 			global::writeLock();
 			std::cout << "Warning!: Task waiting for free fiber" << std::endl <<
@@ -87,22 +92,32 @@ void Scheduler::runTask(Task &task){
 		}
 	} while (fbr==nullptr);
 
-	do{
-		wkr = acquireFreeWorker();
-	} while (wkr == nullptr);
 
-	nextTask = &task;
+	//lock when accessing queue
+	queueMutex->lock();
 
-	global::writeLock();
-	std::cout << "Using fiber: " << fbr->getID() << std::endl <<
-		"Counter:" << counter.load(std::memory_order_relaxed) << std::endl;
-	global::writeUnlock();
+	//try find a free worker
+	wkr = acquireFreeWorker();
 
-	//set values then run, must be in prepared state to change to run state
-	wkr->set(*nextTask, *fbr);
-	
-	//finished setting values so now prepare for running
-	fbr->setPrepared();
+	//add the task queue
+	if (wkr == nullptr || queuedFibers.size()>0){
+
+		fbr->setTask(task);
+		queuedFibers.push_back(fbr);
+	}
+	//no queuing needed
+	else{
+		nextTask = &task;
+
+		//set values then run, must be in prepared state to change to run state
+		wkr->set(*nextTask, *fbr);
+
+		//finished setting values so now prepare for running
+		fbr->setPrepared();
+	}
+
+	//release access to queue
+	queueMutex->unlock();
 }
 
 //end all the threads and notify main thread that the process has ended
@@ -164,4 +179,30 @@ void Scheduler::waitMain(){
 	std::unique_lock<std::mutex> lk(*mtx);
 	mainCV.wait(lk, []{return mainAwake; });
 	lk.unlock();
+}
+
+//this is called by a worker when the worker had been freed.
+//this function will see if there is any fibers in the queue and 
+//run the next fiber
+void Scheduler::workerBeenFreed(Worker* worker){
+
+	//access the queue
+	queueMutex->lock();
+
+	//check if there is any queued fibers
+	if (queuedFibers.size() > 0){
+		//acquire worker
+		worker->forceAcquire();
+
+		//get next fiber with FIFO(first in first out)
+		Fiber* nextFiber = queuedFibers.front();
+		queuedFibers.erase(queuedFibers.begin());
+
+		//run fiber on the worker
+		worker->set(*nextFiber);
+		nextFiber->setPrepared();
+	}
+
+	//release the queue
+	queueMutex->unlock();
 }

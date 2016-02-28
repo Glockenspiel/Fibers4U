@@ -17,18 +17,25 @@ Fiber::~Fiber(){
 void Fiber::run(Task &task){
 	//wait prepared state
 	waitForState(prepared);
-	setState(running);
-	//*counterPtr += 1;
 
 	//assign the current task and delete the old one
 	setTask(task);
+
 	global::writeLock();
 	std::cout << "Exe..." << id << std::endl;
 	global::writeUnlock();
+
 	currentTask->run();
+
 	global::writeLock();
 	std::cout << "Com..." << id << std::endl;
 	global::writeUnlock();
+}
+
+//runs the current task
+void Fiber::run(){
+	waitForState(prepared);
+	currentTask->run();
 }
 
 //alert the scheduler that this task has completed and is ready for reallocation
@@ -42,19 +49,28 @@ void Fiber::free(){
 	global::writeUnlock();
 
 	setState(freed);
+	
 }
 
 
 void Fiber::setTask(Task &task){
+	if (&task == currentTask) return;
+
 	Task *temp = currentTask;
 	currentTask = &task;
 
 	delete temp;
 }
 
-//call both run() and free()
+//call both run the given task and frees is
 void Fiber::runAndFree(Task &task){
 	run(task);
+	free();
+}
+
+//runs the current task and frees it
+void Fiber::runAndFree(){
+	run();
 	free();
 }
 

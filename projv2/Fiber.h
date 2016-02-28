@@ -10,12 +10,14 @@ using std::atomic;
 
 class Fiber{
 public:
-	enum State { running, freed, prepared, acquired };
+	enum State { freed, prepared, acquired };
 	Fiber(atomic<int>& counter, unsigned short id);
 	~Fiber();
 	void runAndFree(Task &task);
+	void runAndFree();
 	//bool isFiberFree();
 	void run(Task &task);
+	void run();
 	void free();
 	void setTask(Task& task);
 	unsigned int getID();
@@ -23,6 +25,7 @@ public:
 	void waitUntilFree();
 	bool inState(State s);
 	bool tryAcquire();
+	Task *currentTask;
 	
 private:
 	void waitForState(State);
@@ -30,7 +33,7 @@ private:
 	SpinLock *spinLock;
 	unsigned int id;
 	atomic<State> state = freed;
-	Task *currentTask;
+	
 	atomic<int>* counterPtr;
 };
 

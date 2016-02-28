@@ -15,7 +15,7 @@ int main(){
 
 	
 
-	Scheduler *scheduler = new Scheduler(3,2, *startingTask);
+	Scheduler *scheduler = new Scheduler(4,2, *startingTask);
 	if (scheduler->getIsConstructed() == false){
 		return 0;
 	}
