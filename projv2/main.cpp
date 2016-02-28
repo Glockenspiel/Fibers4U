@@ -27,7 +27,7 @@ int main(){
 
 	TaskDynArgs<int, int, int> *move = new TaskDynArgs<int, int, int>(&Player::move, p);
 	int c = 0;
-	move->setArgs(a, b, c);
+	move->setArgsCopy(a, b, c);
 	move->run();
 
 

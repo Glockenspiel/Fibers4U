@@ -8,6 +8,9 @@ c:\users\jeoff\fyp\fibers4u\projv2\debug\scheduler.obj
 c:\users\jeoff\fyp\fibers4u\projv2\debug\spinlock.obj
 c:\users\jeoff\fyp\fibers4u\projv2\debug\task.obj
 c:\users\jeoff\fyp\fibers4u\projv2\debug\timer.obj
+c:\users\jeoff\fyp\fibers4u\projv2\debug\waitvars.obj
+c:\users\jeoff\fyp\fibers4u\projv2\debug\taskarg.obj
+c:\users\jeoff\fyp\fibers4u\projv2\debug\taskdynargs.obj
 c:\users\jeoff\fyp\fibers4u\debug\projv2.ilk
 c:\users\jeoff\fyp\fibers4u\debug\projv2.exe
 c:\users\jeoff\fyp\fibers4u\debug\projv2.pdb
