@@ -3,8 +3,9 @@
 
 #include <functional>
 using std::function;
+#include "BaseTask.h"
 
-class Task{
+class Task : public BaseTask{
 public:
 	Task(function<void()> &func);
 

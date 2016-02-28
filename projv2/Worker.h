@@ -15,7 +15,7 @@ public:
 	void run();
 	void switchFiber(Fiber& fiber);
 	void close();
-	void set(Task& task, Fiber& fiber);
+	void set(BaseTask* task, Fiber& fiber);
 	void set(Fiber& fiber);
 	bool tryAcquire();
 	unsigned int getID();

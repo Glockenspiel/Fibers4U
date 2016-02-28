@@ -1,7 +1,7 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
-#include "Task.h"
+#include "BaseTask.h"
 #include <vector>
 #include <atomic>
 #include "Fiber.h"
@@ -24,9 +24,9 @@ static atomic<bool> isCompleted = false;
 class Scheduler{
 public:
 	Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_COUNT, 
-		Task& startingTask);
+		BaseTask* startingTask);
 	~Scheduler();
-	void runTask(Task &task);
+	void runTask(BaseTask* task);
 	void close();
 	bool getIsConstructed();
 	void Scheduler::waitAllFibersFree();

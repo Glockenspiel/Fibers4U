@@ -1,7 +1,7 @@
 #ifndef FIBER_H
 #define FIBER_H
 
-#include "Task.h"
+#include "BaseTask.h"
 #include "SpinLock.h"
 
 #include <atomic>
@@ -16,7 +16,7 @@ public:
 	void runAndFree();
 	void run();
 	void free();
-	void setTask(Task& task);
+	void setTask(BaseTask* task);
 	unsigned int getID();
 	void setPrepared();
 	void waitUntilFree();
@@ -30,7 +30,7 @@ private:
 	SpinLock *spinLock;
 	unsigned int id;
 	atomic<State> state = freed;
-	Task *currentTask;
+	BaseTask *currentTask;
 	atomic<int>* counterPtr;
 };
 

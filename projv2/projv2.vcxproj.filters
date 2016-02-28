@@ -39,6 +39,9 @@
     <ClCompile Include="Worker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TaskArg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Task.h">
@@ -63,6 +66,15 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Worker.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskArg.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseTask.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Nothing.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

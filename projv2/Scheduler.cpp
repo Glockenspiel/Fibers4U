@@ -3,6 +3,7 @@
 #include <functional>
 #include "Timer.h"
 #include "Player.h"
+#include "Task.h"
 //#include "Global.h"
 
 using namespace std::placeholders;
@@ -19,7 +20,7 @@ static std::atomic_flag queueLock = ATOMIC_FLAG_INIT;
 
 
 Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_COUNT, 
-	Task& startingTask){
+	BaseTask* startingTask){
 	N_FIBER_PTR = &FIBER_COUNT;
 	N_THREAD_PTR = &THREAD_COUNT;
 	mtx = new mutex();
@@ -57,8 +58,8 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 		}
 		//assign empty tasks to the rest of the worker threads
 		else{
-			Task *emptyTask = new Task(&Scheduler::empty, this);
-			workers[i]->set(*emptyTask, *fibers[i]);
+			BaseTask *emptyTask = new Task(&Scheduler::empty, this);
+			workers[i]->set(emptyTask, *fibers[i]);
 		}
 		t = new thread(&Worker::run, workers[i]);
 		fibers[i]->setPrepared();
@@ -89,11 +90,11 @@ Scheduler::~Scheduler(){
 
 
 //run the task given on a fiber
-void Scheduler::runTask(Task &task){
+void Scheduler::runTask(BaseTask *task){
 	//find available worker
 	Fiber* fbr;
 	Worker* wkr;
-	Task* nextTask;
+	BaseTask* nextTask;
 
 	//aquire free fiber
 	do{
@@ -123,10 +124,10 @@ void Scheduler::runTask(Task &task){
 	}
 	//no queuing needed
 	else{
-		nextTask = &task;
+		nextTask = task;
 
 		//set values then run, must be in prepared state to change to run state
-		wkr->set(*nextTask, *fbr);
+		wkr->set(nextTask, *fbr);
 
 		//finished setting values so now prepare for running
 		fbr->setPrepared();

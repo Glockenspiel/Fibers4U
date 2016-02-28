@@ -56,7 +56,7 @@ void Worker::close(){
 
 //set the task to the fiber and switches the fiber in fiber
 //moves state to prepared
-void Worker::set(Task& task, Fiber& fiber){
+void Worker::set(BaseTask* task, Fiber& fiber){
 	fiber.setTask(task);
 	switchFiber(fiber);
 	//nextTask(task);

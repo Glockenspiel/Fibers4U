@@ -41,11 +41,11 @@ void Fiber::free(){
 }
 
 
-void Fiber::setTask(Task &task){
-	if (&task == currentTask) return;
+void Fiber::setTask(BaseTask* task){
+	if (task == currentTask) return;
 
-	Task *temp = currentTask;
-	currentTask = &task;
+	BaseTask *temp = currentTask;
+	currentTask = task;
 
 	delete temp;
 }
