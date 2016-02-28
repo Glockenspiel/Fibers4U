@@ -5,29 +5,43 @@
 #include <functional>
 #include "Nothing.h"
 
-using namespace aaa;
+using namespace nothingSpace;
 using namespace std::placeholders;
+
+
+/*
+This is an overloaded template class which allows for different
+amounts of parameters (0,1,2 or 3). 
+The arguments must be set using setArgs() before calling run()
+When this task is destructed it will delete the arguments.
+meaining the values passed to it shouldn't be used in another task.
+If you wish to pass a copy of a variable try using TaskArgCopy instead
+*/
 
 template<class A = nothing, class B = nothing, class C = nothing>
 class TaskArgs : public BaseTask{
 public:
+	//constructor which creates the function with use of placeholders
 	template <class Func, class Obj>
 	TaskArgs(Func func, Obj obj){
 		fn = std::bind(func, obj, _1, _2, _3);
 	}
 
+	//Desructor, delete all the arguments
 	~TaskArgs(){
 		delete aPtr;
 		delete bPtr;
 		delete cPtr;
 	}
 
+	//assign the pointers to the arguments
 	void setArgs(A& a, B& b, C& c){
 		aPtr = &a;
 		bPtr = &b;
 		cPtr = &c;
 	}
 
+	//run function and substitute the placeholders
 	void run(){
 		fn(*aPtr, *bPtr, *cPtr);
 	}

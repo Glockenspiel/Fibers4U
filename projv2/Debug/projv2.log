@@ -1,4 +1,4 @@
-﻿Build started 28/02/2016 12:32:22.
+﻿Build started 28/02/2016 12:46:02.
      1>Project "C:\Users\Jeoff\fyp\fibers4u\projv2\projv2.vcxproj" on node 2 (Rebuild target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Fiber.cpp Worker.cpp main.cpp Player.cpp Scheduler.cpp SpinLock.cpp Task.cpp Timer.cpp
@@ -8,7 +8,7 @@
          Scheduler.cpp
          Player.cpp
          main.cpp
-     1>c:\users\jeoff\fyp\fibers4u\projv2\nothing.h(5): warning C4091: 'static ' : ignored on left of 'aaa::nothing' when no variable is declared
+     1>c:\users\jeoff\fyp\fibers4u\projv2\nothing.h(5): warning C4091: 'static ' : ignored on left of 'nothingSpace::nothing' when no variable is declared
          Worker.cpp
          Fiber.cpp
          Generating Code...
@@ -26,4 +26,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:04.26
+Time Elapsed 00:00:04.24

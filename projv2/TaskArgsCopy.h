@@ -5,25 +5,38 @@
 #include <functional>
 #include "Nothing.h"
 
-using namespace aaa;
+using namespace nothingSpace;
 using namespace std::placeholders;
+
+/*
+This is an overloaded template class which allows for different
+amounts of parameters (1,2 or 3).
+When this setArgs() is called the task will duplicate (Copy) the argument.
+The copys will not update the origional values nor themselves be updated by the origionals.
+The copys will be deleted at destruction of this task.
+If you don't want to make copies look at TaskArgs
+*/
 
 template<class A, class B = nothing, class C = nothing>
 class TaskArgsCopy : public BaseTask{
 public:
+	//constructor which creates the function with use of placeholders
 	template <class Func, class Obj>
 	TaskArgsCopy(Func func, Obj obj){
 		fn = std::bind(func, obj, _1, _2, _3);
 	}
 
+	//Desructor
 	~TaskArgsCopy(){}
 
+	//make copied of the arguments
 	void setArgs(A a, B b, C c){
 		this->a = a;
 		this->b = b;
 		this->c = c;
 	}
 
+	//run function and substitute the placeholders
 	void run(){
 		fn(a, b, c);
 	}

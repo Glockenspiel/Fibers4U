@@ -1,7 +1,7 @@
 #ifndef	NOTHING_H
 #define NOTHING_H
 
-namespace aaa{
+namespace nothingSpace{
 	static struct nothing{};
 }
 
