@@ -5,6 +5,8 @@ Task::Task(function<void()>& func){
 	fn = func;
 }
 
+
+
 Task::~Task(){}
 
 void Task::run(){

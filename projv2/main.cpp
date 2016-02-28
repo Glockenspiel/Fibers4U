@@ -10,8 +10,7 @@ using namespace std;
 //condition_variable cv;
 int main(){
 	Player *p = new Player();
-	std::function<void()> startfn = std::bind(&Player::printHp,p);
-	Task *startingTask = new Task(startfn);
+	Task *startingTask = new Task(&Player::printHp, p);
 
 	
 
@@ -22,13 +21,11 @@ int main(){
 
 	scheduler->waitAllFibersFree();
 
-	function<void()> fn = std::bind(&Player::update, p);
-	Task *task1 = new Task(fn);
+	Task *task1 = new Task(&Player::update, p);
 	scheduler->runTask(*task1);
 
 	//wake up main thread
-	function<void()> closeFn = std::bind(&Scheduler::wakeUpMain, scheduler);
-	Task *endTask = new Task(closeFn);
+	Task *endTask = new Task(&Scheduler::wakeUpMain, scheduler);
 	scheduler->runTask(*endTask);
 
 	//puts main thread to wait and doesn't cunsume cpu time

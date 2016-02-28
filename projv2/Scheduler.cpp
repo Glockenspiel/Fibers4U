@@ -57,8 +57,7 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 		}
 		//assign empty tasks to the rest of the worker threads
 		else{
-			function<void()> emptyFunc = std::bind(&Scheduler::empty, this);
-			Task *emptyTask = new Task(emptyFunc);
+			Task *emptyTask = new Task(&Scheduler::empty, this);
 			workers[i]->set(*emptyTask, *fibers[i]);
 		}
 		t = new thread(&Worker::run, workers[i]);
