@@ -22,18 +22,21 @@ using std::queue;
 
 static atomic<bool> isCompleted = false;
 
+
 class Scheduler{
 public:
 	Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_COUNT, 
 		BaseTask* startingTask);
 	~Scheduler();
 	void runTask(BaseTask* task);
+	void runTasks(vector<BaseTask*> tasks);
 	void close();
 	bool getIsConstructed();
 	void Scheduler::waitAllFibersFree();
 	void wakeUpMain();
 	void waitMain();
 	static void workerBeenFreed(Worker* worker);
+	
 private:
 	vector<Worker *> workers;
 	vector<thread*> threads;

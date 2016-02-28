@@ -14,7 +14,7 @@ using namespace std;
 //condition_variable cv;
 int main(){
 	Player *p = new Player();
-	BaseTask *startingTask = new TaskArgs<>(&Player::printHp, p);
+	BaseTask *printHP = new TaskArgs<>(&Player::printHp, p);
 
 	TaskArgs<int> *taskArg = new TaskArgs<int>(&Player::addHp, p);
 	int a = 20;
@@ -27,25 +27,30 @@ int main(){
 
 	TaskArgsCopy<int, int, int> *move = new TaskArgsCopy<int, int, int>(&Player::move, p);
 	int c = 0;
-	move->setArgs(54, c, 3);
-	move->run();
+	move->setArgs(54, c, global::getThreadCount());
 
 
-	Scheduler *scheduler = new Scheduler(5,2, taskArg);
+	Scheduler *scheduler = new Scheduler(6,4, taskArg);
 	if (scheduler->getIsConstructed() == false){
 		return 0;
 	}
 
 	scheduler->waitAllFibersFree();
+	global::writeLock();
+	global::writeUnlock();
 
-	scheduler->runTask(startingTask);
 
-	Task *task1 = new Task(&Player::update, p);
-	scheduler->runTask(task1);
+	Task *update = new Task(&Player::update, p);
 	
 
 	//wake up main thread
 	Task *endTask = new Task(&Scheduler::wakeUpMain, scheduler);
+
+	//run all task unsyncronized
+	vector<BaseTask*> allTasks = { printHP, move, update };
+	scheduler->runTasks(allTasks);
+
+	scheduler->waitAllFibersFree();
 	scheduler->runTask(endTask);
 
 	//puts main thread to wait and doesn't cunsume cpu time

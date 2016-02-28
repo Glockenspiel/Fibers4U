@@ -26,6 +26,10 @@ public:
 	static void writeUnlock(){
 		mtx->unlock();
 	}
+
+	static unsigned int getThreadCount(){
+		return std::thread::hardware_concurrency();
+	}
 };
 
 

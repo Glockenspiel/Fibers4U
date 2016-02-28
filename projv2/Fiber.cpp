@@ -29,15 +29,16 @@ void Fiber::run(){
 
 //alert the scheduler that this task has completed and is ready for reallocation
 void Fiber::free(){
-	int i = *counterPtr;
+	//int i = *counterPtr;
 	*counterPtr -= 1;
-	while (i == *counterPtr){}
+	//while (i == *counterPtr){}
 
 	global::writeLock();
 	std::cout << "freed:"<< id << std::endl;
 	global::writeUnlock();
 
 	setState(freed);
+
 }
 
 

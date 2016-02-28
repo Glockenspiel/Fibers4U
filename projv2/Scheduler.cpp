@@ -125,6 +125,11 @@ void Scheduler::runTask(BaseTask *task){
 	queueLock.clear(std::memory_order_release);
 }
 
+void Scheduler::runTasks(vector<BaseTask*> tasks){
+	for (BaseTask* task : tasks)
+		runTask(task);
+}
+
 //end all the threads and notify main thread
 void Scheduler::close(){
 	waitAllFibersFree();
