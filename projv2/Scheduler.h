@@ -29,6 +29,7 @@ public:
 		BaseTask* startingTask);
 	~Scheduler();
 	void runTask(BaseTask* task);
+	void runTask(BaseTask *task, Fiber::Priority prioirty);
 	void runTasks(vector<BaseTask*> tasks);
 	void close();
 	bool getIsConstructed();

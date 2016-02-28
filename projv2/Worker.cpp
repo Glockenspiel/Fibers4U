@@ -54,15 +54,6 @@ void Worker::close(){
 	running.store(false, std::memory_order_release);
 }
 
-//set the task to the fiber and switches the fiber in fiber
-//moves state to prepared
-void Worker::set(BaseTask* task, Fiber& fiber){
-	fiber.setTask(task);
-	switchFiber(fiber);
-	//nextTask(task);
-	setState(State::prepared);
-}
-
 //switch in the fiber, use fibers current task
 //moves state to prepared
 void Worker::set(Fiber& fiber){

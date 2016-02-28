@@ -47,12 +47,14 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 		thread *t;
 		//assign starting task the the first worker thread
 		if (i == 0){
-			workers[i]->set(startingTask, *fiberPool->fibers[i]);
+			fiberPool->fibers[i]->setTask(startingTask, Fiber::Priority::low);
+			workers[i]->set(*fiberPool->fibers[i]);
 		}
 		//assign empty tasks to the rest of the worker threads
 		else{
 			BaseTask *emptyTask = new Task(&Scheduler::empty, this);
-			workers[i]->set(emptyTask, *fiberPool->fibers[i]);
+			fiberPool->fibers[i]->setTask(emptyTask, Fiber::Priority::low);
+			workers[i]->set(*fiberPool->fibers[i]);
 		}
 		t = new thread(&Worker::run, workers[i]);
 		fiberPool->fibers[i]->setPrepared();
@@ -79,6 +81,10 @@ Scheduler::~Scheduler(){
 
 //run the task given on a fiber
 void Scheduler::runTask(BaseTask *task){
+	runTask(task, Fiber::Priority::low);
+}
+
+void Scheduler::runTask(BaseTask *task, Fiber::Priority prioirty){
 	//find available worker
 	Fiber* fbr;
 	Worker* wkr;
@@ -107,7 +113,7 @@ void Scheduler::runTask(BaseTask *task){
 	//add the task queue
 	if (wkr == nullptr || fiberQueue.size()>0){
 
-		fbr->setTask(task);
+		fbr->setTask(task, prioirty);
 		fiberQueue.push(fbr);
 	}
 	//no queuing needed
@@ -115,7 +121,8 @@ void Scheduler::runTask(BaseTask *task){
 		nextTask = task;
 
 		//set values then run, must be in prepared state to change to run state
-		wkr->set(nextTask, *fbr);
+		fbr->setTask(task, prioirty);
+		wkr->set(*fbr);
 
 		//finished setting values so now prepare for running
 		fbr->setPrepared();

@@ -37,7 +37,10 @@ int main(){
 
 	scheduler->waitAllFibersFree();
 	global::writeLock();
+	std::cout << "All workers ready!" << std::endl;
 	global::writeUnlock();
+
+	
 
 
 	Task *update = new Task(&Player::update, p);

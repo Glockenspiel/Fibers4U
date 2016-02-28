@@ -28,21 +28,21 @@ void Fiber::run(){
 }
 
 //alert the scheduler that this task has completed and is ready for reallocation
-void Fiber::free(){
-	//int i = *counterPtr;
+void Fiber::freeTask(){
 	*counterPtr -= 1;
-	//while (i == *counterPtr){}
 
 	global::writeLock();
 	std::cout << "freed:"<< id << std::endl;
 	global::writeUnlock();
 
-	setState(freed);
+	setState(free);
 
 }
 
+//sets the current task of the fiber and the fibers priority
+void Fiber::setTask(BaseTask* task, Priority p){
+	priority = p;
 
-void Fiber::setTask(BaseTask* task){
 	if (task == currentTask) return;
 
 	BaseTask *temp = currentTask;
@@ -54,7 +54,7 @@ void Fiber::setTask(BaseTask* task){
 //runs the current task and frees it
 void Fiber::runAndFree(){
 	run();
-	free();
+	freeTask();
 }
 
 unsigned int Fiber::getID(){
@@ -76,7 +76,7 @@ void Fiber::setState(State s){
 }
 
 void Fiber::waitUntilFree(){
-	while (state.load(std::memory_order_relaxed) != freed){}
+	while (state.load(std::memory_order_relaxed) != free){}
 }
 
 bool Fiber::inState(Fiber::State s){
@@ -85,7 +85,7 @@ bool Fiber::inState(Fiber::State s){
 
 //trys to change state from freed to aquire, returns true if state change was a success
 bool Fiber::tryAcquire(){
-	if (state.load(std::memory_order_relaxed) == freed){
+	if (state.load(std::memory_order_relaxed) == free){
 		setState(acquired);
 		*counterPtr += 1;
 		return true;
