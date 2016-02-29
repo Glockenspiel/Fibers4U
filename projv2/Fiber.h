@@ -6,12 +6,19 @@
 
 #include <atomic>
 
+//namspace for prioity enum so it can be accessed more easily
+namespace priority{
+	enum Priority { low, medium, high };
+}
+
 using std::atomic;
+using namespace priority;
+
+
 
 class Fiber{
 public:
 	enum State { free, acquired, prepared };
-	enum Priority { low, medium, high };
 
 	Fiber(atomic<int>& counter, unsigned short id);
 	~Fiber();
@@ -19,7 +26,7 @@ public:
 	void runAndFree();
 	void run();
 	void freeTask();
-	void setTask(BaseTask* task, Priority p);
+	void setTask(BaseTask* task, priority::Priority p);
 	unsigned int getID();
 	void setPrepared();
 	void waitUntilFree();
@@ -35,7 +42,9 @@ private:
 	atomic<State> state = free;
 	BaseTask *currentTask;
 	atomic<int>* counterPtr;
-	Priority priority = Priority::medium;
+	Priority currentPriority = Priority::low;
 };
+
+
 
 #endif

@@ -30,7 +30,7 @@ int main(){
 	move->setArgs(54, c, global::getThreadCount());
 
 
-	Scheduler *scheduler = new Scheduler(6,4, taskArg);
+	Scheduler *scheduler = new Scheduler(6,2, taskArg);
 	if (scheduler->getIsConstructed() == false){
 		return 0;
 	}
@@ -52,6 +52,7 @@ int main(){
 	//run all task unsyncronized
 	vector<BaseTask*> allTasks = { printHP, move, update };
 	scheduler->runTasks(allTasks);
+	scheduler->runTask(printHP, priority::high);
 
 	scheduler->waitAllFibersFree();
 	scheduler->runTask(endTask);

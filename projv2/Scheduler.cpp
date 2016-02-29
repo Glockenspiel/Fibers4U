@@ -7,6 +7,7 @@
 //#include "Global.h"
 
 using namespace std::placeholders;
+using namespace priority;
 
 //varaible used in lambda expression to notify main thread to wake up
 bool mainAwake = false;
@@ -47,13 +48,13 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 		thread *t;
 		//assign starting task the the first worker thread
 		if (i == 0){
-			fiberPool->fibers[i]->setTask(startingTask, Fiber::Priority::low);
+			fiberPool->fibers[i]->setTask(startingTask, Priority::low);
 			workers[i]->set(*fiberPool->fibers[i]);
 		}
 		//assign empty tasks to the rest of the worker threads
 		else{
 			BaseTask *emptyTask = new Task(&Scheduler::empty, this);
-			fiberPool->fibers[i]->setTask(emptyTask, Fiber::Priority::low);
+			fiberPool->fibers[i]->setTask(emptyTask, Priority::low);
 			workers[i]->set(*fiberPool->fibers[i]);
 		}
 		t = new thread(&Worker::run, workers[i]);
@@ -64,6 +65,7 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 
 //destructor
 Scheduler::~Scheduler(){
+
 	delete fiberPool;
 
 	//delete all the threads
@@ -81,10 +83,10 @@ Scheduler::~Scheduler(){
 
 //run the task given on a fiber
 void Scheduler::runTask(BaseTask *task){
-	runTask(task, Fiber::Priority::low);
+	runTask(task, priority::low);
 }
 
-void Scheduler::runTask(BaseTask *task, Fiber::Priority prioirty){
+void Scheduler::runTask(BaseTask *task, Priority taskPrioirty){
 	//find available worker
 	Fiber* fbr;
 	Worker* wkr;
@@ -111,17 +113,24 @@ void Scheduler::runTask(BaseTask *task, Fiber::Priority prioirty){
 	wkr = acquireFreeWorker();
 
 	//add the task queue
-	if (wkr == nullptr || fiberQueue.size()>0){
+	if (wkr == nullptr || fiberPool->queueHasNext()){
 
-		fbr->setTask(task, prioirty);
-		fiberQueue.push(fbr);
+		fbr->setTask(task, taskPrioirty);
+
+		switch (taskPrioirty){
+			case(Priority::high) : fiberPool->fiberQueueHigh.push(fbr); break;
+			case(Priority::medium) : fiberPool->fiberQueueMedium.push(fbr); break;
+			case(Priority::low) : fiberPool->fiberQueueLow.push(fbr); break;
+		}
+
+		//fiberQueue.push(fbr);
 	}
 	//no queuing needed
 	else{
 		nextTask = task;
 
 		//set values then run, must be in prepared state to change to run state
-		fbr->setTask(task, prioirty);
+		fbr->setTask(task, taskPrioirty);
 		wkr->set(*fbr);
 
 		//finished setting values so now prepare for running
@@ -200,14 +209,13 @@ void Scheduler::workerBeenFreed(Worker* worker){
 	while (queueLock.test_and_set(std::memory_order_acquire));
 
 	//check if there is any queued fibers
-	if (fiberQueue.empty() == false){
+	if (fiberPool->queueHasNext()){
 		//acquire worker
 		worker->forceAcquire();
 
 		//get next fiber in the queue using FIFO(first in first out)
 		Fiber* nextFiber;
-		nextFiber= fiberQueue.front();
-		fiberQueue.pop();
+		nextFiber = &fiberPool->popNextFiber();
 
 		//run fiber on the worker
 		worker->set(*nextFiber);

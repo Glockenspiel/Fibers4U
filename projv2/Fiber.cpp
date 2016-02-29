@@ -2,6 +2,8 @@
 #include "Scheduler.h"
 #include <iostream>
 
+using namespace priority;
+
 Fiber::Fiber(atomic<int>& counter, unsigned short id){
 	counterPtr = &counter;
 	spinLock = new SpinLock();
@@ -41,7 +43,7 @@ void Fiber::freeTask(){
 
 //sets the current task of the fiber and the fibers priority
 void Fiber::setTask(BaseTask* task, Priority p){
-	priority = p;
+	currentPriority = p;
 
 	if (task == currentTask) return;
 

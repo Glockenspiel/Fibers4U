@@ -6,15 +6,7 @@ FiberPool::FiberPool(const unsigned int FIBER_COUNT, std::atomic<int>& counter){
 }
 
 FiberPool::~FiberPool(){
-	//delete all fibers
-	for (Fiber* f : fibers)
-		delete f;
-	fibers.clear();
-
-	while (fiberQueue.empty() == false){
-		delete fiberQueue.front();
-		fiberQueue.pop();
-	}
+	//fiber pool is static so it doesn't get cleaned up until the program exits
 }
 
 Fiber* FiberPool::acquireFreeFiber(){
@@ -23,5 +15,31 @@ Fiber* FiberPool::acquireFreeFiber(){
 			return fibers[i];
 	}
 	return nullptr;
+}
+
+bool FiberPool::queueHasNext(){
+	return	
+		fiberQueueLow.empty() == false ||
+		fiberQueueMedium.empty() == false ||
+		fiberQueueHigh.empty() == false;
+}
+
+Fiber& FiberPool::popNextFiber(){
+	Fiber* fiber = nullptr;
+
+	if (fiberQueueHigh.empty() == false){
+		fiber = fiberQueueHigh.front();
+		fiberQueueHigh.pop();
+	}
+	else if (fiberQueueMedium.empty() == false){
+		fiber = fiberQueueMedium.front();
+		fiberQueueMedium.pop();
+	}
+	else if ((fiberQueueLow.empty() == false)){
+		fiber = fiberQueueLow.front();
+		fiberQueueLow.pop();
+	}
+
+	return *fiber;
 }
 

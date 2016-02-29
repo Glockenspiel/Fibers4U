@@ -8,8 +8,7 @@
 using std::queue;
 using std::vector;
 
-//static queue for fibers not yet set to workers
-static queue<Fiber *> fiberQueue;
+
 
 //atomic spinlock flag, used for accessing the queue atomically
 static std::atomic_flag queueLock = ATOMIC_FLAG_INIT;
@@ -21,10 +20,17 @@ public:
 	~FiberPool();
 
 	Fiber* acquireFreeFiber();
+	bool queueHasNext();
+	Fiber& popNextFiber();
 
 private:
+	//list of all the fibers available
 	std::vector<Fiber *> fibers;
-	queue<Fiber *>* qPtr = &fiberQueue;
+
+	//queues for fibers not yet set to workers
+	queue<Fiber *> fiberQueueLow;
+	queue<Fiber *> fiberQueueMedium;
+	queue<Fiber *> fiberQueueHigh;
 };
 
 #endif

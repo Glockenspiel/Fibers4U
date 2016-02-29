@@ -21,7 +21,7 @@ using std::mutex;
 using std::queue;
 
 static atomic<bool> isCompleted = false;
-
+static FiberPool *fiberPool;
 
 class Scheduler{
 public:
@@ -29,7 +29,7 @@ public:
 		BaseTask* startingTask);
 	~Scheduler();
 	void runTask(BaseTask* task);
-	void runTask(BaseTask *task, Fiber::Priority prioirty);
+	void runTask(BaseTask *task, priority::Priority taskPrioirty);
 	void runTasks(vector<BaseTask*> tasks);
 	void close();
 	bool getIsConstructed();
@@ -41,8 +41,6 @@ public:
 private:
 	vector<Worker *> workers;
 	vector<thread*> threads;
-	FiberPool* fiberPool;
-	
 	atomic<int> counter=0;
 	unsigned const int  *N_FIBER_PTR, *N_THREAD_PTR;
 	bool isConstructed = true;
