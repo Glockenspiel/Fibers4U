@@ -11,9 +11,7 @@ Player::~Player(){
 }
 
 void Player::update(){
-	global::writeLock();
-	std::cout << "updating player" << std::endl;
-	global::writeUnlock();
+	fbr::cout << "updating player" << fbr::endl;
 }
 
 void Player::addHp(int amount){
@@ -21,9 +19,7 @@ void Player::addHp(int amount){
 }
 
 void Player::printHp(){
-	global::writeLock();
-	std::cout << "player hp: " << hp << std::endl;
-	global::writeUnlock();
+	fbr::cout << "player hp: " << hp << fbr::endl;
 }
 
 void Player::empty(){}
@@ -36,7 +32,5 @@ void Player::damage(int amount, bool isMagic){
 }
 
 void Player::move(int x, int y, int z){
-	global::writeLock();
-	std::cout << "x:" << x << " y:" << y << " z:" << z << std::endl;
-	global::writeUnlock();
+	fbr::cout << "x:" << x << " y:" << y << " z:" << z << fbr::endl;
 }

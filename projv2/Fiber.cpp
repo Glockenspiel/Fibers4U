@@ -18,25 +18,17 @@ Fiber::~Fiber(){
 //runs the current task
 void Fiber::run(){
 	waitForState(prepared);
-	global::writeLock();
-	std::cout << "Exe..." << id << std::endl;
-	global::writeUnlock();
 
+	fbr::cout << "Exe..." << id << fbr::endl;
 	currentTask->run();
+	fbr::cout << "Com..." << id << fbr::endl;
 
-	global::writeLock();
-	std::cout << "Com..." << id << std::endl;
-	global::writeUnlock();
 }
 
 //alert the scheduler that this task has completed and is ready for reallocation
 void Fiber::freeTask(){
 	*counterPtr -= 1;
-
-	global::writeLock();
-	std::cout << "freed:"<< id << std::endl;
-	global::writeUnlock();
-
+	fbr::cout << "freed:" << id << fbr::endl;
 	setState(free);
 
 }

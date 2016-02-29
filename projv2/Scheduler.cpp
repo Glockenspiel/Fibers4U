@@ -20,13 +20,11 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 
 	//do check on fiber and thread count, display error message if true
 	if (FIBER_COUNT < THREAD_COUNT && FIBER_COUNT>0){
-		global::writeLock();
-		std::cout << "Scheduler not started!" << std::endl <<
-			"Need more fibers" << std::endl <<
-			"Thread count: " << THREAD_COUNT << std::endl <<
-			"Fiber count: " << FIBER_COUNT << std::endl <<
-			"Fiber count is less than thread count or else there's no fibers" << std::endl;
-		global::writeUnlock();
+		fbr::cout_warn << "Scheduler not started!" << fbr::endl <<
+			"Need more fibers" << fbr::endl <<
+			"Thread count: " << THREAD_COUNT << fbr::endl <<
+			"Fiber count: " << FIBER_COUNT << fbr::endl <<
+			"Fiber count is less than thread count or else there's no fibers" << fbr::endl;
 
 		system("pause");
 
@@ -34,10 +32,7 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 		return;
 	}
 
-	//create fibers
-	//for (unsigned int i = 0; i < FIBER_COUNT; i++){
-	//	fibers.push_back(new Fiber(counter, i));
-	//}
+	//construct FiberPool and its fibers
 	fiberPool = new FiberPool(FIBER_COUNT, counter);
 
 	//create worker threads
@@ -98,10 +93,9 @@ void Scheduler::runTask(BaseTask *task, Priority taskPrioirty){
 
 		//display warinign if spining for a free fiber
 		if (fbr == nullptr){
-			global::writeLock();
-			std::cout << "Warning!: Task waiting for free fiber" << std::endl <<
-				"Create more fibers to prevent unessasary waiting" << std::endl;
-			global::writeUnlock();
+			fbr::cout_warn << "Task waiting for free fiber." << fbr::endl <<
+				"Create more fibers to prevent unessasary waiting." << fbr::endl <<
+				"This can also cause dealock." << fbr::endl;
 		}
 	} while (fbr==nullptr);
 

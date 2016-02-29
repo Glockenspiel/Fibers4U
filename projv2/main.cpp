@@ -9,7 +9,6 @@
 using namespace std;
 
 
-
 //bool awake = false;
 //condition_variable cv;
 int main(){
@@ -30,15 +29,13 @@ int main(){
 	move->setArgs(54, c, global::getThreadCount());
 
 
-	Scheduler *scheduler = new Scheduler(6,2, taskArg);
+	Scheduler *scheduler = new Scheduler(5,2, taskArg);
 	if (scheduler->getIsConstructed() == false){
 		return 0;
 	}
 
 	scheduler->waitAllFibersFree();
-	global::writeLock();
-	std::cout << "All workers ready!" << std::endl;
-	global::writeUnlock();
+	fbr::cout << "All workers ready!" << fbr::endl;
 
 	
 
@@ -62,11 +59,14 @@ int main(){
 	scheduler->waitMain();
 
 	scheduler->close();
+	//LOG_WARN << "test" << 4 << "workd" << 2.4 << Log::endl;
 	system("pause");
 
 	//delete scheduler and display msg
 	delete scheduler;
-	std::cout << "Scheduler deleted" << std::endl;
+	
+	//fbr::log << "here" << Log::endl;
+	fbr::cout << "Scheduler deleted" << fbr::endl;
 	Timer *timer = new Timer();
 	timer->wait(2);
 	delete timer;
