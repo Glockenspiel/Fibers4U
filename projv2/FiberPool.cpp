@@ -9,7 +9,8 @@ FiberPool::~FiberPool(){
 	//fiber pool is static so it doesn't get cleaned up until the program exits
 }
 
-Fiber* FiberPool::acquireFreeFiber(){
+//trys to acquire a free fiber, if no free fiber is found a nullptr is returned
+Fiber* FiberPool::tryAcquireFreeFiber(){
 	for (unsigned int i = 0; i < fibers.size(); i++){
 		if (fibers[i]->tryAcquire()) //try acquire
 			return fibers[i];
@@ -17,6 +18,7 @@ Fiber* FiberPool::acquireFreeFiber(){
 	return nullptr;
 }
 
+//returns true if there is any fibers in the low,medium or high queue
 bool FiberPool::queueHasNext(){
 	return	
 		fiberQueueLow.empty() == false ||
@@ -24,6 +26,7 @@ bool FiberPool::queueHasNext(){
 		fiberQueueHigh.empty() == false;
 }
 
+//returns the next fiber in queue to be executed, it also pops this fiber out of the queue
 Fiber& FiberPool::popNextFiber(){
 	Fiber* fiber = nullptr;
 
@@ -43,6 +46,7 @@ Fiber& FiberPool::popNextFiber(){
 	return *fiber;
 }
 
+//pushes the fiber to its corresponding queue
 void FiberPool::pushToQueue(Fiber& fiber){
 	switch (fiber.getPriority()){
 		case(Priority::high) : fiberQueueHigh.push(&fiber); break;

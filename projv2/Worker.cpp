@@ -2,12 +2,15 @@
 #include <iostream>
 #include "global.h"
 #include "Scheduler.h"
+#include <ctime>
 
 Worker::Worker(unsigned int id){
 	this->id = id;
+	lastRun == high_resolution_clock::now();
 }
 
-Worker::~Worker(){}
+Worker::~Worker(){
+}
 
 /*
 Starts the spin lock for this worker thread
@@ -20,9 +23,17 @@ void Worker::run(){
 	running = true;
 	while (running.load(std::memory_order_relaxed)){
 		if (state.load(std::memory_order_relaxed) == State::prepared){
+			lastRun = steady_clock::now();
 			currentFiber->runAndFree();
 			setState(State::free);
 			Scheduler::workerBeenFreed(this);
+		}
+
+		timeNow = high_resolution_clock::now();
+		timeSinceLastRun= timeNow-lastRun;
+		if (timeSinceLastRun > timeUntilSleep){
+			fbr::cout << "WORKER SHOULD SLEEP: " << getID() << fbr::endl << 
+				"Time since used: " << timeSinceLastRun.count() << "ms" << fbr::endl;
 		}
 	}
 }

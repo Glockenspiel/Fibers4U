@@ -4,8 +4,10 @@
 #include "Fiber.h"
 #include <atomic>
 #include <mutex>
+#include <chrono>
 
 using std::atomic;
+using namespace std::chrono;
 
 class Worker{
 public:
@@ -25,6 +27,11 @@ private:
 	atomic<State> state = free;
 	void setState(State s);
 	unsigned int id;
+	high_resolution_clock::time_point lastRun, timeNow;
+
+	duration<double, std::milli> 
+		timeSinceLastRun, 
+		timeUntilSleep = duration<double, std::milli>(1000);
 };
 
 #endif

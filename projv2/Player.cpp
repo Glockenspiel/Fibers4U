@@ -1,6 +1,7 @@
 #include "Player.h"
 #include <iostream>
 #include "global.h"
+#include "Timer.h"
 
 Player::Player(){
 
@@ -33,4 +34,9 @@ void Player::damage(int amount, bool isMagic){
 
 void Player::move(int x, int y, int z){
 	fbr::cout << "x:" << x << " y:" << y << " z:" << z << fbr::endl;
+}
+
+void Player::longTask(){
+	Timer *t = new Timer();
+	t->wait(3);
 }

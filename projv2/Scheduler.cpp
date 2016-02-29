@@ -90,7 +90,7 @@ void Scheduler::runTask(BaseTask *task, Priority taskPrioirty){
 
 	//aquire free fiber
 	do{
-		fbr = fiberPool->acquireFreeFiber();
+		fbr = fiberPool->tryAcquireFreeFiber();
 
 		//display warinign if spining for a free fiber
 		if (fbr == nullptr){

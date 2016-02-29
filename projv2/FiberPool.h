@@ -19,7 +19,7 @@ public:
 	FiberPool(const unsigned int FIBER_COUNT, std::atomic<int>& counter);
 	~FiberPool();
 
-	Fiber* acquireFreeFiber();
+	Fiber* tryAcquireFreeFiber();
 	bool queueHasNext();
 	Fiber& popNextFiber();
 	void pushToQueue(Fiber& fiber);

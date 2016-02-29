@@ -29,7 +29,7 @@ int main(){
 	move->setArgs(54, c, global::getThreadCount());
 
 
-	Scheduler *scheduler = new Scheduler(5,2, taskArg);
+	Scheduler *scheduler = new Scheduler(6,2, taskArg);
 	if (scheduler->getIsConstructed() == false){
 		return 0;
 	}
@@ -37,19 +37,20 @@ int main(){
 	scheduler->waitAllFibersFree();
 	fbr::cout << "All workers ready!" << fbr::endl;
 
-	
-
-
 	Task *update = new Task(&Player::update, p);
 	
 
 	//wake up main thread
 	Task *endTask = new Task(&Scheduler::wakeUpMain, scheduler);
 
+	Task *longTask = new Task(&Player::longTask, p);
+
 	//run all task unsyncronized
 	vector<BaseTask*> allTasks = { printHP, move, update };
 	scheduler->runTasks(allTasks, priority::low);
 	scheduler->runTask(printHP, priority::high);
+
+	//scheduler->runTask(longTask);
 
 	scheduler->waitAllFibersFree();
 	scheduler->runTask(endTask);

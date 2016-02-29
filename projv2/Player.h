@@ -10,6 +10,7 @@ public:
 	void move(int x, int y, int z);
 	void printHp();
 	void empty();
+	void longTask();
 	~Player();
 private:
 	int hp=0;
