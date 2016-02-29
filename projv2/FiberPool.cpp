@@ -43,3 +43,10 @@ Fiber& FiberPool::popNextFiber(){
 	return *fiber;
 }
 
+void FiberPool::pushToQueue(Fiber& fiber){
+	switch (fiber.getPriority()){
+		case(Priority::high) : fiberQueueHigh.push(&fiber); break;
+		case(Priority::medium) : fiberQueueMedium.push(&fiber); break;
+		case(Priority::low) : fiberQueueLow.push(&fiber); break;
+	}
+}

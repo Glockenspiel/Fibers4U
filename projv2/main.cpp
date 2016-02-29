@@ -48,7 +48,7 @@ int main(){
 
 	//run all task unsyncronized
 	vector<BaseTask*> allTasks = { printHP, move, update };
-	scheduler->runTasks(allTasks);
+	scheduler->runTasks(allTasks, priority::low);
 	scheduler->runTask(printHP, priority::high);
 
 	scheduler->waitAllFibersFree();

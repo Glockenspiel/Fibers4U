@@ -32,7 +32,7 @@ public:
 	void waitUntilFree();
 	bool inState(State s);
 	bool tryAcquire();
-	
+	priority::Priority getPriority();
 	
 private:
 	void waitForState(State);

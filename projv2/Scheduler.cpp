@@ -76,11 +76,12 @@ Scheduler::~Scheduler(){
 }
 
 
-//run the task given on a fiber
+//run the task with low priority
 void Scheduler::runTask(BaseTask *task){
 	runTask(task, priority::low);
 }
 
+//run the task with a given priority
 void Scheduler::runTask(BaseTask *task, Priority taskPrioirty){
 	//find available worker
 	Fiber* fbr;
@@ -110,14 +111,8 @@ void Scheduler::runTask(BaseTask *task, Priority taskPrioirty){
 	if (wkr == nullptr || fiberPool->queueHasNext()){
 
 		fbr->setTask(task, taskPrioirty);
+		fiberPool->pushToQueue(*fbr);
 
-		switch (taskPrioirty){
-			case(Priority::high) : fiberPool->fiberQueueHigh.push(fbr); break;
-			case(Priority::medium) : fiberPool->fiberQueueMedium.push(fbr); break;
-			case(Priority::low) : fiberPool->fiberQueueLow.push(fbr); break;
-		}
-
-		//fiberQueue.push(fbr);
 	}
 	//no queuing needed
 	else{
@@ -135,9 +130,16 @@ void Scheduler::runTask(BaseTask *task, Priority taskPrioirty){
 	queueLock.clear(std::memory_order_release);
 }
 
+//run multiple tasks with low priority
 void Scheduler::runTasks(vector<BaseTask*> tasks){
 	for (BaseTask* task : tasks)
 		runTask(task);
+}
+
+//run multiple tasks with a given priority
+void Scheduler::runTasks(vector<BaseTask*> tasks, Priority taskPriority){
+	for (BaseTask* task : tasks)
+		runTask(task, taskPriority);
 }
 
 //end all the threads and notify main thread

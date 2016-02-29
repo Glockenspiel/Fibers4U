@@ -22,6 +22,7 @@ public:
 	Fiber* acquireFreeFiber();
 	bool queueHasNext();
 	Fiber& popNextFiber();
+	void pushToQueue(Fiber& fiber);
 
 private:
 	//list of all the fibers available

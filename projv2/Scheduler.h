@@ -31,6 +31,7 @@ public:
 	void runTask(BaseTask* task);
 	void runTask(BaseTask *task, priority::Priority taskPrioirty);
 	void runTasks(vector<BaseTask*> tasks);
+	void runTasks(vector<BaseTask*> tasks, Priority taskPriority);
 	void close();
 	bool getIsConstructed();
 	void Scheduler::waitAllFibersFree();

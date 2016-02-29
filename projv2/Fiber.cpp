@@ -86,3 +86,7 @@ bool Fiber::tryAcquire(){
 	}
 	return false;
 }
+
+Priority Fiber::getPriority(){
+	return currentPriority;
+}
