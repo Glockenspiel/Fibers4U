@@ -20,7 +20,7 @@ class Fiber{
 public:
 	enum State { free, acquired, prepared };
 
-	Fiber(atomic<int>& counter, unsigned short id);
+	Fiber(unsigned short id);
 	~Fiber();
 
 	void runAndFree();
@@ -41,7 +41,6 @@ private:
 	unsigned int id;
 	atomic<State> state = free;
 	BaseTask *currentTask;
-	atomic<int>* counterPtr;
 	Priority currentPriority = Priority::low;
 };
 

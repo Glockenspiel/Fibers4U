@@ -29,13 +29,14 @@ int main(){
 	move->setArgs(54, c, global::getThreadCount());
 
 
-	Scheduler *scheduler = new Scheduler(6,2, taskArg);
+	Scheduler *scheduler = new Scheduler(9,2, taskArg);
 	if (scheduler->getIsConstructed() == false){
 		return 0;
 	}
 
 	scheduler->waitAllFibersFree();
-	fbr::cout << "All workers ready!" << fbr::endl;
+	//while (counter.load(std::memory_order_relaxed) != 0){}
+	fbr::cout << "All workers ready! " << fbr::endl;
 
 	Task *update = new Task(&Player::update, p);
 	
@@ -44,27 +45,33 @@ int main(){
 	Task *endTask = new Task(&Scheduler::wakeUpMain);
 
 	Task *longTask = new Task(&Player::longTask, p);
-
 	//run all task unsyncronized
-	vector<BaseTask*> allTasks = { printHP, move, update };
+	vector<BaseTask*> allTasks = { printHP, move, update,longTask };
 	scheduler->runTasks(allTasks, priority::low);
-	scheduler->runTask(printHP, priority::high);
+	//scheduler->runTask(move, priority::low);
 
 	//scheduler->runTask(longTask);
-
+	//fbr::cout << "WOOOOOO:" << counter.load(std::memory_order_relaxed) << fbr::endl;
+	scheduler->waitAllFibersFree(); //is waiting really waiting??
+	//while (counter.load(std::memory_order_relaxed)!=0){}
+	//scheduler->runTasks(allTasks, priority::low);
+	//scheduler->runTask(move);
+	fbr::cout << "FIBERS COUNT=0 !!!!!!!!!!!!!!!!!" << fbr::endl;
 	//scheduler->waitAllFibersFree();
 	//scheduler->runTask(endTask);
 
-	Scheduler::waitForCounter(0, endTask);
+	Scheduler::wakeUpMain();
+	//Scheduler::waitForCounter(0, endTask);
+
 
 	//puts main thread to wait and doesn't cunsume cpu time
 	//wakes up when endTask is run
 	Scheduler::waitMain();
 
 	scheduler->close();
-	//LOG_WARN << "test" << 4 << "workd" << 2.4 << Log::endl;
+	
+	
 	system("pause");
-
 	//delete scheduler and display msg
 	delete scheduler;
 	

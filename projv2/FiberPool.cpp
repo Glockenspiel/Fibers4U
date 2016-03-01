@@ -1,8 +1,8 @@
 #include "FiberPool.h"
 
-FiberPool::FiberPool(const unsigned int FIBER_COUNT, std::atomic<int>& counter){
+FiberPool::FiberPool(const unsigned int FIBER_COUNT){
 	for (unsigned int i = 0; i < FIBER_COUNT; i++)
-		fibers.push_back(new Fiber(counter, i));
+		fibers.push_back(new Fiber(i));
 }
 
 FiberPool::~FiberPool(){

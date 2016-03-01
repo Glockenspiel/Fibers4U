@@ -4,8 +4,7 @@
 
 using namespace priority;
 
-Fiber::Fiber(atomic<int>& counter, unsigned short id){
-	counterPtr = &counter;
+Fiber::Fiber(unsigned short id){
 	spinLock = new SpinLock();
 	this->id = id;
 }
@@ -27,10 +26,9 @@ void Fiber::run(){
 
 //alert the scheduler that this task has completed and is ready for reallocation
 void Fiber::freeTask(){
-	*counterPtr -= 1;
-	fbr::cout << "freed:" << id << fbr::endl;
+	fbr::cout << "freed:" << id  << fbr::endl;
 	setState(free);
-
+	//counter -= 1;
 }
 
 //sets the current task of the fiber and the fibers priority
@@ -81,7 +79,7 @@ bool Fiber::inState(Fiber::State s){
 bool Fiber::tryAcquire(){
 	if (state.load(std::memory_order_relaxed) == free){
 		setState(acquired);
-		*counterPtr += 1;
+		//counter += 1;
 		return true;
 	}
 	return false;

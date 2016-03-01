@@ -25,7 +25,7 @@ static atomic<bool> isCompleted = false;
 static FiberPool *fiberPool;
 static mutex *mainMtx;
 static std::condition_variable mainCV;
-static atomic<int> counter = 0;
+
 static vector<WaitingTask *> waitingTasks;
 static vector<Worker *> workers;
 
@@ -43,7 +43,7 @@ public:
 	static void runTasks(vector<BaseTask*> tasks, Priority taskPriority);
 	void close();
 	bool getIsConstructed();
-	static void Scheduler::waitAllFibersFree();
+	static void waitAllFibersFree();
 
 	static void waitForCounter(int count, BaseTask* task);
 	static void waitForCounter(WaitingTask& task);
@@ -51,7 +51,7 @@ public:
 	static void checkWaitingTasks();
 	static void wakeUpMain();
 	static void waitMain();
-	static void workerBeenFreed(Worker* worker);
+	static void notifyWorkerBeenFreed(Worker* worker);
 	
 private:
 	
@@ -63,5 +63,10 @@ private:
 	static Worker* acquireFreeWorker();
 	
 };
+
+namespace count{
+	static std::atomic_flag counterLock = ATOMIC_FLAG_INIT;
+	static atomic<int> counter;
+}
 
 #endif

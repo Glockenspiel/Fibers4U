@@ -21,7 +21,7 @@ void Player::addHp(int amount){
 }
 
 void Player::printHp(){
-	fbr::cout << "player hp: " << hp << fbr::endl;
+	fbr::cout << "player hp: " << hp <<  fbr::endl;
 }
 
 void Player::empty(){}
@@ -39,5 +39,5 @@ void Player::move(int x, int y, int z){
 
 void Player::longTask(){
 	Timer *t = new Timer();
-	t->wait(3);
+	t->wait(2);
 }

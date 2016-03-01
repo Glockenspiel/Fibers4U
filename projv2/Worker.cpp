@@ -26,14 +26,14 @@ void Worker::run(){
 			lastRun = steady_clock::now();
 			currentFiber->runAndFree();
 			setState(State::free);
-			Scheduler::workerBeenFreed(this);
+			Scheduler::notifyWorkerBeenFreed(this);
 		}
 
 		timeNow = high_resolution_clock::now();
 		timeSinceLastRun= timeNow-lastRun;
 		if (timeSinceLastRun > timeUntilSleep){
-			fbr::cout << "WORKER SHOULD SLEEP: " << getID() << fbr::endl << 
-				"Time since used: " << timeSinceLastRun.count() << "ms" << fbr::endl;
+		//	fbr::cout << "WORKER SHOULD SLEEP: " << getID() << fbr::endl << 
+		//		"Time since used: " << timeSinceLastRun.count() << "ms" << fbr::endl;
 		}
 	}
 }

@@ -16,7 +16,7 @@ static std::atomic_flag queueLock = ATOMIC_FLAG_INIT;
 class FiberPool{
 	friend class Scheduler;
 public:
-	FiberPool(const unsigned int FIBER_COUNT, std::atomic<int>& counter);
+	FiberPool(const unsigned int FIBER_COUNT);
 	~FiberPool();
 
 	Fiber* tryAcquireFreeFiber();

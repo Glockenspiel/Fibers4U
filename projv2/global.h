@@ -14,17 +14,19 @@ using std::string;
 
 static std::mutex *mtx = new std::mutex;
 static std::atomic<int> RWCounter = 0;
-
+static std::atomic_flag writeFlag = ATOMIC_FLAG_INIT;
 
 
 class global{
 public:
 	static void writeLock(){
-		while (mtx->try_lock() == false){}
+		while (writeFlag.test_and_set(std::memory_order_seq_cst));
+		//while (mtx->try_lock() == false){}
 	}
 
 	static void writeUnlock(){
-		mtx->unlock();
+		//mtx->unlock();
+		writeFlag.clear(std::memory_order_seq_cst);
 	}
 
 	static unsigned int getThreadCount(){
