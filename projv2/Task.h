@@ -13,6 +13,12 @@ public:
 	Task(Func func, Obj obj){
 		fn = std::bind(func, obj);
 	}
+
+	template <class Func>
+	Task(Func staticFunc){
+		fn = staticFunc;
+	}
+
 	~Task();
 
 	void run();

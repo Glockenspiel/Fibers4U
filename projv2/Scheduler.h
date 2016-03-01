@@ -22,6 +22,8 @@ using std::queue;
 
 static atomic<bool> isCompleted = false;
 static FiberPool *fiberPool;
+static mutex *mainMtx;
+static std::condition_variable mainCV;
 
 class Scheduler{
 public:
@@ -35,8 +37,8 @@ public:
 	void close();
 	bool getIsConstructed();
 	void Scheduler::waitAllFibersFree();
-	void wakeUpMain();
-	void waitMain();
+	static void wakeUpMain();
+	static void waitMain();
 	static void workerBeenFreed(Worker* worker);
 	
 private:
@@ -47,9 +49,7 @@ private:
 	bool isConstructed = true;
 	void empty();
 	Worker* acquireFreeWorker();
-	mutex *mtx;
 	
-	std::condition_variable mainCV;
 };
 
 #endif

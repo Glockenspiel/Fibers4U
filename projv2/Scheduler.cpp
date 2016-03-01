@@ -16,7 +16,7 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 	BaseTask* startingTask){
 	N_FIBER_PTR = &FIBER_COUNT;
 	N_THREAD_PTR = &THREAD_COUNT;
-	mtx = new mutex();
+	mainMtx = new mutex();
 
 	//do check on fiber and thread count, display error message if true
 	if (FIBER_COUNT < THREAD_COUNT && FIBER_COUNT>0){
@@ -72,7 +72,7 @@ Scheduler::~Scheduler(){
 		delete w;
 	workers.clear();
 
-	delete mtx;
+	//delete mainMtx;
 }
 
 
@@ -183,7 +183,7 @@ Worker* Scheduler::acquireFreeWorker(){
 void Scheduler::empty(){}
 
 void Scheduler::wakeUpMain(){
-	std::lock_guard<std::mutex> lk(*mtx);
+	std::lock_guard<std::mutex> lk(*mainMtx);
 	mainAwake = true;
 
 	//wake up main thread
@@ -191,7 +191,7 @@ void Scheduler::wakeUpMain(){
 }
 
 void Scheduler::waitMain(){
-	std::unique_lock<std::mutex> lk(*mtx);
+	std::unique_lock<std::mutex> lk(*mainMtx);
 	mainCV.wait(lk, []{return mainAwake; });
 	lk.unlock();
 }

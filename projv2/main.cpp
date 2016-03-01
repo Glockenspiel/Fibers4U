@@ -41,7 +41,7 @@ int main(){
 	
 
 	//wake up main thread
-	Task *endTask = new Task(&Scheduler::wakeUpMain, scheduler);
+	Task *endTask = new Task(&Scheduler::wakeUpMain);
 
 	Task *longTask = new Task(&Player::longTask, p);
 
@@ -57,7 +57,7 @@ int main(){
 
 	//puts main thread to wait and doesn't cunsume cpu time
 	//wakes up when endTask is run
-	scheduler->waitMain();
+	Scheduler::waitMain();
 
 	scheduler->close();
 	//LOG_WARN << "test" << 4 << "workd" << 2.4 << Log::endl;
