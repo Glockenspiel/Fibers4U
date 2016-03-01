@@ -48,7 +48,7 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 		}
 		//assign empty tasks to the rest of the worker threads
 		else{
-			BaseTask *emptyTask = new Task(&Scheduler::empty, this);
+			Task *emptyTask = new Task(&Scheduler::empty);
 			fiberPool->fibers[i]->setTask(emptyTask, Priority::low);
 			workers[i]->set(*fiberPool->fibers[i]);
 		}
@@ -200,6 +200,7 @@ void Scheduler::waitMain(){
 //this function will see if there is any fibers in the queue and 
 //run the next fiber
 void Scheduler::workerBeenFreed(Worker* worker){
+	checkWaitingTasks();
 
 	//access the queue
 	while (queueLock.test_and_set(std::memory_order_acquire));
@@ -220,4 +221,45 @@ void Scheduler::workerBeenFreed(Worker* worker){
 
 	//release the queue
 	queueLock.clear(std::memory_order_release);
+}
+
+//abbreviated version of waitForCounter
+void Scheduler::waitForCounter(int count, BaseTask* task){
+	waitForCounter(count, task, Priority::high);
+}
+
+//allows a task to wait until counter reaches a point without spinlocking a worker thread
+void Scheduler::waitForCounter(int count, BaseTask* task, Priority taskPriority){
+	//if wait is not required
+	if (count <= counter.load(std::memory_order_relaxed))
+		runTask(task, taskPriority);
+
+	//if waiting is required add this task to the waitingTasks list
+	else{
+		//acquire lock for accessing waitingTasks
+		while (waitingLock.test_and_set(std::memory_order_acquire));
+
+		waitingTasks.push_back(new WaitingTask(task, count, taskPriority));
+
+		//release waitingTasks
+		waitingLock.clear(std::memory_order_release);
+
+		checkWaitingTasks();
+	}
+}
+
+void Scheduler::checkWaitingTasks(){
+	//acquire lock for accessing waitingTasks
+	while (waitingLock.test_and_set(std::memory_order_acquire));
+
+	for (unsigned int i = 0; i < waitingTasks.size(); i++){
+		if (waitingTasks[i]->getWaitingCount() <= counter.load(std::memory_order_relaxed)){
+			runTask(waitingTasks[i]->getTask(), Priority::high);
+			delete waitingTasks[i];
+			waitingTasks.erase(waitingTasks.begin()+i);
+		}
+	}
+
+	//release waitingTasks
+	waitingLock.clear(std::memory_order_release);
 }

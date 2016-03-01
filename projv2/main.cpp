@@ -52,8 +52,10 @@ int main(){
 
 	//scheduler->runTask(longTask);
 
-	scheduler->waitAllFibersFree();
-	scheduler->runTask(endTask);
+	//scheduler->waitAllFibersFree();
+	//scheduler->runTask(endTask);
+
+	Scheduler::waitForCounter(0, endTask, priority::high);
 
 	//puts main thread to wait and doesn't cunsume cpu time
 	//wakes up when endTask is run

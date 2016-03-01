@@ -2,6 +2,7 @@
 #include <iostream>
 #include "global.h"
 #include "Timer.h"
+#include "Scheduler.h"
 
 Player::Player(){
 

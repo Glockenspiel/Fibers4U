@@ -13,6 +13,7 @@
 #include <condition_variable>
 #include <queue>
 #include "FiberPool.h"
+#include "WaitingTask.h"
 
 
 using std::thread;
@@ -24,31 +25,41 @@ static atomic<bool> isCompleted = false;
 static FiberPool *fiberPool;
 static mutex *mainMtx;
 static std::condition_variable mainCV;
+static atomic<int> counter = 0;
+static vector<WaitingTask *> waitingTasks;
+static vector<Worker *> workers;
+
+//atomic flag for accessing waitingTasks
+static std::atomic_flag waitingLock = ATOMIC_FLAG_INIT;
 
 class Scheduler{
 public:
 	Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_COUNT, 
 		BaseTask* startingTask);
 	~Scheduler();
-	void runTask(BaseTask* task);
-	void runTask(BaseTask *task, priority::Priority taskPrioirty);
-	void runTasks(vector<BaseTask*> tasks);
-	void runTasks(vector<BaseTask*> tasks, Priority taskPriority);
+	static void runTask(BaseTask* task);
+	static void runTask(BaseTask *task, priority::Priority taskPrioirty);
+	static void runTasks(vector<BaseTask*> tasks);
+	static void runTasks(vector<BaseTask*> tasks, Priority taskPriority);
 	void close();
 	bool getIsConstructed();
-	void Scheduler::waitAllFibersFree();
+	static void Scheduler::waitAllFibersFree();
+
+	static void waitForCounter(int count, BaseTask* task);
+	static void waitForCounter(int count, BaseTask* task, Priority taskPriority);
+	static void checkWaitingTasks();
 	static void wakeUpMain();
 	static void waitMain();
 	static void workerBeenFreed(Worker* worker);
 	
 private:
-	vector<Worker *> workers;
+	
 	vector<thread*> threads;
-	atomic<int> counter=0;
+	
 	unsigned const int  *N_FIBER_PTR, *N_THREAD_PTR;
 	bool isConstructed = true;
-	void empty();
-	Worker* acquireFreeWorker();
+	static void empty();
+	static Worker* acquireFreeWorker();
 	
 };
 
