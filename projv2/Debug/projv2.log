@@ -1,13 +1,8 @@
-﻿Build started 01/03/2016 10:13:32.
+﻿Build started 01/03/2016 10:19:47.
      1>Project "C:\Users\Jeoff\fyp\fibers4u\projv2\projv2.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Fiber.cpp Player.cpp Scheduler.cpp Worker.cpp main.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
-         Worker.cpp
-         Scheduler.cpp
-         Player.cpp
-         Fiber.cpp
-         Generating Code...
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Jeoff\fyp\fibers4u\Debug\projv2.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Jeoff\fyp\fibers4u\Debug\projv2.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Jeoff\fyp\fibers4u\Debug\projv2.lib" /MACHINE:X86 Debug\Fiber.obj
          Debug\FiberPool.obj
@@ -24,4 +19,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:03.37
+Time Elapsed 00:00:01.17

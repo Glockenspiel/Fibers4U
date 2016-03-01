@@ -46,7 +46,8 @@ public:
 	static void Scheduler::waitAllFibersFree();
 
 	static void waitForCounter(int count, BaseTask* task);
-	static void waitForCounter(int count, BaseTask* task, Priority taskPriority);
+	static void waitForCounter(WaitingTask& task);
+
 	static void checkWaitingTasks();
 	static void wakeUpMain();
 	static void waitMain();

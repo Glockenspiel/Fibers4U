@@ -190,6 +190,8 @@ void Scheduler::wakeUpMain(){
 	mainCV.notify_one();
 }
 
+//this allows for the a thread to yield until wakeUpMain() is called
+//only use this to yield the main thread
 void Scheduler::waitMain(){
 	std::unique_lock<std::mutex> lk(*mainMtx);
 	mainCV.wait(lk, []{return mainAwake; });
@@ -225,21 +227,22 @@ void Scheduler::workerBeenFreed(Worker* worker){
 
 //abbreviated version of waitForCounter
 void Scheduler::waitForCounter(int count, BaseTask* task){
-	waitForCounter(count, task, Priority::high);
+	WaitingTask* wt = new WaitingTask(task, count, Priority::high);
+	waitForCounter(*wt);
 }
 
 //allows a task to wait until counter reaches a point without spinlocking a worker thread
-void Scheduler::waitForCounter(int count, BaseTask* task, Priority taskPriority){
+void Scheduler::waitForCounter(WaitingTask& task){
 	//if wait is not required
-	if (count <= counter.load(std::memory_order_relaxed))
-		runTask(task, taskPriority);
+	if (task.getWaitingCount() <= counter.load(std::memory_order_relaxed))
+		runTask(task.getTask(), task.getPriority());
 
 	//if waiting is required add this task to the waitingTasks list
 	else{
 		//acquire lock for accessing waitingTasks
 		while (waitingLock.test_and_set(std::memory_order_acquire));
 
-		waitingTasks.push_back(new WaitingTask(task, count, taskPriority));
+		waitingTasks.push_back(&task);
 
 		//release waitingTasks
 		waitingLock.clear(std::memory_order_release);
