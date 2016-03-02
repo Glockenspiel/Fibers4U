@@ -48,19 +48,9 @@ int main(){
 	//run all task unsyncronized
 	vector<BaseTask*> allTasks = { printHP, move, update,longTask };
 	scheduler->runTasks(allTasks, priority::low);
-	//scheduler->runTask(move, priority::low);
 
-	//scheduler->runTask(longTask);
-	//fbr::cout << "WOOOOOO:" << counter.load(std::memory_order_relaxed) << fbr::endl;
-	scheduler->waitAllFibersFree(); //is waiting really waiting??
-	//while (counter.load(std::memory_order_relaxed)!=0){}
-	//scheduler->runTasks(allTasks, priority::low);
-	//scheduler->runTask(move);
-	fbr::cout << "FIBERS COUNT=0 !!!!!!!!!!!!!!!!!" << fbr::endl;
-	//scheduler->waitAllFibersFree();
-	//scheduler->runTask(endTask);
-
-	Scheduler::wakeUpMain();
+	scheduler->waitAllFibersFree();
+	scheduler->runTask(endTask);
 	//Scheduler::waitForCounter(0, endTask);
 
 

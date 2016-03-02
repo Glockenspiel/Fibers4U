@@ -54,3 +54,7 @@ void FiberPool::pushToQueue(Fiber& fiber){
 		case(Priority::low) : fiberQueueLow.push(&fiber); break;
 	}
 }
+
+int FiberPool::queueCount(){
+	return fiberQueueHigh.size() + fiberQueueMedium.size() + fiberQueueLow.size();
+}

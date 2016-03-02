@@ -13,7 +13,6 @@
 using std::string;
 
 static std::mutex *mtx = new std::mutex;
-static std::atomic<int> RWCounter = 0;
 static std::atomic_flag writeFlag = ATOMIC_FLAG_INIT;
 
 
@@ -21,11 +20,9 @@ class global{
 public:
 	static void writeLock(){
 		while (writeFlag.test_and_set(std::memory_order_seq_cst));
-		//while (mtx->try_lock() == false){}
 	}
 
 	static void writeUnlock(){
-		//mtx->unlock();
 		writeFlag.clear(std::memory_order_seq_cst);
 	}
 
@@ -53,6 +50,7 @@ public:
 	//spinlock until lock is acquired
 	void getLock(){
 		while (mtx->try_lock() == false){}
+		//while (writeFlag.test_and_set(std::memory_order_seq_cst));
 	}
 
 	//print the next value
@@ -70,10 +68,9 @@ public:
 		return manip(*this);
 	}
 
-	
-
 	//release lock after printing has completed
 	~Log(){
+		//writeFlag.clear(std::memory_order_seq_cst);
 		mtx->unlock();
 	}
 };

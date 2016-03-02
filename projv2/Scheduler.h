@@ -52,6 +52,7 @@ public:
 	static void wakeUpMain();
 	static void waitMain();
 	static void notifyWorkerBeenFreed(Worker* worker);
+	static void notifyFinishedTask();
 	
 private:
 	
@@ -67,6 +68,7 @@ private:
 namespace count{
 	static std::atomic_flag counterLock = ATOMIC_FLAG_INIT;
 	static atomic<int> counter;
+	static atomic<int> queueCounter = 0;
 }
 
 #endif

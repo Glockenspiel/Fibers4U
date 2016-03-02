@@ -23,6 +23,7 @@ public:
 	bool queueHasNext();
 	Fiber& popNextFiber();
 	void pushToQueue(Fiber& fiber);
+	int queueCount();
 
 private:
 	//list of all the fibers available
