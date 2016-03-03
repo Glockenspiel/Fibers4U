@@ -15,8 +15,6 @@ bool mainAwake = false;
 
 Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_COUNT, 
 	BaseTask* startingTask){
-	N_FIBER_PTR = &FIBER_COUNT;
-	N_THREAD_PTR = &THREAD_COUNT;
 	mainMtx = new mutex();
 
 	//do check on fiber and thread count, display error message if true
@@ -60,6 +58,7 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 		fiberPool->fibers[i]->setPrepared();
 		threads.push_back(t);
 	}
+	waitAllFibersFree();
 }
 
 //destructor
@@ -143,7 +142,7 @@ bool Scheduler::getIsConstructed(){
 
 
 //trys to acequire a free worker, returns nullptr if it fails
-Worker* Scheduler::acquireFreeWorker(){
+Worker* Scheduler::tryAcquireFreeWorker(){
 	for (unsigned int i = 0; i < workers.size(); i++){
 		if (workers[i]->tryAcquire())
 			return workers[i];
@@ -208,20 +207,23 @@ void Scheduler::notifyWorkerBeenFreed(Worker* worker){
 }
 
 //allows a task to wait until counter reaches a point without spinlocking a worker thread
-//by adding this task to a waiting queue adn checking it each time a worker thread is freed
+//by adding this task to a waiting queue and checking it each time a worker thread is freed.
+//if the counter is less than or equal to the waiting tasks waiting count, the task will just be run.
 void Scheduler::waitForCounter(WaitingTask& task){
-	//acquire lock for accessing waitingTasks
-	while (waitingLock.test_and_set(std::memory_order_seq_cst));
+	//if all workers are free, just run rather than waiting
+	if (taskCounter.get()<=task.getWaitingCount()){
+		runTasks({ task.getTask() }, task.getPriority());
+	}
+	//send to waiting queue
+	else{
+		//acquire lock for accessing waitingTasks
+		while (waitingLock.test_and_set(std::memory_order_seq_cst));
 
-	waitingTasks.push_back(&task);
+		waitingTasks.push_back(&task);
 
-	//release waitingTasks
-	waitingLock.clear(std::memory_order_seq_cst);
-
-	fbr::cout << "waiting task added" << fbr::endl;
-
-	//check in the case of all workers are free and no worker checks the waiting queue
-	checkWaitingTasks();
+		//release waitingTasks
+		waitingLock.clear(std::memory_order_seq_cst);
+	}
 }
 
 //abbreviated version of waitForCounter

@@ -10,14 +10,11 @@ SpinLock::SpinLock(){
 	timer = new Timer();
 }
 
-SpinLock::~SpinLock(){
-
-}
+SpinLock::~SpinLock(){}
 
 //begin spin lock
 void SpinLock::lock(){
 	isLocked = true;
-
 	while (isLocked.load(std::memory_order_relaxed)){}
 }
 

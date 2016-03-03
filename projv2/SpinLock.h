@@ -8,12 +8,16 @@ class SpinLock{
 public:
 	SpinLock();
 	~SpinLock();
+	//begins the spin lock
 	void lock();
+
+	//unlocks the spinlock (must be called by another thread)
 	void unlock();
+
+	//returns true if locked
 	bool getIsLocked();
 private:
 	std::atomic<bool> isLocked = false;
-	std::time_t startLockTime;
 	bool curLock;
 	Timer *timer;
 };

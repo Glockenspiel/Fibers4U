@@ -36,32 +36,60 @@ static std::atomic_flag waitingLock = ATOMIC_FLAG_INIT;
 
 class Scheduler{
 public:
+	//intialises all the worker threads
 	Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_COUNT, 
 		BaseTask* startingTask);
+
+	//destructor, must call close() first
 	~Scheduler();
 	
+	//puts all the tasks into a queue and runs them
 	static void runTasks(vector<BaseTask*> tasks, Priority taskPriority);
+
+	//waits for all queued fibers to complete and then joins the threads 
+	//(must be called before deconstructor)
 	void close();
+
+	//returns true if construction was successful
 	bool getIsConstructed();
+
+	//spinlocks until all fibers have completed their tasks
 	static void waitAllFibersFree();
 
-	static void waitForCounter(unsigned int count, BaseTask* task);
+	//put the task into a waiting queue until the task counter reaches thw waiting count
 	static void waitForCounter(WaitingTask& task);
 
+	//constructs a WaitingTask object and calls waitForCounter
+	static void waitForCounter(unsigned int count, BaseTask* task);
+
+	//checks the waiting queue to see if any of the tasks should be woken up
 	static void checkWaitingTasks();
+
+	//wakes up the main thread
 	static void wakeUpMain();
+
+	//call this in the main thread to make the thread yield until wakeUpMain() is called
 	static void waitMain();
+
+	//allows workers notify that they have been freed, 
+	//then check the waiting queue and 
+	//then run the next task in the queue if any
 	static void notifyWorkerBeenFreed(Worker* worker);
+
+	//notifies the task counter that a task has completed
 	static void notifyTaskFinished();
 	
 private:
-	
-	vector<thread*> threads;
+	//adds a task to the task queue
 	static void addToQueue(BaseTask *task, priority::Priority taskPrioirty);
-	unsigned const int  *N_FIBER_PTR, *N_THREAD_PTR;
+
+	//tries to acquire a free worker, return nullptr if failed
+	static Worker* tryAcquireFreeWorker();
+
+	vector<thread*> threads;
 	bool isConstructed = true;
 	static void empty();
-	static Worker* acquireFreeWorker();
+	
 	
 };
 

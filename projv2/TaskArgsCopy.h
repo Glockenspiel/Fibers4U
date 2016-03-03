@@ -48,6 +48,7 @@ private:
 	C c;
 };
 
+//2 parameters required for the function
 template<class A, class B>
 class TaskArgsCopy<A, B, nothing> : public BaseTask{
 public:
@@ -72,6 +73,7 @@ private:
 	B b;
 };
 
+//1 parameter required for the function
 template<class A>
 class TaskArgsCopy<A, nothing, nothing> : public BaseTask{
 public:

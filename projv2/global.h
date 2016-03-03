@@ -1,7 +1,6 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
-#include <mutex>
 #include <iostream>
 #include <string>
 #include <atomic>
@@ -12,26 +11,28 @@
 
 using std::string;
 
-static std::mutex *mtx = new std::mutex;
 static std::atomic_flag writeFlag = ATOMIC_FLAG_INIT;
 
 
 class global{
 public:
+	//acquires the writing lock
 	static void writeLock(){
 		while (writeFlag.test_and_set(std::memory_order_seq_cst));
 	}
 
+	//releases the writing lock
 	static void writeUnlock(){
 		writeFlag.clear(std::memory_order_seq_cst);
 	}
 
+	//returns the thread count found by the run time
 	static unsigned int getThreadCount(){
 		return std::thread::hardware_concurrency();
 	}
-
 };
 
+//namespace for concurrent standard output
 namespace fbr{
 class Log
 {
@@ -49,8 +50,7 @@ public:
 
 	//spinlock until lock is acquired
 	void getLock(){
-		while (mtx->try_lock() == false){}
-		//while (writeFlag.test_and_set(std::memory_order_seq_cst));
+		while (writeFlag.test_and_set(std::memory_order_seq_cst));
 	}
 
 	//print the next value
@@ -70,8 +70,7 @@ public:
 
 	//release lock after printing has completed
 	~Log(){
-		//writeFlag.clear(std::memory_order_seq_cst);
-		mtx->unlock();
+		writeFlag.clear(std::memory_order_seq_cst);
 	}
 };
 
@@ -87,9 +86,5 @@ inline Log& endl(Log& log){
 #define cout Log()
 #define cout_warn Log(__FUNCTION__)
 }
-
-//using namespace fbr when including this header file
-using namespace fbr;
-
 
 #endif

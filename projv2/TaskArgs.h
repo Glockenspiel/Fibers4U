@@ -53,6 +53,7 @@ private:
 	C* cPtr;
 };
 
+//2 parameters in the function
 template<class A, class B>
 class TaskArgs<A, B, nothing> : public BaseTask{
 public:
@@ -80,6 +81,7 @@ private:
 	B *bPtr;
 };
 
+//1 parameter in the function
 template<class A>
 class TaskArgs<A, nothing, nothing> : public BaseTask{
 public:
@@ -104,6 +106,7 @@ private:
 	A* aPtr;
 };
 
+//no parameters in the function
 template<>
 class TaskArgs<nothing, nothing, nothing> : public BaseTask{
 public:

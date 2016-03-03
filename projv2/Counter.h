@@ -3,19 +3,25 @@
 
 #include <atomic>
 
+//concurrent data structure for a counter
 class Counter{
 public:
+	//add value to counter
 	void add(int a);
+
+	//subtract value from counter
 	void sub(int a);
+
+	//get value from counter
 	int get();
 
-	//Operater overloading
-	Counter& operator++(){
+	//Operater overloading (++,--,+=,-=)
+	Counter& operator++(int){
 		add(1);
 		return *this;
 	}
 
-	Counter& operator--(){
+	Counter& operator--(int){
 		sub(1);
 		return *this;
 	}

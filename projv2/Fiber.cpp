@@ -5,13 +5,11 @@
 using namespace priority;
 
 Fiber::Fiber(unsigned short id){
-	spinLock = new SpinLock();
 	this->id = id;
 }
 
 Fiber::~Fiber(){
 	delete currentTask;
-	delete spinLock;
 }
 
 //runs the current task
@@ -25,10 +23,9 @@ void Fiber::run(){
 }
 
 //alert the scheduler that this task has completed and is ready for reallocation
-void Fiber::freeTask(){
+void Fiber::freeFiber(){
 	fbr::cout << "freed:" << id  << fbr::endl;
 	setState(free);
-	//counter -= 1;
 }
 
 //sets the current task of the fiber and the fibers priority
@@ -46,9 +43,10 @@ void Fiber::setTask(BaseTask* task, Priority p){
 //runs the current task and frees it
 void Fiber::runAndFree(){
 	run();
-	freeTask();
+	freeFiber();
 }
 
+//returns the current id
 unsigned int Fiber::getID(){
 	return id;
 }
@@ -59,18 +57,22 @@ void Fiber::setPrepared(){
 	state = prepared;
 }
 
+//waits for the fibers state to reach the given state
 void Fiber::waitForState(State s){
 	while (state.load(std::memory_order_relaxed) != s){}
 }
 
+//sets the state to the given state
 void Fiber::setState(State s){
 	state.store(s, std::memory_order_release);
 }
 
+//waits until the fiber reaches its free state
 void Fiber::waitUntilFree(){
 	while (state.load(std::memory_order_relaxed) != free){}
 }
 
+//returns true if the fiber is in the given state
 bool Fiber::inState(Fiber::State s){
 	return state.load(std::memory_order_relaxed) == s;
 }
@@ -85,6 +87,7 @@ bool Fiber::tryAcquire(){
 	return false;
 }
 
+//returns the fibers current priority
 Priority Fiber::getPriority(){
 	return currentPriority;
 }

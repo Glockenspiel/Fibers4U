@@ -9,8 +9,7 @@ Worker::Worker(unsigned int id){
 	lastRun == high_resolution_clock::now();
 }
 
-Worker::~Worker(){
-}
+Worker::~Worker(){}
 
 /*
 Starts the spin lock for this worker thread
@@ -94,6 +93,7 @@ void Worker::setState(State s){
 	state.store(s, std::memory_order_seq_cst);
 }
 
+//returns the id
 unsigned int Worker::getID(){
 	return id;
 }

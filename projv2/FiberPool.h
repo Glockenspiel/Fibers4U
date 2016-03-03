@@ -8,11 +8,8 @@
 using std::queue;
 using std::vector;
 
-static int realCounter = 0;
-
 //atomic spinlock flag, used for accessing the queue atomically
 static std::atomic_flag queueLock = ATOMIC_FLAG_INIT;
-//static std::atomic_flag counterLock = ATOMIC_FLAG_INIT;
 
 class FiberPool{
 	friend class Scheduler;
@@ -20,15 +17,17 @@ public:
 	FiberPool(const unsigned int FIBER_COUNT);
 	~FiberPool();
 
+	//trys to acquire a fiber which is free, returns nullptr if no free fibers
 	Fiber* tryAcquireFreeFiber();
+
+	//returns true if there is an element in one of the queues
 	bool queueHasNext();
+
+	//pops the next highest priority fiber off the queues
 	Fiber& popNextFiber();
+
+	//pushes a fiber onto its relevant queue. (depending on the fibers priority)
 	void pushToQueue(Fiber& fiber);
-	/*
-	int queueCount();
-	
-	void workerStarted(int a);
-	*/
 
 private:
 	//list of all the fibers available

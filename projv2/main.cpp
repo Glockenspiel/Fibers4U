@@ -32,7 +32,7 @@ int main(){
 	if (scheduler->getIsConstructed() == false){
 		return 0;
 	}
-	scheduler->waitAllFibersFree();
+
 	fbr::cout << "All workers ready! " << fbr::endl;
 
 	Task *update = new Task(&Player::update, p);
