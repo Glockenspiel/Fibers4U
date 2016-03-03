@@ -36,7 +36,7 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 	//construct FiberPool and its fibers
 	fiberPool = new FiberPool(FIBER_COUNT);
 
-	taskCounter.add(THREAD_COUNT);
+	taskCounter+=THREAD_COUNT;
 
 	//create worker threads
 	for (unsigned int i = 0; i < THREAD_COUNT; i++){
@@ -75,8 +75,6 @@ Scheduler::~Scheduler(){
 	for (Worker* w : workers)
 		delete w;
 	workers.clear();
-
-	//delete mainMtx;
 }
 
 
@@ -100,7 +98,7 @@ void Scheduler::addToQueue(BaseTask *task, Priority taskPrioirty){
 
 	fiber->setTask(task, taskPrioirty);
 	fiberPool->pushToQueue(*fiber);
-	taskCounter.add(1);
+	taskCounter++;
 }
 
 //run multiple tasks with a given priority
@@ -252,5 +250,5 @@ void Scheduler::checkWaitingTasks(){
 }
 
 void Scheduler::taskFinished(){
-	taskCounter.sub(1);
+	taskCounter--;
 }
