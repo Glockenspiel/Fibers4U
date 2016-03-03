@@ -27,6 +27,8 @@ int main(){
 	int c = 0;
 	move->setArgs(54, c, global::getThreadCount());
 
+	Task *inputtask = new Task(&Player::taskInput, p);
+
 	Scheduler *scheduler = new Scheduler(9,2, taskArg);
 	if (scheduler->getIsConstructed() == false){
 		return 0;
@@ -49,8 +51,7 @@ int main(){
 	Scheduler::runTasks(priority::low, 4, printHP, move, update, longTask);
 
 	//scheduler->waitAllFibersFree();  
-	//scheduler->runTask(endTask);
-	Scheduler::waitForCounter(0, endTask);
+	Scheduler::waitForCounter(0, inputtask);
 
 
 	//puts main thread to wait and doesn't cunsume cpu time
@@ -60,7 +61,7 @@ int main(){
 	scheduler->close();
 	
 	
-	system("pause");
+	//system("pause");
 	//delete scheduler and display msg
 	delete scheduler;
 	

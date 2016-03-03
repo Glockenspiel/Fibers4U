@@ -11,6 +11,7 @@ public:
 	void printHp();
 	void empty();
 	void longTask();
+	void taskInput();
 	~Player();
 private:
 	int hp=0;

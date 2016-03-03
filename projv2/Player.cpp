@@ -41,3 +41,10 @@ void Player::longTask(){
 	Timer *t = new Timer();
 	t->wait(2);
 }
+
+void Player::taskInput(){
+	std::string s;
+	fbr::cin(s, "Enter some text:");
+	fbr::cout << s << fbr::endl;
+	Scheduler::wakeUpMain();
+}
