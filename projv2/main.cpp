@@ -29,11 +29,12 @@ int main(){
 	move->setArgs(54, c, global::getThreadCount());
 
 
+	fiberPool->workerStarted(2);
 	Scheduler *scheduler = new Scheduler(9,2, taskArg);
 	if (scheduler->getIsConstructed() == false){
 		return 0;
 	}
-
+	fbr::cout << fiberPool->queueCount() << fbr::endl;
 	scheduler->waitAllFibersFree();
 	//while (counter.load(std::memory_order_relaxed) != 0){}
 	fbr::cout << "All workers ready! " << fbr::endl;
@@ -49,9 +50,9 @@ int main(){
 	vector<BaseTask*> allTasks = { printHP, move, update,longTask };
 	scheduler->runTasks(allTasks, priority::low);
 
-	scheduler->waitAllFibersFree();
-	scheduler->runTask(endTask);
-	//Scheduler::waitForCounter(0, endTask);
+	//scheduler->waitAllFibersFree();
+	//scheduler->runTask(endTask);
+	Scheduler::waitForCounter(0, endTask);
 
 
 	//puts main thread to wait and doesn't cunsume cpu time

@@ -26,8 +26,7 @@ void Worker::run(){
 			lastRun = steady_clock::now();
 			currentFiber->runAndFree();
 			setState(State::free);
-			//while (state.load(std::memory_order_relaxed) != free){}
-			Scheduler::notifyFinishedTask();
+			fiberPool->taskFinished();
 			Scheduler::notifyWorkerBeenFreed(this);
 		}
 

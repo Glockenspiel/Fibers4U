@@ -36,7 +36,6 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 	//construct FiberPool and its fibers
 	fiberPool = new FiberPool(FIBER_COUNT);
 
-	counter = THREAD_COUNT;
 	//create worker threads
 	for (unsigned int i = 0; i < THREAD_COUNT; i++){
 		workers.push_back(new Worker(i));
@@ -54,6 +53,7 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 			fiberPool->fibers[i]->setTask(emptyTask, Priority::low);
 			workers[i]->set(*fiberPool->fibers[i]);
 		}
+		//fiberPool->workerStarted();
 		t = new thread(&Worker::run, workers[i]);
 		fiberPool->fibers[i]->setPrepared();
 		threads.push_back(t);
@@ -78,13 +78,10 @@ Scheduler::~Scheduler(){
 }
 
 
-//run the task with low priority
-void Scheduler::runTask(BaseTask *task){
-	runTask(task, priority::low);
-}
 
 //run the task with a given priority
-void Scheduler::runTask(BaseTask *task, Priority taskPrioirty){
+
+void Scheduler::addToQueue(BaseTask *task, Priority taskPrioirty){
 	//fbr::cout << "runTask() started" << fbr::endl;
 	//find available worker
 	Fiber* fbr;
@@ -103,59 +100,20 @@ void Scheduler::runTask(BaseTask *task, Priority taskPrioirty){
 		}
 	} while (fbr==nullptr);
 
-
-	//lock when accessing queue
-	//while (queueLock.test_and_set(std::memory_order_seq_cst));
-
-	//try find a free worker
-	//wkr = acquireFreeWorker();
-
-	//add the task queue
-	//if (wkr == nullptr || fiberPool->queueHasNext()){
-
-		fbr->setTask(task, taskPrioirty);
-		fiberPool->pushToQueue(*fbr);
-		/*
-	}
-	//no queuing needed
-	else{
-		nextTask = task;
-
-		//set values then run, must be in prepared state to change to run state
-		fbr->setTask(task, taskPrioirty);
-		wkr->set(*fbr);
-
-		//finished setting values so now prepare for running
-		fbr->setPrepared();
-	}
-	*/
-	//release access to queue
-	//queueLock.clear(std::memory_order_seq_cst);
-	//fbr::cout << "After runTask() counter:" << counter.load(std::memory_order_seq_cst) << fbr::endl;
-}
-
-//run multiple tasks with low priority
-void Scheduler::runTasks(vector<BaseTask*> tasks){
-	runTasks(tasks, priority::low);
+	fbr->setTask(task, taskPrioirty);
+	fiberPool->pushToQueue(*fbr);
 }
 
 //run multiple tasks with a given priority
 void Scheduler::runTasks(vector<BaseTask*> tasks, Priority taskPriority){
 	while (queueLock.test_and_set(std::memory_order_seq_cst));
 	for (BaseTask* task : tasks)
-		runTask(task, taskPriority);
+		addToQueue(task, taskPriority);
 	
 	queueLock.clear(std::memory_order_seq_cst);
-	waitAllFibersFree();
-	counter.fetch_add(tasks.size(), std::memory_order_seq_cst);
-	fbr::cout << "starting task counter:" << counter << ":" << fiberPool->queueCount() << fbr::endl;
 	for (Worker* w : workers){
 		notifyWorkerBeenFreed(w);
 	}
-}
-
-void Scheduler::notifyFinishedTask(){
-	counter.fetch_sub(1, std::memory_order_seq_cst);
 }
 
 //end all the threads and notify main thread
@@ -175,8 +133,9 @@ void Scheduler::close(){
 
 //waits until all current tasks are completed i.e. when the counter reaches zero
 void Scheduler::waitAllFibersFree(){
-	//while (count::counter.load(std::memory_order_relaxed) != 0){}
-	while (fiberPool->queueCount()>0){}
+	while (fiberPool->queueCount()>0){
+		//fbr::cout << fiberPool->queueCount() << fbr::endl;
+	}
 }
 
 
@@ -221,11 +180,9 @@ void Scheduler::waitMain(){
 //run the next fiber
 void Scheduler::notifyWorkerBeenFreed(Worker* worker){
 	
-	fbr::cout << "Task completed: " << count::counter.load(std::memory_order_relaxed) << ":"<< fiberPool->queueCount() << fbr::endl;
 	
-	//fbr::cout << "checkWaitingTasks() started" << fbr::endl;
-	//checkWaitingTasks();
-	//fbr::cout << "checkWaitingTasks() ended" << fbr::endl;
+	
+	checkWaitingTasks();
 
 	//access the queue
 	while (queueLock.test_and_set(std::memory_order_seq_cst));
@@ -233,14 +190,13 @@ void Scheduler::notifyWorkerBeenFreed(Worker* worker){
 	//check if there is any queued fibers
 	if (fiberPool->queueHasNext()){
 		//acquire worker
-		
-		fbr::cout << "queue has next" << fbr::endl;
 		worker->forceAcquire();
-		//fbr::cout << "force acquire ended" << fbr::endl;
+
 		//get next fiber in the queue using FIFO(first in first out)
 		Fiber* nextFiber;
 		nextFiber = &fiberPool->popNextFiber();
 
+		//release the queue
 		queueLock.clear(std::memory_order_seq_cst);
 
 		//run fiber on the worker
@@ -249,12 +205,10 @@ void Scheduler::notifyWorkerBeenFreed(Worker* worker){
 	}
 	else{
 		//release the queue
-		
 		fbr::cout << "queue is empty" << fbr::endl;
 		queueLock.clear(std::memory_order_seq_cst);
 	}
-
-	fbr::cout << "notify completed" << fbr::endl;
+	fbr::cout << "Task completed: " << fiberPool->queueCount() << fbr::endl;
 }
 
 //abbreviated version of waitForCounter
@@ -265,40 +219,32 @@ void Scheduler::waitForCounter(int count, BaseTask* task){
 
 //allows a task to wait until counter reaches a point without spinlocking a worker thread
 void Scheduler::waitForCounter(WaitingTask& task){
-	//if wait is not required, just run the task
-	if (task.getWaitingCount() >= count::counter.load(std::memory_order_relaxed)){
-		counter += 1;
-		runTask(task.getTask(), task.getPriority());
-	}
+	//acquire lock for accessing waitingTasks
+	while (waitingLock.test_and_set(std::memory_order_seq_cst));
 
-	//if waiting is required add this task to the waitingTasks list
-	else{
-		//acquire lock for accessing waitingTasks
-		while (waitingLock.test_and_set(std::memory_order_seq_cst));
+	waitingTasks.push_back(&task);
 
-		waitingTasks.push_back(&task);
+	//release waitingTasks
+	waitingLock.clear(std::memory_order_seq_cst);
 
-		//release waitingTasks
-		waitingLock.clear(std::memory_order_seq_cst);
-
-	}
+	fbr::cout << "waiting task added" << fbr::endl;
+	checkWaitingTasks();
 }
 
+//checks if there is any waiting tasks to be added to the queue
 void Scheduler::checkWaitingTasks(){
 	//acquire lock for accessing waitingTasks
-	
 	while (waitingLock.test_and_set(std::memory_order_release));
 
 	for (unsigned int i = 0; i < waitingTasks.size(); i++){
 		//if waiting count >= counter, run the task with high priority
-		if (waitingTasks[i]->getWaitingCount() >= counter.load(std::memory_order_acquire)){
-			counter += 1;
-			runTask(waitingTasks[i]->getTask(), Priority::high);
+		if (waitingTasks[i]->getWaitingCount() >= fiberPool->queueCount()){
+
+			addToQueue(waitingTasks[i]->getTask(), Priority::high);
 
 			//remove waiting task from vector
 			delete waitingTasks[i];
 			waitingTasks.erase(waitingTasks.begin()+i);
-			i--;
 		}
 	}
 

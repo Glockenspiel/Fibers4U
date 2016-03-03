@@ -37,9 +37,7 @@ public:
 	Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_COUNT, 
 		BaseTask* startingTask);
 	~Scheduler();
-	static void runTask(BaseTask* task);
-	static void runTask(BaseTask *task, priority::Priority taskPrioirty);
-	static void runTasks(vector<BaseTask*> tasks);
+	
 	static void runTasks(vector<BaseTask*> tasks, Priority taskPriority);
 	void close();
 	bool getIsConstructed();
@@ -52,12 +50,11 @@ public:
 	static void wakeUpMain();
 	static void waitMain();
 	static void notifyWorkerBeenFreed(Worker* worker);
-	static void notifyFinishedTask();
 	
 private:
 	
 	vector<thread*> threads;
-	
+	static void addToQueue(BaseTask *task, priority::Priority taskPrioirty);
 	unsigned const int  *N_FIBER_PTR, *N_THREAD_PTR;
 	bool isConstructed = true;
 	static void empty();
@@ -67,7 +64,7 @@ private:
 
 namespace count{
 	static std::atomic_flag counterLock = ATOMIC_FLAG_INIT;
-	static atomic<int> counter;
+	//static atomic<int> counter;
 	static atomic<int> queueCounter = 0;
 }
 
