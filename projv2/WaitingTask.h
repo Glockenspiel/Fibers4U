@@ -13,7 +13,7 @@ public:
 	~WaitingTask();
 
 	//returns the waiting count
-	int getWaitingCount();
+	unsigned int getWaitingCount();
 
 	//returns the task
 	BaseTask* getTask();
@@ -22,7 +22,7 @@ public:
 	Priority getPriority();
 private:
 	BaseTask* task;
-	int count;
+	unsigned int count;
 	priority::Priority taskPriority = priority::high;
 };
 

@@ -39,6 +39,9 @@ public:
 
 	//spinlocks until free, then changes state to acquired
 	void forceAcquire();
+
+	//returns the current state
+	State getState();
 private:
 	//switch the given fiber with the current fiber
 	void switchFiber(Fiber& fiber);

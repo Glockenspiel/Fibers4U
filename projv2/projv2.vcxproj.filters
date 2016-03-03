@@ -95,5 +95,11 @@
     <ClInclude Include="Counter.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="con_queue.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="con_vector.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

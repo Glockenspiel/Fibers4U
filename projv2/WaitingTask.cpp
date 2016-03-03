@@ -14,7 +14,7 @@ WaitingTask::WaitingTask(BaseTask* task, unsigned int count, Priority taskPriori
 WaitingTask::~WaitingTask(){}
 
 //returns the waiting count
-int WaitingTask::getWaitingCount(){
+unsigned int WaitingTask::getWaitingCount(){
 	return count;
 }
 

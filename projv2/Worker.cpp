@@ -97,3 +97,7 @@ void Worker::setState(State s){
 unsigned int Worker::getID(){
 	return id;
 }
+
+Worker::State Worker::getState(){
+	return state;
+}

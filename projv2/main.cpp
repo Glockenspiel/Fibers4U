@@ -46,7 +46,7 @@ int main(){
 	vector<BaseTask*> allTasks = { printHP, move, update,longTask };
 	scheduler->runTasks(allTasks, priority::low);
 
-	//scheduler->waitAllFibersFree();
+	//scheduler->waitAllFibersFree();  
 	//scheduler->runTask(endTask);
 	Scheduler::waitForCounter(0, endTask);
 

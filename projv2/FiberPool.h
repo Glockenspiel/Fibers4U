@@ -2,11 +2,10 @@
 #define FIBER_POOL_H
 
 #include "Fiber.h"
-#include <queue>
+#include "con_queue.h"
+#include "con_vector.h"
 #include <vector>
 
-using std::queue;
-using std::vector;
 
 //atomic spinlock flag, used for accessing the queue atomically
 static std::atomic_flag queueLock = ATOMIC_FLAG_INIT;
@@ -31,12 +30,12 @@ public:
 
 private:
 	//list of all the fibers available
-	std::vector<Fiber *> fibers;
+	con_vector<Fiber *> fibers;
 
 	//queues for fibers not yet set to workers
-	queue<Fiber *> fiberQueueLow;
-	queue<Fiber *> fiberQueueMedium;
-	queue<Fiber *> fiberQueueHigh;
+	con_queue<Fiber *> fiberQueueLow;
+	con_queue<Fiber *> fiberQueueMedium;
+	con_queue<Fiber *> fiberQueueHigh;
 };
 
 #endif

@@ -3,7 +3,7 @@
 
 #include <atomic>
 
-//concurrent data structure for a counter
+//concurrent data structure for an integer
 class Counter{
 public:
 	//add value to counter
