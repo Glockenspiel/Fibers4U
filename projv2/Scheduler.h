@@ -17,7 +17,6 @@
 
 
 using std::thread;
-using std::vector;
 using std::mutex;
 
 static atomic<bool> isCompleted = false;
@@ -26,11 +25,13 @@ static mutex *mainMtx;
 static std::condition_variable mainCV;
 
 static con_vector<WaitingTask *> waitingTasks;
-static vector<Worker *> workers;
+static con_vector<Worker *> workers;
 
 
 //atomic flag for accessing waitingTasks
 static std::atomic_flag waitingLock = ATOMIC_FLAG_INIT;
+
+using std::vector;
 
 class Scheduler{
 public:
@@ -87,7 +88,7 @@ private:
 	//empty function used for creating worker threads
 	static void empty();
 
-	vector<thread*> threads;
+	con_vector<thread*> threads;
 	bool isConstructed = true;
 
 	

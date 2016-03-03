@@ -16,8 +16,8 @@ public:
 	}
 
 	//returns the size of the vector
-	int size(){
-		int a;
+	unsigned int size(){
+		unsigned int a;
 		while (lock.test_and_set(std::memory_order_seq_cst));
 		a = list.size();
 		lock.clear(std::memory_order_seq_cst);

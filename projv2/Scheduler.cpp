@@ -67,12 +67,12 @@ Scheduler::~Scheduler(){
 	delete fiberPool;
 
 	//delete all the threads
-	for (thread* t : threads)
-		delete t;
+	for (unsigned int i = 0; i < threads.size(); i++)
+		delete threads[i];
 	threads.clear();
 
-	for (Worker* w : workers)
-		delete w;
+	for (unsigned int i = 0; i < workers.size(); i++)
+		delete workers[i];
 	workers.clear();
 }
 
@@ -106,7 +106,7 @@ void Scheduler::runTasks(vector<BaseTask*> tasks, Priority taskPriority){
 	
 	//only notify the free workers
 	for (unsigned int i = 0; i < tasks.size() && i < workers.size(); i++){
-		if (workers[i]->getState() == Worker::free);
+		if (workers[i]->getState() == Worker::free)
 			notifyWorkerBeenFreed(workers[i]);
 	}
 
