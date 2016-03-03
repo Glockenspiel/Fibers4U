@@ -104,13 +104,36 @@ void Scheduler::runTasks(vector<BaseTask*> tasks, Priority taskPriority){
 		addToQueue(task, taskPriority);
 	
 	//only notify the free workers
-	for (unsigned int i = 0; i < tasks.size() && i < workers.size(); i++){
-		if (workers[i]->getState() == Worker::free)
-			notifyWorkerBeenFreed(workers[i]);
-	}
+	notifyFreeWorkers(tasks.size());
 
 	//tidy up vector
 	tasks.clear();
+}
+
+//variadic function overload of runTasks()
+void Scheduler::runTasks(Priority prio, unsigned int count, BaseTask*...){
+	int curCount = count;
+	va_list args;
+	va_start(args, count);
+
+	while (curCount > 0){
+		BaseTask * bt = va_arg(args, BaseTask*);
+		addToQueue(bt, prio);
+		curCount--;
+	}
+	va_end(args);
+
+	notifyFreeWorkers(count);
+}
+
+//tells a certain amount of workers that the queue has been populated again
+void Scheduler::notifyFreeWorkers(int max){
+	for (unsigned int i = 0; max>0 && i < workers.size(); i++){
+		if (workers[i]->getState() == Worker::free){
+			notifyWorkerBeenFreed(workers[i]);
+			max--;
+		}
+	}
 }
 
 //end all the threads and notify main thread
@@ -250,3 +273,4 @@ void Scheduler::checkWaitingTasks(){
 void Scheduler::notifyTaskFinished(){
 	taskCounter--;
 }
+

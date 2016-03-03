@@ -13,6 +13,7 @@
 #include "FiberPool.h"
 #include "WaitingTask.h"
 #include "Counter.h"
+#include <stdarg.h>
 
 
 using std::thread;
@@ -43,6 +44,9 @@ public:
 	
 	//puts all the tasks into a queue and runs them
 	static void runTasks(vector<BaseTask*> tasks, Priority taskPriority);
+
+	//run tasks variadic function overload
+	static void runTasks(Priority prio, unsigned int count, BaseTask*...);
 
 	//waits for all queued fibers to complete and then joins the threads 
 	//(must be called before deconstructor)
@@ -83,6 +87,9 @@ private:
 
 	//tries to acquire a free worker, return nullptr if failed
 	static Worker* tryAcquireFreeWorker();
+
+	//tells a certain amount of workers that the queue has been populated again
+	static void notifyFreeWorkers(int max);
 
 	//empty function used for creating worker threads
 	static void empty();

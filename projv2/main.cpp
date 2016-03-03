@@ -42,8 +42,11 @@ int main(){
 
 	Task *longTask = new Task(&Player::longTask, p);
 	//run all task unsyncronized
-	vector<BaseTask*> allTasks = { printHP, move, update,longTask };
-	scheduler->runTasks(allTasks, priority::low);
+	//example with vector
+	//vector<BaseTask*> allTasks = { printHP, move, update,longTask };
+	//scheduler->runTasks(allTasks, priority::low);
+	//example with variadic function
+	Scheduler::runTasks(priority::low, 4, printHP, move, update, longTask);
 
 	//scheduler->waitAllFibersFree();  
 	//scheduler->runTask(endTask);
