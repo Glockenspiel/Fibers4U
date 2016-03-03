@@ -4,7 +4,6 @@
 #include "Timer.h"
 #include "Player.h"
 #include "Task.h"
-//#include "Global.h"
 
 using namespace std::placeholders;
 using namespace priority;
@@ -132,7 +131,7 @@ void Scheduler::close(){
 //waits in a spinlock until all current tasks are completed i.e. when the counter reaches zero
 //note: this will consume the current thread which calls this function
 void Scheduler::waitAllFibersFree(){
-	while (taskCounter.get()>0){}
+	while (taskCounter.get()>0);
 }
 
 

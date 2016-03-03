@@ -2,14 +2,14 @@
 #define SPIN_LOCK_H
 
 #include <atomic>
-#include "Timer.h"
 
 class SpinLock{
 public:
 	SpinLock();
 	~SpinLock();
+
 	//begins the spin lock
-	void lock();
+	void acquireLock();
 
 	//unlocks the spinlock (must be called by another thread)
 	void unlock();
@@ -17,9 +17,8 @@ public:
 	//returns true if locked
 	bool getIsLocked();
 private:
-	std::atomic<bool> isLocked = false;
+	std::atomic_flag isLocked;
 	bool curLock;
-	Timer *timer;
 };
 
 #endif

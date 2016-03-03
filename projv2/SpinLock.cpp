@@ -4,25 +4,23 @@
 #include "Global.h"
 #include <thread>
 
-std::atomic_flag lockflag = ATOMIC_FLAG_INIT;
 
-SpinLock::SpinLock(){
-	timer = new Timer();
-}
+SpinLock::SpinLock(){}
 
 SpinLock::~SpinLock(){}
 
 //begin spin lock
-void SpinLock::lock(){
-	isLocked = true;
-	while (isLocked.load(std::memory_order_relaxed)){}
+void SpinLock::acquireLock(){
+	while (isLocked.test_and_set(std::memory_order_seq_cst));
+	curLock = true;
 }
 
-//unlocks the spin lock
+//unlocks the spin lock from another thread
 void SpinLock::unlock(){
-	isLocked.store(false, std::memory_order_release);
+	isLocked.clear(std::memory_order_seq_cst);
+	curLock = false;
 }
 
 bool SpinLock::getIsLocked(){
-	return isLocked.load(std::memory_order_relaxed);
+	return curLock;
 }

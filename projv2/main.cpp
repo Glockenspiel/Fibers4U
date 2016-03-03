@@ -5,12 +5,11 @@
 #include "Global.h"
 #include "TaskArgs.h"
 #include "TaskArgsCopy.h"
-//#include "WaitVars.h"
+#include "Timer.h"
+
 using namespace std;
 
 
-//bool awake = false;
-//condition_variable cv;
 int main(){
 	Player *p = new Player();
 	BaseTask *printHP = new TaskArgs<>(&Player::printHp, p);

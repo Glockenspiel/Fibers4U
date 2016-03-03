@@ -6,7 +6,6 @@
 #include <atomic>
 #include "Fiber.h"
 #include <thread>
-#include "SpinLock.h"
 #include "Global.h"
 #include "Worker.h"
 #include <mutex>

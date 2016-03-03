@@ -1,13 +1,10 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
-#include <iostream>
-#include <string>
 #include <atomic>
 #include <thread>
 #include <string>
 #include <iostream>
-#include <stdarg.h>
 
 using std::string;
 
