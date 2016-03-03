@@ -43,8 +43,6 @@ Fiber& FiberPool::popNextFiber(){
 		fiberQueueLow.pop();
 	}
 
-	
-
 	return *fiber;
 }
 
@@ -55,27 +53,4 @@ void FiberPool::pushToQueue(Fiber& fiber){
 		case(Priority::medium) : fiberQueueMedium.push(&fiber); break;
 		case(Priority::low) : fiberQueueLow.push(&fiber); break;
 	}
-
-	//while (counterLock.test_and_set(std::memory_order_seq_cst));
-	//realCounter += 1;
-	//counterLock.clear(std::memory_order_seq_cst);
 }
-
-/*
-int FiberPool::queueCount(){
-	//return fiberQueueHigh.size() + fiberQueueMedium.size() + fiberQueueLow.size();
-	int a;
-	while (counterLock.test_and_set(std::memory_order_seq_cst));
-	a = realCounter;
-	counterLock.clear(std::memory_order_seq_cst);
-
-	return a;
-}
-*/
-/*
-void FiberPool::workerStarted(int a){
-	while (counterLock.test_and_set(std::memory_order_seq_cst));
-	realCounter += a;
-	counterLock.clear(std::memory_order_seq_cst);
-}
-*/

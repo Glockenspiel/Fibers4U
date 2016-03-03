@@ -52,7 +52,7 @@ public:
 	static void wakeUpMain();
 	static void waitMain();
 	static void notifyWorkerBeenFreed(Worker* worker);
-	static void taskFinished();
+	static void notifyTaskFinished();
 	
 private:
 	

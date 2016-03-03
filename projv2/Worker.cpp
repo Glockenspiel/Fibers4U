@@ -26,7 +26,7 @@ void Worker::run(){
 			lastRun = steady_clock::now();
 			currentFiber->runAndFree();
 			setState(State::free);
-			Scheduler::taskFinished();
+			Scheduler::notifyTaskFinished();
 			Scheduler::notifyWorkerBeenFreed(this);
 		}
 
@@ -51,8 +51,7 @@ void Worker::switchFiber(Fiber& fiber){
 		return;
 	}
 	//assign fiber pointer
-	else
-	{
+	else{
 		currentFiber = &fiber;
 	}
 }
@@ -86,7 +85,7 @@ bool Worker::tryAcquire(){
 //spin locks until the workers goes to free state and 
 //then the fiber changed to acquired state
 void Worker::forceAcquire(){
-	//while (state.load(std::memory_order_relaxed) != free){}
+	while (state.load(std::memory_order_relaxed) != free){}
 	setState(State::aquired);
 }
 

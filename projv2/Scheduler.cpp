@@ -77,10 +77,7 @@ Scheduler::~Scheduler(){
 	workers.clear();
 }
 
-
-
-//run the task with a given priority
-
+//adds a taks to the queue with the given priority
 void Scheduler::addToQueue(BaseTask *task, Priority taskPrioirty){
 	Fiber* fiber;
 
@@ -101,7 +98,9 @@ void Scheduler::addToQueue(BaseTask *task, Priority taskPrioirty){
 	taskCounter++;
 }
 
-//run multiple tasks with a given priority
+//adds the tasks to the queue and then run them
+//this also clears the vector passed in
+//the tasks will be cleaned up by the scheduler
 void Scheduler::runTasks(vector<BaseTask*> tasks, Priority taskPriority){
 	while (queueLock.test_and_set(std::memory_order_seq_cst));
 	for (BaseTask* task : tasks)
@@ -111,6 +110,8 @@ void Scheduler::runTasks(vector<BaseTask*> tasks, Priority taskPriority){
 	for (Worker* w : workers){
 		notifyWorkerBeenFreed(w);
 	}
+	//tidy up vector
+	tasks.clear();
 }
 
 //end all the threads and notify main thread
@@ -128,11 +129,10 @@ void Scheduler::close(){
 	}
 }
 
-//waits until all current tasks are completed i.e. when the counter reaches zero
+//waits in a spinlock until all current tasks are completed i.e. when the counter reaches zero
+//note: this will consume the current thread which calls this function
 void Scheduler::waitAllFibersFree(){
-	while (taskCounter.get()>0){
-		//fbr::cout << fiberPool->queueCount() << fbr::endl;
-	}
+	while (taskCounter.get()>0){}
 }
 
 
@@ -142,7 +142,7 @@ bool Scheduler::getIsConstructed(){
 }
 
 
-//trys to acequire a free worker
+//trys to acequire a free worker, returns nullptr if it fails
 Worker* Scheduler::acquireFreeWorker(){
 	for (unsigned int i = 0; i < workers.size(); i++){
 		if (workers[i]->tryAcquire())
@@ -155,6 +155,7 @@ Worker* Scheduler::acquireFreeWorker(){
 //empty function for initialising worker threads
 void Scheduler::empty(){}
 
+//wakes up the main thread to end the programs execution
 void Scheduler::wakeUpMain(){
 	fbr::cout << "WAKEWAKEWAKEWAKE" << fbr::endl;
 	std::lock_guard<std::mutex> lk(*mainMtx);
@@ -173,10 +174,10 @@ void Scheduler::waitMain(){
 }
 
 //this is called by a worker when the worker had been freed.
-//this function will see if there is any fibers in the queue and 
-//run the next fiber
+//this function will first check if any waiting tasks should be added to the queue
+//then see if there is any fibers in the queue and run the next fiber in the queue
 void Scheduler::notifyWorkerBeenFreed(Worker* worker){
-	//check if any waiting task should be added to the queue
+	//check if any waiting tasks should be added to the queue
 	checkWaitingTasks();
 
 	//access the queue
@@ -206,13 +207,8 @@ void Scheduler::notifyWorkerBeenFreed(Worker* worker){
 	fbr::cout << "Task completed: " << taskCounter.get() << fbr::endl;
 }
 
-//abbreviated version of waitForCounter
-void Scheduler::waitForCounter(unsigned int count, BaseTask* task){
-	WaitingTask* wt = new WaitingTask(task, count, Priority::high);
-	waitForCounter(*wt);
-}
-
 //allows a task to wait until counter reaches a point without spinlocking a worker thread
+//by adding this task to a waiting queue adn checking it each time a worker thread is freed
 void Scheduler::waitForCounter(WaitingTask& task){
 	//acquire lock for accessing waitingTasks
 	while (waitingLock.test_and_set(std::memory_order_seq_cst));
@@ -223,11 +219,20 @@ void Scheduler::waitForCounter(WaitingTask& task){
 	waitingLock.clear(std::memory_order_seq_cst);
 
 	fbr::cout << "waiting task added" << fbr::endl;
+
+	//check in the case of all workers are free and no worker checks the waiting queue
 	checkWaitingTasks();
+}
+
+//abbreviated version of waitForCounter
+void Scheduler::waitForCounter(unsigned int count, BaseTask* task){
+	WaitingTask* wt = new WaitingTask(task, count, Priority::high);
+	waitForCounter(*wt);
 }
 
 //checks if there is any waiting tasks to be added to the queue
 void Scheduler::checkWaitingTasks(){
+
 	//acquire lock for accessing waitingTasks
 	while (waitingLock.test_and_set(std::memory_order_release));
 
@@ -245,10 +250,9 @@ void Scheduler::checkWaitingTasks(){
 
 	//release waitingTasks
 	waitingLock.clear(std::memory_order_relaxed);
-
-	
 }
 
-void Scheduler::taskFinished(){
+//worker threads can notify the scheduler that a task has finished
+void Scheduler::notifyTaskFinished(){
 	taskCounter--;
 }
