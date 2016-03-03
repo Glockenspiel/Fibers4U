@@ -12,7 +12,7 @@ static int realCounter = 0;
 
 //atomic spinlock flag, used for accessing the queue atomically
 static std::atomic_flag queueLock = ATOMIC_FLAG_INIT;
-static std::atomic_flag counterLock = ATOMIC_FLAG_INIT;
+//static std::atomic_flag counterLock = ATOMIC_FLAG_INIT;
 
 class FiberPool{
 	friend class Scheduler;
@@ -24,9 +24,11 @@ public:
 	bool queueHasNext();
 	Fiber& popNextFiber();
 	void pushToQueue(Fiber& fiber);
+	/*
 	int queueCount();
-	void taskFinished();
+	
 	void workerStarted(int a);
+	*/
 
 private:
 	//list of all the fibers available

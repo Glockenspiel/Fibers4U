@@ -14,6 +14,7 @@
 #include <queue>
 #include "FiberPool.h"
 #include "WaitingTask.h"
+#include "Counter.h"
 
 
 using std::thread;
@@ -29,6 +30,7 @@ static std::condition_variable mainCV;
 static vector<WaitingTask *> waitingTasks;
 static vector<Worker *> workers;
 
+
 //atomic flag for accessing waitingTasks
 static std::atomic_flag waitingLock = ATOMIC_FLAG_INIT;
 
@@ -43,13 +45,14 @@ public:
 	bool getIsConstructed();
 	static void waitAllFibersFree();
 
-	static void waitForCounter(int count, BaseTask* task);
+	static void waitForCounter(unsigned int count, BaseTask* task);
 	static void waitForCounter(WaitingTask& task);
 
 	static void checkWaitingTasks();
 	static void wakeUpMain();
 	static void waitMain();
 	static void notifyWorkerBeenFreed(Worker* worker);
+	static void taskFinished();
 	
 private:
 	
@@ -63,8 +66,7 @@ private:
 };
 
 namespace count{
-	static std::atomic_flag counterLock = ATOMIC_FLAG_INIT;
-	//static atomic<int> counter;
+	static Counter taskCounter;
 	static atomic<int> queueCounter = 0;
 }
 

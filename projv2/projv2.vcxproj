@@ -64,6 +64,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Counter.cpp" />
     <ClCompile Include="Fiber.cpp" />
     <ClCompile Include="FiberPool.cpp" />
     <ClCompile Include="WaitingTask.cpp" />
@@ -77,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseTask.h" />
+    <ClInclude Include="Counter.h" />
     <ClInclude Include="Fiber.h" />
     <ClInclude Include="FiberPool.h" />
     <ClInclude Include="Nothing.h" />

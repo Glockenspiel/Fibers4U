@@ -28,15 +28,11 @@ int main(){
 	int c = 0;
 	move->setArgs(54, c, global::getThreadCount());
 
-
-	fiberPool->workerStarted(2);
 	Scheduler *scheduler = new Scheduler(9,2, taskArg);
 	if (scheduler->getIsConstructed() == false){
 		return 0;
 	}
-	fbr::cout << fiberPool->queueCount() << fbr::endl;
 	scheduler->waitAllFibersFree();
-	//while (counter.load(std::memory_order_relaxed) != 0){}
 	fbr::cout << "All workers ready! " << fbr::endl;
 
 	Task *update = new Task(&Player::update, p);

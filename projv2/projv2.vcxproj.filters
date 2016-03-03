@@ -45,6 +45,9 @@
     <ClCompile Include="WaitingTask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Counter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Task.h">
@@ -87,6 +90,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="WaitingTask.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Counter.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

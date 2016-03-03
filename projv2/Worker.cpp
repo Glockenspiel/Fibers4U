@@ -26,7 +26,7 @@ void Worker::run(){
 			lastRun = steady_clock::now();
 			currentFiber->runAndFree();
 			setState(State::free);
-			fiberPool->taskFinished();
+			Scheduler::taskFinished();
 			Scheduler::notifyWorkerBeenFreed(this);
 		}
 

@@ -6,8 +6,8 @@
 
 class WaitingTask{
 public:
-	WaitingTask(BaseTask* task, int count);
-	WaitingTask(BaseTask* task, int count, Priority taskPriority);
+	WaitingTask(BaseTask* task, unsigned int count);
+	WaitingTask(BaseTask* task, unsigned int count, Priority taskPriority);
 	~WaitingTask();
 	int getWaitingCount();
 	BaseTask* getTask();
