@@ -4,11 +4,7 @@
 #include <vector>
 #include <atomic>
 
-template<class T>
-struct element{
-	T val;
-	element<T>* next;
-};
+#include "element.h"
 
 //concurrent data structure for std::vector which uses atomic spinlocks
 template<class T>
@@ -42,9 +38,9 @@ public:
 	void clear();
 
 private:
-	element<T> *front = nullptr;
-	element<T> *back = nullptr;
-	element<T> *cur = nullptr;
+	element<T>	*front = nullptr,
+				*back = nullptr,
+				*cur = nullptr;
 
 	std::vector<T> list;
 	std::atomic_flag lock;

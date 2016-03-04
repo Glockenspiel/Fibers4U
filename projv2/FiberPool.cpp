@@ -31,13 +31,13 @@ Fiber& FiberPool::popNextFiber(){
 	Fiber* fiber = nullptr;
 
 	if (fiberQueueHigh.empty() == false){
-		fiber = fiberQueueHigh.pop();
+		fiber = fiberQueueHigh.getPop();
 	}
 	else if (fiberQueueMedium.empty() == false){
-		fiber = fiberQueueMedium.pop();
+		fiber = fiberQueueMedium.getPop();
 	}
 	else if ((fiberQueueLow.empty() == false)){
-		fiber = fiberQueueLow.pop();
+		fiber = fiberQueueLow.getPop();
 	}
 
 	return *fiber;

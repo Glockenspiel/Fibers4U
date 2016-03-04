@@ -81,6 +81,7 @@
     <ClInclude Include="con_queue.h" />
     <ClInclude Include="con_vector.h" />
     <ClInclude Include="Counter.h" />
+    <ClInclude Include="element.h" />
     <ClInclude Include="Fiber.h" />
     <ClInclude Include="FiberPool.h" />
     <ClInclude Include="Nothing.h" />
