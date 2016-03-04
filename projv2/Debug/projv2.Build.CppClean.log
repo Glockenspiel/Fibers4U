@@ -2,6 +2,7 @@ c:\users\jeoff\fyp\fibers4u\projv2\debug\vc120.pdb
 c:\users\jeoff\fyp\fibers4u\projv2\debug\vc120.idb
 c:\users\jeoff\fyp\fibers4u\projv2\debug\fiber.obj
 c:\users\jeoff\fyp\fibers4u\projv2\debug\fiberpool.obj
+c:\users\jeoff\fyp\fibers4u\projv2\debug\waitingtask.obj
 c:\users\jeoff\fyp\fibers4u\projv2\debug\worker.obj
 c:\users\jeoff\fyp\fibers4u\projv2\debug\main.obj
 c:\users\jeoff\fyp\fibers4u\projv2\debug\player.obj
@@ -9,8 +10,7 @@ c:\users\jeoff\fyp\fibers4u\projv2\debug\scheduler.obj
 c:\users\jeoff\fyp\fibers4u\projv2\debug\spinlock.obj
 c:\users\jeoff\fyp\fibers4u\projv2\debug\task.obj
 c:\users\jeoff\fyp\fibers4u\projv2\debug\timer.obj
-c:\users\jeoff\fyp\fibers4u\projv2\debug\wintimer.obj
-c:\users\jeoff\fyp\fibers4u\projv2\debug\waitingtask.obj
+c:\users\jeoff\fyp\fibers4u\projv2\debug\counter.obj
 c:\users\jeoff\fyp\fibers4u\debug\projv2.ilk
 c:\users\jeoff\fyp\fibers4u\debug\projv2.exe
 c:\users\jeoff\fyp\fibers4u\debug\projv2.pdb
