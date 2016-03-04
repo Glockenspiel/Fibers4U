@@ -11,18 +11,25 @@ class con_queue{
 public:
 	//pops the first element off the queue and returns it
 	T getPop();
+
 	//pops off the first element
 	void pop();
+
 	//returns the first element
 	T front();
 
+	//returns last element
 	T back();
+
 	//pushes the item onto the back of the queue
 	void push(T t);
+
 	//returns the size of the queue
 	int size();
+
 	//returns true if the queue is empty
 	bool empty();
+
 private:
 
 	//std::queue<T> queue;

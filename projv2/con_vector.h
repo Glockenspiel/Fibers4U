@@ -42,7 +42,7 @@ private:
 				*back = nullptr,
 				*cur = nullptr;
 
-	std::vector<T> list;
+	unsigned int totalSize=0;
 	std::atomic_flag lock;
 };
 
@@ -50,20 +50,7 @@ template<class T>
 unsigned int con_vector<T>::size(){
 	unsigned int count;
 	while (lock.test_and_set(std::memory_order_seq_cst));
-
-	if (front == nullptr){
-		count = 0;
-	}
-	else{
-		cur = front;
-		count = 1;
-
-		while (cur->next != nullptr){
-			cur = cur->next;
-			count++;
-		}
-	}
-
+	count = totalSize;
 	lock.clear(std::memory_order_seq_cst);
 	return count;
 }
@@ -83,7 +70,7 @@ void con_vector<T>::push_back(T t){
 		back->next = e;
 		back = e;
 	}
-
+	totalSize++;
 	lock.clear(std::memory_order_seq_cst);
 }
 
@@ -129,7 +116,7 @@ void con_vector<T>::erase(unsigned int index){
 			}
 		}
 	}
-
+	totalSize--;
 	lock.clear(std::memory_order_seq_cst);
 }
 
@@ -162,7 +149,11 @@ void con_vector<T>::clear(){
 	while (lock.test_and_set(std::memory_order_seq_cst));
 	front = nullptr;
 	back = nullptr;
+	totalSize=0;
 	lock.clear(std::memory_order_seq_cst);
 }
+
+
+
 
 #endif
