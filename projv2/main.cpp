@@ -2,7 +2,7 @@
 #include "Task.h"
 #include "Player.h"
 #include "Scheduler.h"
-#include "Global.h"
+#include "con_iostream.h"
 #include "TaskArgs.h"
 #include "TaskArgsCopy.h"
 #include "Timer.h"
@@ -11,6 +11,9 @@ using namespace std;
 
 
 int main(){
+
+	//fbr::cout << tuple.get<0>() << ":" << tuple.get<1>() << fbr::endl;
+
 	Player *p = new Player();
 	BaseTask *printHP = new TaskArgs<>(&Player::printHp, p);
 
@@ -25,7 +28,7 @@ int main(){
 
 	TaskArgsCopy<int, int, int> *move = new TaskArgsCopy<int, int, int>(&Player::move, p);
 	int c = 0;
-	move->setArgs(54, c, global::getThreadCount());
+	move->setArgs(54, c, std::thread::hardware_concurrency());
 
 	Task *inputtask = new Task(&Player::taskInput, p);
 
@@ -34,7 +37,7 @@ int main(){
 		return 0;
 	}
 
-	fbr::cout << "All workers ready! " << fbr::endl;
+	fbr::con_cout << "All workers ready! " << fbr::endl;
 
 	Task *update = new Task(&Player::update, p);
 	
@@ -66,7 +69,7 @@ int main(){
 	delete scheduler;
 	
 	//fbr::log << "here" << Log::endl;
-	fbr::cout << "Scheduler deleted" << fbr::endl;
+	fbr::con_cout << "Scheduler deleted" << fbr::endl;
 	Timer *timer = new Timer();
 	timer->wait(2);
 	delete timer;

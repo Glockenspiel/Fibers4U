@@ -16,15 +16,15 @@ Fiber::~Fiber(){
 void Fiber::run(){
 	waitForState(prepared);
 
-	fbr::cout << "Exe..." << id << fbr::endl;
+	fbr::con_cout << "Exe..." << id << fbr::endl;
 	currentTask->run();
-	fbr::cout << "Com..." << id << fbr::endl;
+	fbr::con_cout << "Com..." << id << fbr::endl;
 
 }
 
 //alert the scheduler that this task has completed and is ready for reallocation
 void Fiber::freeFiber(){
-	fbr::cout << "freed:" << id  << fbr::endl;
+	fbr::con_cout << "freed:" << id << fbr::endl;
 	setState(free);
 }
 

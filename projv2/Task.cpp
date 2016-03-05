@@ -1,5 +1,5 @@
 #include "Task.h"
-#include "global.h"
+#include "con_iostream.h"
 
 Task::Task(function<void()>& func){
 	fn = func;

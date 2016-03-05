@@ -18,7 +18,7 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 
 	//do check on fiber and thread count, display error message if true
 	if (FIBER_COUNT < THREAD_COUNT && FIBER_COUNT>0){
-		fbr::cout_warn << "Scheduler not started!" << fbr::endl <<
+		fbr::con_cout_warn << "Scheduler not started!" << fbr::endl <<
 			"Need more fibers" << fbr::endl <<
 			"Thread count: " << THREAD_COUNT << fbr::endl <<
 			"Fiber count: " << FIBER_COUNT << fbr::endl <<
@@ -85,7 +85,7 @@ void Scheduler::addToQueue(BaseTask *task, Priority taskPrioirty){
 
 		//display warining if spining for a free fiber
 		if (fiber == nullptr){
-			fbr::cout_warn << "Task waiting for free fiber." << fbr::endl <<
+			fbr::con_cout_warn << "Task waiting for free fiber." << fbr::endl <<
 				"Create more fibers to prevent unessasary waiting." << fbr::endl <<
 				"This can also cause dealock." << fbr::endl;
 		}
@@ -179,7 +179,7 @@ void Scheduler::empty(){}
 
 //wakes up the main thread to end the programs execution
 void Scheduler::wakeUpMain(){
-	fbr::cout << "WAKEWAKEWAKEWAKE" << fbr::endl;
+	fbr::con_cout << "WAKEWAKEWAKEWAKE" << fbr::endl;
 	std::lock_guard<std::mutex> lk(*mainMtx);
 	mainAwake = true;
 
@@ -216,9 +216,9 @@ void Scheduler::notifyWorkerBeenFreed(Worker* worker){
 		nextFiber->setPrepared();
 	}
 	else{
-		fbr::cout << "queue is empty" << fbr::endl;
+		fbr::con_cout << "queue is empty" << fbr::endl;
 	}
-	fbr::cout << "Task completed: " << taskCounter.get() << fbr::endl;
+	fbr::con_cout << "Task completed: " << taskCounter.get() << fbr::endl;
 }
 
 //allows a task to wait until counter reaches a point without spinlocking a worker thread

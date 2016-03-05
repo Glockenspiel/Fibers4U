@@ -1,6 +1,6 @@
 #include "Worker.h"
 #include <iostream>
-#include "global.h"
+#include "con_iostream.h"
 #include "Scheduler.h"
 #include <ctime>
 

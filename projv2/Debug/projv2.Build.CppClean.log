@@ -1,5 +1,7 @@
+c:\users\jeoff\appdata\local\microsoft\windows\wer\reportarchive\appcrash_cl.exe_15778f912fa12fd8ec1889e1bfc2242fae224b3a_0c5e1b75\report.wer
 c:\users\jeoff\fyp\fibers4u\projv2\debug\vc120.pdb
 c:\users\jeoff\fyp\fibers4u\projv2\debug\vc120.idb
+c:\users\jeoff\fyp\fibers4u\projv2\debug\counter.obj
 c:\users\jeoff\fyp\fibers4u\projv2\debug\fiber.obj
 c:\users\jeoff\fyp\fibers4u\projv2\debug\fiberpool.obj
 c:\users\jeoff\fyp\fibers4u\projv2\debug\waitingtask.obj
@@ -10,10 +12,14 @@ c:\users\jeoff\fyp\fibers4u\projv2\debug\scheduler.obj
 c:\users\jeoff\fyp\fibers4u\projv2\debug\spinlock.obj
 c:\users\jeoff\fyp\fibers4u\projv2\debug\task.obj
 c:\users\jeoff\fyp\fibers4u\projv2\debug\timer.obj
-c:\users\jeoff\fyp\fibers4u\projv2\debug\counter.obj
+c:\users\jeoff\fyp\fibers4u\projv2\debug\con_vector.obj
 c:\users\jeoff\fyp\fibers4u\debug\projv2.ilk
 c:\users\jeoff\fyp\fibers4u\debug\projv2.exe
 c:\users\jeoff\fyp\fibers4u\debug\projv2.pdb
+c:\users\jeoff\fyp\fibers4u\projv2\debug\projv2.tlog\cl-dw20-dwwin.read.2.tlog
+c:\users\jeoff\fyp\fibers4u\projv2\debug\projv2.tlog\cl-dw20-dwwin.read.4.tlog
+c:\users\jeoff\fyp\fibers4u\projv2\debug\projv2.tlog\cl-dw20-dwwin.write.2.tlog
+c:\users\jeoff\fyp\fibers4u\projv2\debug\projv2.tlog\cl-dw20.read.1.tlog
 c:\users\jeoff\fyp\fibers4u\projv2\debug\projv2.tlog\cl.command.1.tlog
 c:\users\jeoff\fyp\fibers4u\projv2\debug\projv2.tlog\cl.read.1.tlog
 c:\users\jeoff\fyp\fibers4u\projv2\debug\projv2.tlog\cl.write.1.tlog

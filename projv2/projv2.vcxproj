@@ -80,6 +80,7 @@
     <ClInclude Include="BaseTask.h" />
     <ClInclude Include="con_queue.h" />
     <ClInclude Include="con_vector.h" />
+    <ClInclude Include="con_soa_vector.h" />
     <ClInclude Include="Counter.h" />
     <ClInclude Include="element.h" />
     <ClInclude Include="Fiber.h" />
@@ -89,7 +90,7 @@
     <ClInclude Include="TaskArgsCopy.h" />
     <ClInclude Include="WaitingTask.h" />
     <ClInclude Include="Worker.h" />
-    <ClInclude Include="global.h" />
+    <ClInclude Include="con_iostream.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Scheduler.h" />
     <ClInclude Include="SpinLock.h" />

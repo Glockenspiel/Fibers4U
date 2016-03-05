@@ -1,7 +1,7 @@
 #include "SpinLock.h"
 #include <iostream>
 #include "Timer.h"
-#include "Global.h"
+#include "con_iostream.h"
 #include <thread>
 
 

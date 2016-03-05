@@ -6,7 +6,7 @@
 #include <atomic>
 #include "Fiber.h"
 #include <thread>
-#include "Global.h"
+#include "con_iostream.h"
 #include "Worker.h"
 #include <mutex>
 #include <condition_variable>
