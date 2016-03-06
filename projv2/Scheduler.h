@@ -20,6 +20,7 @@ using std::thread;
 using std::mutex;
 
 static atomic<bool> isCompleted = false;
+static bool useDynamicFibers;
 static FiberPool *fiberPool;
 static mutex *mainMtx;
 static std::condition_variable mainCV;
@@ -31,13 +32,16 @@ static con_vector<Worker *> workers;
 //atomic flag for accessing waitingTasks
 static std::atomic_flag waitingLock = ATOMIC_FLAG_INIT;
 
+//lock for adding dynamic fibers
+static std::atomic_flag dynamicFiberLock = ATOMIC_FLAG_INIT;
+
 using std::vector;
 
 class Scheduler{
 public:
 	//intialises all the worker threads
-	Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_COUNT, 
-		BaseTask* startingTask);
+	Scheduler(const unsigned int FIBER_COUNT, const unsigned int THREAD_COUNT,
+		BaseTask* startingTask, bool fibersAreDynamic);
 
 	//destructor, must call close() first
 	~Scheduler();
@@ -96,7 +100,7 @@ private:
 
 	con_vector<thread*> threads;
 	bool isConstructed = true;
-
+	
 	
 };
 

@@ -12,12 +12,13 @@ using namespace count;
 //varaible used in lambda expression to notify main thread to wake up
 bool mainAwake = false;
 
-Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_COUNT, 
-	BaseTask* startingTask){
+Scheduler::Scheduler(const unsigned int FIBER_COUNT, const unsigned int THREAD_COUNT, 
+	BaseTask* startingTask, bool fiberAreDynamic){
 	mainMtx = new mutex();
+	useDynamicFibers = fiberAreDynamic;
 
 	//do check on fiber and thread count, display error message if true
-	if (FIBER_COUNT < THREAD_COUNT && FIBER_COUNT>0){
+	if (FIBER_COUNT < THREAD_COUNT && FIBER_COUNT>0 && useDynamicFibers==false){
 		fbr::con_cout_warn << "Scheduler not started!" << fbr::endl <<
 			"Need more fibers" << fbr::endl <<
 			"Thread count: " << THREAD_COUNT << fbr::endl <<
@@ -31,7 +32,11 @@ Scheduler::Scheduler(unsigned const int FIBER_COUNT, unsigned const int THREAD_C
 	}
 
 	//construct FiberPool and its fibers
-	fiberPool = new FiberPool(FIBER_COUNT);
+	//if dynamic make sure there is at least 1 fiber per worker
+	if (useDynamicFibers && FIBER_COUNT<THREAD_COUNT)
+		fiberPool = new FiberPool(THREAD_COUNT);
+	else
+		fiberPool = new FiberPool(FIBER_COUNT);
 
 	taskCounter+=THREAD_COUNT;
 
@@ -83,11 +88,20 @@ void Scheduler::addToQueue(BaseTask *task, Priority taskPrioirty){
 	do{
 		fiber = fiberPool->tryAcquireFreeFiber();
 
-		//display warining if spining for a free fiber
+		//no free fiber found
 		if (fiber == nullptr){
-			fbr::con_cout_warn << "Task waiting for free fiber." << fbr::endl <<
-				"Create more fibers to prevent unessasary waiting." << fbr::endl <<
-				"This can also cause dealock." << fbr::endl;
+			//if dynamic create a new fiber
+			if (useDynamicFibers){
+				while(dynamicFiberLock.test_and_set(std::memory_order_seq_cst));
+					fiberPool->fibers.push_back(new Fiber(fiberPool->fibers.size()));
+				dynamicFiberLock.clear(std::memory_order_seq_cst);
+			}
+			//display warning of the unessasary spin lock
+			else{
+				fbr::con_cout_warn << "Task waiting for free fiber." << fbr::endl <<
+					"Create more fibers to prevent unessasary waiting." << fbr::endl <<
+					"This can also cause dealock." << fbr::endl;
+			}
 		}
 	} while (fiber==nullptr);
 
@@ -201,7 +215,7 @@ void Scheduler::waitMain(){
 void Scheduler::notifyWorkerBeenFreed(Worker* worker){
 	//check if any waiting tasks should be added to the queue
 	checkWaitingTasks();
-
+	fbr::con_cout << "NOTIFIED:" << worker->getID() << fbr::endl;
 	//check if there is any queued fibers
 	if (fiberPool->queueHasNext()){
 		//acquire worker
