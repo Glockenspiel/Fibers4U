@@ -23,12 +23,12 @@ public:
 
 	//Warning logger, prints the function name too
 	Log(const std::string &funcName){
-		getLock();
-		std::cout << "Warning! "<< funcName << ": "  << std::endl;
+		while (writeFlag.test_and_set(std::memory_order_seq_cst));
+		std::cout << "Warning! " << funcName << ": " << std::endl;
 	}
 
 	//spinlock until lock is acquired
-	void getLock(){
+	static void getLock(){
 		while (writeFlag.test_and_set(std::memory_order_seq_cst));
 	}
 
@@ -49,6 +49,7 @@ public:
 
 	//release lock after printing has completed
 	~Log(){
+		//release lock
 		writeFlag.clear(std::memory_order_seq_cst);
 	}
 };

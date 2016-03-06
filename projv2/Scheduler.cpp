@@ -215,7 +215,6 @@ void Scheduler::waitMain(){
 void Scheduler::notifyWorkerBeenFreed(Worker* worker){
 	//check if any waiting tasks should be added to the queue
 	checkWaitingTasks();
-	fbr::con_cout << "NOTIFIED:" << worker->getID() << fbr::endl;
 	//check if there is any queued fibers
 	if (fiberPool->queueHasNext()){
 		//acquire worker

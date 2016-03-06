@@ -6,13 +6,16 @@
 #include "TaskArgs.h"
 #include "TaskArgsCopy.h"
 #include "Timer.h"
+#include "SpinLock.h"
 
 using namespace std;
+
 
 
 int main(){
 
 	//fbr::cout << tuple.get<0>() << ":" << tuple.get<1>() << fbr::endl;
+	
 
 	Player *p = new Player();
 	BaseTask *printHP = new TaskArgs<>(&Player::printHp, p);

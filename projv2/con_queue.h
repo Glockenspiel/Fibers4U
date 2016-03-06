@@ -31,7 +31,8 @@ public:
 	bool empty();
 
 private:
-
+	void getLock();
+	void unlock();
 	//std::queue<T> queue;
 	element<T>	*frontptr=nullptr, 
 				*backptr=nullptr;
@@ -42,32 +43,32 @@ private:
 template<class T>
 T con_queue<T>::getPop(){
 	T t;
-	while (lock.test_and_set(std::memory_order_seq_cst));
+	getLock();
 	t = frontptr->val;
 	frontptr = frontptr->next;
-	lock.clear(std::memory_order_seq_cst);
+	unlock();
 	return t;
 }
 
 //pop function with locking
 template<class T>
 void con_queue<T>::pop(){
-	while (lock.test_and_set(std::memory_order_seq_cst));
+	getLock();
 	head = head->next;
-	lock.clear(std::memory_order_seq_cst);
+	unlock();
 }
 
 
 template<class T>
 T con_queue<T>::front(){
-	while (lock.test_and_set(std::memory_order_seq_cst));
+	getLock();
 	return *frontptr;
-	lock.clear(std::memory_order_seq_cst);
+	unlock();
 }
 
 template<class T>
 void con_queue<T>::push(T t){
-	while (lock.test_and_set(std::memory_order_seq_cst));
+	getLock();
 	element<T> *e = new element<T>();
 	e->next = nullptr;
 	e->val = t;
@@ -81,13 +82,13 @@ void con_queue<T>::push(T t){
 		backptr->next = e;
 		backptr = e;
 	}
-	lock.clear(std::memory_order_seq_cst);
+	unlock();
 }
 
 template<class T>
 int con_queue<T>::size(){
 	int count;
-	while (lock.test_and_set(std::memory_order_seq_cst));
+	getLock();
 	element<T> *ptr = front;
 	if (ptr == nullptr)
 		count = 0;
@@ -98,16 +99,16 @@ int con_queue<T>::size(){
 			count++;
 		}
 	}
-	lock.clear(std::memory_order_seq_cst);
+	unlock();
 	return count;
 }
 
 template<class T>
 bool con_queue<T>::empty(){
 	bool flag;
-	while (lock.test_and_set(std::memory_order_seq_cst));
+	getLock();
 	flag = frontptr == nullptr;
-	lock.clear(std::memory_order_seq_cst);
+	unlock();
 	return flag;
 }
 
@@ -116,6 +117,14 @@ T con_queue<T>::back(){
 	return *back;
 }
 
+template <class T>
+void con_queue<T>::getLock(){
+	while (lock.test_and_set(std::memory_order_seq_cst));
+}
 
+template <class T>
+void con_queue<T>::unlock(){
+	lock.clear(std::memory_order_seq_cst);
+}
 
 #endif

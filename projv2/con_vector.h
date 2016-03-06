@@ -38,6 +38,9 @@ public:
 	void clear();
 
 private:
+	void getLock();
+	void unlock();
+
 	element<T>	*front = nullptr,
 				*back = nullptr,
 				*cur = nullptr;
@@ -49,15 +52,15 @@ private:
 template<class T>
 unsigned int con_vector<T>::size(){
 	unsigned int count;
-	while (lock.test_and_set(std::memory_order_seq_cst));
+	getLock();
 	count = totalSize;
-	lock.clear(std::memory_order_seq_cst);
+	unlock();
 	return count;
 }
 
 template<class T>
 void con_vector<T>::push_back(T t){
-	while (lock.test_and_set(std::memory_order_seq_cst));
+	getLock();
 	element<T>* e = new element<T>();
 	e->val = t;
 	e->next = nullptr;
@@ -71,21 +74,21 @@ void con_vector<T>::push_back(T t){
 		back = e;
 	}
 	totalSize++;
-	lock.clear(std::memory_order_seq_cst);
+	unlock();
 }
 
 template<class T>
 bool con_vector<T>::empty(){
 	bool flag;
-	while (lock.test_and_set(std::memory_order_seq_cst));
+	getLock();
 	flag = front == nullptr;
-	lock.clear(std::memory_order_seq_cst);
+	unlock();
 	return flag;
 }
 
 template<class T>
 void con_vector<T>::erase(unsigned int index){
-	while (lock.test_and_set(std::memory_order_seq_cst));
+	getLock();
 
 	//remove front element
 	if (index == 0){
@@ -117,13 +120,13 @@ void con_vector<T>::erase(unsigned int index){
 		}
 	}
 	totalSize--;
-	lock.clear(std::memory_order_seq_cst);
+	unlock();
 }
 
 template<class T>
 T con_vector<T>::at(unsigned int index){
 	T t;
-	while (lock.test_and_set(std::memory_order_seq_cst));
+	getLock();
 
 	cur = front;
 
@@ -135,7 +138,7 @@ T con_vector<T>::at(unsigned int index){
 
 	t = cur->val;
 
-	lock.clear(std::memory_order_seq_cst);
+	unlock();
 	return t;
 }
 
@@ -146,14 +149,22 @@ T con_vector<T>::operator[](unsigned int index){
 
 template <class T>
 void con_vector<T>::clear(){
-	while (lock.test_and_set(std::memory_order_seq_cst));
+	getLock();
 	front = nullptr;
 	back = nullptr;
 	totalSize=0;
-	lock.clear(std::memory_order_seq_cst);
+	unlock();
 }
 
+template <class T>
+void con_vector<T>::getLock(){
+	while (lock.test_and_set(std::memory_order_seq_cst));
+}
 
+template <class T>
+void con_vector<T>::unlock(){
+	lock.clear(std::memory_order_seq_cst);
+}
 
 
 #endif

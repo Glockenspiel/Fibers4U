@@ -18,7 +18,7 @@ public:
 	bool getIsLocked();
 private:
 	std::atomic_flag isLocked;
-	bool curLock;
+	std::atomic<bool> curLock;
 };
 
 #endif
