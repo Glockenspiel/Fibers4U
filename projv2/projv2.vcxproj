@@ -83,6 +83,7 @@
     <ClInclude Include="con_soa_vector.h" />
     <ClInclude Include="Counter.h" />
     <ClInclude Include="element.h" />
+    <ClInclude Include="fbr.h" />
     <ClInclude Include="Fiber.h" />
     <ClInclude Include="FiberPool.h" />
     <ClInclude Include="Nothing.h" />

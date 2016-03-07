@@ -107,5 +107,8 @@
     <ClInclude Include="con_iostream.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="fbr.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
