@@ -20,6 +20,8 @@ using std::thread;
 using std::mutex;
 
 static atomic<bool> isCompleted = false;
+
+//boolean to detect if the scheduler should use dynamic fibers
 static bool useDynamicFibers;
 static FiberPool *fiberPool;
 static mutex *mainMtx;
