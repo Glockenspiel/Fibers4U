@@ -4,6 +4,7 @@
 #include "Timer.h"
 #include "Scheduler.h"
 #include "con_soa_vector.h"
+#include "concurrent.h"
 
 Player::Player(){
 
@@ -47,7 +48,13 @@ void Player::taskInput(){
 	con_soa_vector<int, double> soalist;
 	soalist.add(1, 3.5);
 
-
+	concurrent<int> aa = 10;
+	concurrent<double> dd = 5.5;
+	++dd;
+	aa = dd.get() + 10;
+	concurrent<int>* ptr = &aa;
+	
+	fbr::con_cout << "CONCURRENT VALUE:" << ptr->get() << fbr::endl;
 
 	std::string s;
 	fbr::cin(s, "Enter some text:");
