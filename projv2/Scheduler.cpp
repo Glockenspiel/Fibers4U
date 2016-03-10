@@ -13,9 +13,10 @@ using namespace count;
 bool mainAwake = false;
 
 Scheduler::Scheduler(const unsigned int FIBER_COUNT, const unsigned int THREAD_COUNT, 
-	BaseTask* startingTask, bool fiberAreDynamic){
+	BaseTask* startingTask, bool fiberAreDynamic, bool enableSleeping){
 	mainMtx = new mutex();
 	useDynamicFibers = fiberAreDynamic;
+	isSleepingEnabled = enableSleeping;
 
 	//do check on fiber and thread count, display error message if true
 	if (FIBER_COUNT < THREAD_COUNT && FIBER_COUNT>0 && useDynamicFibers==false){
@@ -287,3 +288,6 @@ void Scheduler::notifyTaskFinished(){
 	taskCounter--;
 }
 
+bool Scheduler::sleepingEnabled(){
+	return isSleepingEnabled.get();
+}

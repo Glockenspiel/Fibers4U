@@ -22,18 +22,26 @@ void Worker::run(){
 	running = true;
 	while (running.load(std::memory_order_relaxed)){
 		if (state.load(std::memory_order_relaxed) == State::prepared){
-			lastRun = steady_clock::now();
 			currentFiber->runAndFree();
 			setState(State::free);
 			Scheduler::notifyTaskFinished();
 			Scheduler::notifyWorkerBeenFreed(this);
+			lastRun = steady_clock::now();
 		}
 
-		timeNow = high_resolution_clock::now();
-		timeSinceLastRun= timeNow-lastRun;
-		if (timeSinceLastRun > timeUntilSleep){
-		//	fbr::cout << "WORKER SHOULD SLEEP: " << getID() << fbr::endl << 
-		//		"Time since used: " << timeSinceLastRun.count() << "ms" << fbr::endl;
+		//don't sleep if sleeping is disabled
+		if (Scheduler::sleepingEnabled()){
+			timeNow = high_resolution_clock::now();
+			timeSinceLastRun = timeNow - lastRun;
+			if (timeSinceLastRun > timeUntilSleep && isAwake){
+				fbr::con_cout << "WORKER ASLEEP: " << getID() << fbr::endl;
+				isAwake = false;
+
+				std::unique_lock<std::mutex> lk(mtx);
+				while (isAwake == false) cv.wait(lk);
+
+				fbr::con_cout << "WORKER AWAKE:" << id << fbr::endl;
+			}
 		}
 	}
 }
@@ -59,9 +67,9 @@ void Worker::switchFiber(Fiber& fiber){
 void Worker::close(){
 	//wait for current fiber to be set
 	while (currentFiber == nullptr){}
-
 	currentFiber->waitUntilFree();
 	running.store(false, std::memory_order_release);
+	wakeUp();
 }
 
 //switch in the fiber, use fibers current task
@@ -86,6 +94,16 @@ bool Worker::tryAcquire(){
 void Worker::forceAcquire(){
 	while (state.load(std::memory_order_relaxed) != free){}
 	setState(State::aquired);
+	wakeUp();
+}
+
+//wake up worker thread if it is asleep
+void Worker::wakeUp(){
+	if (isSleepingEnabled.get())
+	{
+		isAwake = true;
+		cv.notify_one();
+	}
 }
 
 //sets the state of the worker
@@ -98,6 +116,7 @@ unsigned int Worker::getID(){
 	return id;
 }
 
+//returns the current state
 Worker::State Worker::getState(){
 	return state;
 }

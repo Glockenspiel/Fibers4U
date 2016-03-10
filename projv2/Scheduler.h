@@ -14,6 +14,7 @@
 #include "WaitingTask.h"
 #include "Counter.h"
 #include <stdarg.h>
+#include "concurrent.h"
 
 
 using std::thread;
@@ -37,13 +38,15 @@ static std::atomic_flag waitingLock = ATOMIC_FLAG_INIT;
 //lock for adding dynamic fibers
 static std::atomic_flag dynamicFiberLock = ATOMIC_FLAG_INIT;
 
+static concurrent<bool> isSleepingEnabled = true;
+
 using std::vector;
 
 class Scheduler{
 public:
 	//intialises all the worker threads
 	Scheduler(const unsigned int FIBER_COUNT, const unsigned int THREAD_COUNT,
-		BaseTask* startingTask, bool fibersAreDynamic);
+		BaseTask* startingTask, bool fibersAreDynamic, bool enableSleeping);
 
 	//destructor, must call close() first
 	~Scheduler();
@@ -86,6 +89,8 @@ public:
 
 	//notifies the task counter that a task has completed
 	static void notifyTaskFinished();
+
+	static bool sleepingEnabled();
 	
 private:
 	//adds a task to the task queue

@@ -6,8 +6,13 @@
 #include <mutex>
 #include <chrono>
 
+
+#include <condition_variable>
+
+
 using std::atomic;
 using namespace std::chrono;
+
 
 class Worker{
 public:
@@ -49,16 +54,24 @@ private:
 	//sets the state
 	void setState(State s);
 
+	//wakes up the worker thread if it is asleep
+	void wakeUp();
+
 	atomic<bool> running = false;
 	Fiber* currentFiber;
 	atomic<State> state = free;
 	
+	//values for sleeping
 	unsigned int id;
 	high_resolution_clock::time_point lastRun, timeNow;
 
 	duration<double, std::milli> 
 		timeSinceLastRun, 
 		timeUntilSleep = duration<double, std::milli>(1000);
+
+	bool isAwake = true;
+	std::condition_variable cv;
+	std::mutex mtx;
 };
 
 #endif

@@ -28,7 +28,7 @@ int main(){
 
 	Task *inputtask = new Task(&Player::taskInput, p);
 
-	Scheduler *scheduler = new Scheduler(0,2, taskArg,true);
+	Scheduler *scheduler = new Scheduler(0,4, taskArg,true,false);
 	if (scheduler->getIsConstructed() == false){
 		return 0;
 	}
