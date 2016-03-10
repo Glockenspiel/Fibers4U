@@ -82,6 +82,7 @@
     <ClInclude Include="BaseTask.h" />
     <ClInclude Include="concurrent.h" />
     <ClInclude Include="con_queue.h" />
+    <ClInclude Include="con_stack.h" />
     <ClInclude Include="con_vector.h" />
     <ClInclude Include="con_soa_vector.h" />
     <ClInclude Include="Counter.h" />

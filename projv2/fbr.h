@@ -6,6 +6,7 @@
 #include "con_queue.h"
 #include "con_soa_vector.h"
 #include "con_vector.h"
+#include "con_stack.h"
 
 //tasks
 #include "Task.h"

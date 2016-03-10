@@ -122,5 +122,8 @@
     <ClInclude Include="thread_sleeper.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="con_stack.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

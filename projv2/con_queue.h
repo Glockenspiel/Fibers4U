@@ -54,7 +54,7 @@ T con_queue<T>::getPop(){
 template<class T>
 void con_queue<T>::pop(){
 	getLock();
-	head = head->next;
+	frontptr = frontptr->next;
 	unlock();
 }
 
@@ -87,18 +87,15 @@ void con_queue<T>::push(T t){
 
 template<class T>
 int con_queue<T>::size(){
-	int count;
+	int count=0;
 	getLock();
-	element<T> *ptr = front;
-	if (ptr == nullptr)
-		count = 0;
-	else{
-		count = 1;
-		while (ptr->next != nullptr){
+	element<T> *ptr = frontptr;
+
+		do {
 			ptr = ptr->next;
 			count++;
-		}
-	}
+		} while (ptr != nullptr);
+	
 	unlock();
 	return count;
 }
