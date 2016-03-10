@@ -7,14 +7,12 @@
 
 using namespace std::placeholders;
 using namespace priority;
-using namespace count;
 
 //varaible used in lambda expression to notify main thread to wake up
 bool mainAwake = false;
 
 Scheduler::Scheduler(const unsigned int FIBER_COUNT, const unsigned int THREAD_COUNT, 
 	BaseTask* startingTask, bool fiberAreDynamic, bool enableSleeping){
-	mainMtx = new mutex();
 	useDynamicFibers = fiberAreDynamic;
 	isSleepingEnabled = enableSleeping;
 
@@ -194,20 +192,13 @@ void Scheduler::empty(){}
 
 //wakes up the main thread to end the programs execution
 void Scheduler::wakeUpMain(){
-	fbr::con_cout << "WAKEWAKEWAKEWAKE" << fbr::endl;
-	std::lock_guard<std::mutex> lk(*mainMtx);
-	mainAwake = true;
-
-	//wake up main thread
-	mainCV.notify_one();
+	mainThreadSleeper.wakeUp();
 }
 
 //this allows for the a thread to yield until wakeUpMain() is called
 //only use this to yield the main thread
 void Scheduler::waitMain(){
-	std::unique_lock<std::mutex> lk(*mainMtx);
-	mainCV.wait(lk, []{return mainAwake; });
-	lk.unlock();
+	mainThreadSleeper.sleep();
 }
 
 //this is called by a worker when the worker had been freed.

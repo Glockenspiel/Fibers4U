@@ -8,27 +8,27 @@
 #include <thread>
 #include "con_iostream.h"
 #include "Worker.h"
-#include <mutex>
-#include <condition_variable>
 #include "FiberPool.h"
 #include "WaitingTask.h"
 #include "Counter.h"
 #include <stdarg.h>
-#include "concurrent.h"
+#include "thread_sleeper.h"
 
 
 using std::thread;
 using std::mutex;
+using std::vector;
 
-static atomic<bool> isCompleted = false;
 
 //boolean to detect if the scheduler should use dynamic fibers
 static bool useDynamicFibers;
-static FiberPool *fiberPool;
-static mutex *mainMtx;
-static std::condition_variable mainCV;
 
+static FiberPool *fiberPool;
+
+//queue for waiting before excution
 static con_vector<WaitingTask *> waitingTasks;
+
+//workers
 static con_vector<Worker *> workers;
 
 
@@ -38,9 +38,14 @@ static std::atomic_flag waitingLock = ATOMIC_FLAG_INIT;
 //lock for adding dynamic fibers
 static std::atomic_flag dynamicFiberLock = ATOMIC_FLAG_INIT;
 
+//enables or disables thread sleeping
 static concurrent<bool> isSleepingEnabled = true;
 
-using std::vector;
+//allows the main thread sleep
+static ThreadSleeper mainThreadSleeper;
+
+//counter for number of tasks being executed
+static Counter taskCounter;
 
 class Scheduler{
 public:
@@ -111,9 +116,5 @@ private:
 	
 };
 
-namespace count{
-	static Counter taskCounter;
-	static atomic<int> queueCounter = 0;
-}
 
 #endif
