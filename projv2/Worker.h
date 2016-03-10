@@ -3,11 +3,8 @@
 
 #include "Fiber.h"
 #include <atomic>
-#include <mutex>
 #include <chrono>
-
-
-#include <condition_variable>
+#include "thread_sleeper.h"
 
 
 using std::atomic;
@@ -69,9 +66,7 @@ private:
 		timeSinceLastRun, 
 		timeUntilSleep = duration<double, std::milli>(1000);
 
-	bool isAwake = true;
-	std::condition_variable cv;
-	std::mutex mtx;
+	ThreadSleeper threadSleeper;
 };
 
 #endif

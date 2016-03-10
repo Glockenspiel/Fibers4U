@@ -6,10 +6,6 @@ using namespace std;
 
 
 int main(){
-
-	//fbr::cout << tuple.get<0>() << ":" << tuple.get<1>() << fbr::endl;
-	
-
 	Player *p = new Player();
 	BaseTask *printHP = new TaskArgs<>(&Player::printHp, p);
 
@@ -28,7 +24,7 @@ int main(){
 
 	Task *inputtask = new Task(&Player::taskInput, p);
 
-	Scheduler *scheduler = new Scheduler(0,4, taskArg,true,false);
+	Scheduler *scheduler = new Scheduler(0,4, taskArg,true,true);
 	if (scheduler->getIsConstructed() == false){
 		return 0;
 	}

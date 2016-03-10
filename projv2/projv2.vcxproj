@@ -67,6 +67,7 @@
     <ClCompile Include="Counter.cpp" />
     <ClCompile Include="Fiber.cpp" />
     <ClCompile Include="FiberPool.cpp" />
+    <ClCompile Include="ThreadSleeper.cpp" />
     <ClCompile Include="WaitingTask.cpp" />
     <ClCompile Include="Worker.cpp" />
     <ClCompile Include="main.cpp" />
@@ -90,6 +91,7 @@
     <ClInclude Include="Nothing.h" />
     <ClInclude Include="TaskArgs.h" />
     <ClInclude Include="TaskArgsCopy.h" />
+    <ClInclude Include="thread_sleeper.h" />
     <ClInclude Include="WaitingTask.h" />
     <ClInclude Include="Worker.h" />
     <ClInclude Include="con_iostream.h" />

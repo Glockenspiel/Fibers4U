@@ -33,12 +33,10 @@ void Worker::run(){
 		if (Scheduler::sleepingEnabled()){
 			timeNow = high_resolution_clock::now();
 			timeSinceLastRun = timeNow - lastRun;
-			if (timeSinceLastRun > timeUntilSleep && isAwake){
+			if (timeSinceLastRun > timeUntilSleep){
 				fbr::con_cout << "WORKER ASLEEP: " << getID() << fbr::endl;
-				isAwake = false;
 
-				std::unique_lock<std::mutex> lk(mtx);
-				while (isAwake == false) cv.wait(lk);
+				threadSleeper.sleep();
 
 				fbr::con_cout << "WORKER AWAKE:" << id << fbr::endl;
 			}
@@ -100,10 +98,7 @@ void Worker::forceAcquire(){
 //wake up worker thread if it is asleep
 void Worker::wakeUp(){
 	if (isSleepingEnabled.get())
-	{
-		isAwake = true;
-		cv.notify_one();
-	}
+		threadSleeper.wakeUp();
 }
 
 //sets the state of the worker

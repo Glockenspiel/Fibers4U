@@ -4,10 +4,11 @@
 #include <atomic>
 
 /*
-	wrapper to allow all access and modifications to a class thread safe
-	this operations will follow sequentially-consistent ordering according to
+	A Wrapper to make all access and modifications to a primitive type thread safe.
+	This wrapper provides overloading for most of the operators and operands available in C++
+
+	these operations will follow sequentially-consistent ordering according to
 	std::memory_order_seq_cst
-	This wrapper provide overloading for most of the operators and operands available in C++
 */
 template <class T>
 class concurrent{

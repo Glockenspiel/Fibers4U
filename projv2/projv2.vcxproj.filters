@@ -48,6 +48,9 @@
     <ClCompile Include="Counter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ThreadSleeper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Task.h">
@@ -111,6 +114,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="concurrent.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="thread_sleeper.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
