@@ -24,6 +24,14 @@ void Fiber::run(){
 
 //alert the scheduler that this task has completed and is ready for reallocation
 void Fiber::freeFiber(){
+	//delete the current task if it is not reusable
+	if(currentTask->isReusable()==false)
+	{
+		BaseTask *temp = currentTask;
+		currentTask = nullptr;
+
+		delete temp;
+	}
 	fbr::con_cout << "freed:" << id << fbr::endl;
 	setState(free);
 }
@@ -31,19 +39,17 @@ void Fiber::freeFiber(){
 //sets the current task of the fiber and the fibers priority
 void Fiber::setTask(BaseTask* task, Priority p){
 	currentPriority = p;
-
-	if (task == currentTask) return;
-
-	BaseTask *temp = currentTask;
 	currentTask = task;
 
-	delete temp;
+	
 }
 
 //runs the current task and frees it
 void Fiber::runAndFree(){
 	run();
 	freeFiber();
+
+	
 }
 
 //returns the current id

@@ -11,9 +11,8 @@ using namespace std::placeholders;
 /*
 This is an overloaded template class which allows for different
 amounts of parameters (1,2 or 3).
-When this setArgs() is called the task will duplicate (Copy) the argument.
+When this setArgs() is called the task will duplicate (Copy) the argument(s).
 The copys will not update the origional values nor themselves be updated by the origionals.
-The copys will be deleted at destruction of this task.
 If you don't want to make copies look at TaskArgs
 */
 

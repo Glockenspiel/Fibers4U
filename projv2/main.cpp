@@ -23,6 +23,7 @@ int main(){
 	move->setArgs(54, c, std::thread::hardware_concurrency());
 
 	Task *inputtask = new Task(&Player::taskInput, p);
+	inputtask->setReuseable(true);
 
 	Scheduler *scheduler = new Scheduler(0,4, taskArg,true,true);
 	if (scheduler->getIsConstructed() == false){
@@ -46,6 +47,7 @@ int main(){
 	Scheduler::runTasks(priority::low, 4, printHP, move, update, longTask);
 
 	//scheduler->waitAllFibersFree();  
+	Scheduler::waitForCounter(0, inputtask);
 	Scheduler::waitForCounter(0, inputtask);
 
 

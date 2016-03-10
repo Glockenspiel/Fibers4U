@@ -64,6 +64,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BaseTask.cpp" />
     <ClCompile Include="Counter.cpp" />
     <ClCompile Include="Fiber.cpp" />
     <ClCompile Include="FiberPool.cpp" />
