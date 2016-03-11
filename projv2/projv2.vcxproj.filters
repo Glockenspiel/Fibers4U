@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\concurrent">
+      <UniqueIdentifier>{f2a15744-a825-470d-9d92-8627ed2339d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\task">
+      <UniqueIdentifier>{18369cad-a30d-440a-9b3b-7e701ba1fff2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -33,9 +39,6 @@
     <ClCompile Include="SpinLock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Timer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Worker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -54,76 +57,79 @@
     <ClCompile Include="BaseTask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SpinUntil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Task.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Scheduler.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Fiber.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SpinLock.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Timer.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Worker.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseTask.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Nothing.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TaskArgs.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TaskArgsCopy.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FiberPool.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WaitingTask.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Counter.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="con_queue.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="con_vector.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="element.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="con_soa_vector.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="con_iostream.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="fbr.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="concurrent.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="FiberPool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scheduler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpinLock.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="thread_sleeper.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Worker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WaitingTask.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="con_iostream.h">
+      <Filter>Header Files\concurrent</Filter>
+    </ClInclude>
+    <ClInclude Include="con_queue.h">
+      <Filter>Header Files\concurrent</Filter>
+    </ClInclude>
+    <ClInclude Include="con_soa_vector.h">
+      <Filter>Header Files\concurrent</Filter>
     </ClInclude>
     <ClInclude Include="con_stack.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files\concurrent</Filter>
+    </ClInclude>
+    <ClInclude Include="con_vector.h">
+      <Filter>Header Files\concurrent</Filter>
+    </ClInclude>
+    <ClInclude Include="concurrent.h">
+      <Filter>Header Files\concurrent</Filter>
+    </ClInclude>
+    <ClInclude Include="Counter.h">
+      <Filter>Header Files\concurrent</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseTask.h">
+      <Filter>Header Files\task</Filter>
+    </ClInclude>
+    <ClInclude Include="Task.h">
+      <Filter>Header Files\task</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskArgs.h">
+      <Filter>Header Files\task</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskArgsCopy.h">
+      <Filter>Header Files\task</Filter>
+    </ClInclude>
+    <ClInclude Include="element.h">
+      <Filter>Header Files\concurrent</Filter>
+    </ClInclude>
+    <ClInclude Include="Nothing.h">
+      <Filter>Header Files\task</Filter>
+    </ClInclude>
+    <ClInclude Include="SpinUntil.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

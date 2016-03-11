@@ -64,7 +64,7 @@ int main(){
 	
 	//fbr::log << "here" << Log::endl;
 	fbr::con_cout << "Scheduler deleted" << fbr::endl;
-	Timer *timer = new Timer();
+	SpinUntil *timer = new SpinUntil();
 	timer->wait(2);
 	delete timer;
 }

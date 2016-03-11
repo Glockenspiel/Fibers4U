@@ -1,7 +1,7 @@
 #include "Player.h"
 #include <iostream>
 #include "con_iostream.h"
-#include "Timer.h"
+#include "SpinUntil.h"
 #include "Scheduler.h"
 #include "con_soa_vector.h"
 #include "concurrent.h"
@@ -40,7 +40,7 @@ void Player::move(int x, int y, int z){
 }
 
 void Player::longTask(){
-	Timer *t = new Timer();
+	SpinUntil *t = new SpinUntil();
 	t->wait(2);
 }
 

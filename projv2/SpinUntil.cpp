@@ -1,11 +1,12 @@
-#include "Timer.h"
+#include "SpinUntil.h"
+#include <ctime>
 
-Timer::Timer(){}
+SpinUntil::SpinUntil(){}
 
-Timer::~Timer(){}
+SpinUntil::~SpinUntil(){}
 
 //wait until time is up using a spin lock
-void Timer::wait(int secs){
+void SpinUntil::wait(int secs){
 	std::time_t endTime = std::time(nullptr) + secs;
 	while (endTime > std::time(nullptr)){}
 }
