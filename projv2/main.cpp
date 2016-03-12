@@ -47,8 +47,8 @@ int main(){
 	Scheduler::runTasks(priority::low, 4, printHP, move, update, longTask);
 
 	//scheduler->waitAllFibersFree();  
-	Scheduler::waitForCounter(0, inputtask);
-	Scheduler::waitForCounter(0, inputtask);
+	//Scheduler::waitForCounter(0, inputtask);
+	//Scheduler::waitForCounter(0, inputtask);
 
 
 	//puts main thread to wait and doesn't cunsume cpu time

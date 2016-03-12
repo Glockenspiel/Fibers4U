@@ -5,6 +5,7 @@
 #include "Scheduler.h"
 #include "con_soa_vector.h"
 #include "concurrent.h"
+#include "Task.h"
 
 Player::Player(){
 
@@ -42,6 +43,8 @@ void Player::move(int x, int y, int z){
 void Player::longTask(){
 	SpinUntil *t = new SpinUntil();
 	t->wait(2);
+	Task *inputtask = new Task(&Player::taskInput, this);
+	Scheduler::waitForCounter(0, inputtask);
 }
 
 void Player::taskInput(){
