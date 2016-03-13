@@ -56,6 +56,16 @@ void Player::taskInput(){
 	++dd;
 	aa = dd.get() + 10;
 	concurrent<int>* ptr = &aa;
+
+	con_vector<int> mylist;
+
+	mylist.get_lock_extern();
+		for (unsigned int i = 0; mylist.size_unsync() < 10; i++)
+			mylist.push_back_unsync(aa.get());
+	mylist.unlock_extern();
+
+	fbr::con_cout << "myList:" << mylist.at(0) << fbr::endl;
+
 	
 	fbr::con_cout << "CONCURRENT VALUE:" << ptr->get() << fbr::endl;
 

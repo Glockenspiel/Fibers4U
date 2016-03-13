@@ -5,6 +5,7 @@
 #include <atomic>
 
 #include "element.h"
+#include "concurrent.h"
 
 //concurrent data structure for std::vector which uses atomic spinlocks
 template<class T>
@@ -37,6 +38,25 @@ public:
 	//clears the list
 	void clear();
 
+
+	//These functions allows vector to be locked once externally rather than once each access
+	//This allows for the freedom of easily switching between 
+	//a synchronized and unsynchronized vector
+	//---------------------------------------------------------------------------
+	void get_lock_extern();
+	void unlock_extern();
+
+	//same functions as above but their unsyncronized counter part
+	//to be used with get_lock_extern() and unlock_extern()
+	void push_back_unsync(T t);
+	unsigned int size_unsync();
+	bool empty_unsync();
+	void erase_unsync(unsigned int index);
+	T at_unsync(unsigned int index);
+	void clear_unsync();
+	//---------------------------------------------------------------------------
+	
+
 private:
 	void getLock();
 	void unlock();
@@ -47,13 +67,26 @@ private:
 
 	unsigned int totalSize=0;
 	std::atomic_flag lock;
+
+	//flag to determine if the vector has been locked externally, used with the operator[]
+	concurrent<bool> locked_externally = false;
 };
+
+template<class T>
+T con_vector<T>::operator[](unsigned int index){
+	if (locked_externally == false)
+		return at(index);
+	else
+		return at_unsync(index);
+}
+
+
 
 template<class T>
 unsigned int con_vector<T>::size(){
 	unsigned int count;
 	getLock();
-	count = totalSize;
+	count = size_unsync();
 	unlock();
 	return count;
 }
@@ -61,6 +94,62 @@ unsigned int con_vector<T>::size(){
 template<class T>
 void con_vector<T>::push_back(T t){
 	getLock();
+	push_back_unsync(t);
+	unlock();
+}
+
+template<class T>
+bool con_vector<T>::empty(){
+	bool flag;
+	getLock();
+	flag = empty_unsync;
+	unlock();
+	return flag;
+}
+
+template<class T>
+void con_vector<T>::erase(unsigned int index){
+	getLock();
+	erase_unsync(index);
+	unlock();
+}
+
+template<class T>
+T con_vector<T>::at(unsigned int index){
+	T t;
+	getLock();
+	t = at_unsync(index);
+	unlock();
+	return t;
+}
+
+template <class T>
+void con_vector<T>::clear(){
+	getLock();
+	clear_unsync();
+	unlock();
+}
+
+template <class T>
+void con_vector<T>::getLock(){
+	while (lock.test_and_set(std::memory_order_seq_cst));
+}
+
+template <class T>
+void con_vector<T>::unlock(){
+	lock.clear(std::memory_order_seq_cst);
+}
+
+
+template<class T>
+unsigned int con_vector<T>::size_unsync(){
+	unsigned int count;
+	count = totalSize;
+	return count;
+}
+
+template<class T>
+void con_vector<T>::push_back_unsync(T t){
 	element<T>* e = new element<T>();
 	e->val = t;
 	e->next = nullptr;
@@ -74,22 +163,17 @@ void con_vector<T>::push_back(T t){
 		back = e;
 	}
 	totalSize++;
-	unlock();
 }
 
 template<class T>
-bool con_vector<T>::empty(){
+bool con_vector<T>::empty_unsync(){
 	bool flag;
-	getLock();
 	flag = front == nullptr;
-	unlock();
 	return flag;
 }
 
 template<class T>
-void con_vector<T>::erase(unsigned int index){
-	getLock();
-
+void con_vector<T>::erase_unsync(unsigned int index){
 	//remove front element
 	if (index == 0){
 		//keep back up to date if only 1 element
@@ -120,13 +204,11 @@ void con_vector<T>::erase(unsigned int index){
 		}
 	}
 	totalSize--;
-	unlock();
 }
 
 template<class T>
-T con_vector<T>::at(unsigned int index){
+T con_vector<T>::at_unsync(unsigned int index){
 	T t;
-	getLock();
 
 	cur = front;
 
@@ -138,32 +220,29 @@ T con_vector<T>::at(unsigned int index){
 
 	t = cur->val;
 
-	unlock();
 	return t;
 }
 
-template<class T>
-T con_vector<T>::operator[](unsigned int index){
-	return at(index);
-}
+
 
 template <class T>
-void con_vector<T>::clear(){
-	getLock();
+void con_vector<T>::clear_unsync(){
 	front = nullptr;
 	back = nullptr;
 	totalSize=0;
-	unlock();
 }
 
+
 template <class T>
-void con_vector<T>::getLock(){
+void con_vector<T>::get_lock_extern(){
 	while (lock.test_and_set(std::memory_order_seq_cst));
+	locked_externally = true;
 }
 
 template <class T>
-void con_vector<T>::unlock(){
+void con_vector<T>::unlock_extern(){
 	lock.clear(std::memory_order_seq_cst);
+	locked_externally = false;
 }
 
 
