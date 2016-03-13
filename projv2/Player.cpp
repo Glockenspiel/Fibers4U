@@ -70,7 +70,7 @@ void Player::taskInput(){
 	fbr::con_cout << "CONCURRENT VALUE:" << ptr->get() << fbr::endl;
 
 	std::string s;
-	fbr::cin(s, "Enter some text:");
+	fbr::con_input(s, "Enter some text:");
 	fbr::con_cout << s << fbr::endl;
 	Scheduler::wakeUpMain();
 }

@@ -68,17 +68,17 @@ inline Log& endl(Log& log){
 static std::mutex *readMutex = new std::mutex();
 //take input and t is set to input value
 template<class T>
-static void cin(T& t){
+static void con_input(T& t){
 	while (readMutex->try_lock());
 	std::cin >> t;
 	readMutex->unlock();
 }
 
 //print message using fbr::cout then call cin()
-template<class T, class R>
-static void cin(T& t, R r){
-	con_cout << r;
-	cin(t);
+template<class T, class MSG>
+static void con_input(T& t, MSG msg){
+	con_cout << msg;
+	con_input(t);
 }
 
 

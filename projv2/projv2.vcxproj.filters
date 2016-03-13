@@ -86,9 +86,6 @@
     <ClInclude Include="Worker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WaitingTask.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="con_iostream.h">
       <Filter>Header Files\concurrent</Filter>
     </ClInclude>
@@ -130,6 +127,9 @@
     </ClInclude>
     <ClInclude Include="SpinUntil.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WaitingTask.h">
+      <Filter>Header Files\task</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
