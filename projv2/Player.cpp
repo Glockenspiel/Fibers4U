@@ -7,6 +7,8 @@
 #include "concurrent.h"
 #include "Task.h"
 
+using namespace fbr;
+
 Player::Player(){
 
 }

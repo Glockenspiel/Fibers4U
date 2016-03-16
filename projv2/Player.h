@@ -14,7 +14,7 @@ public:
 	void taskInput();
 	~Player();
 private:
-	int hp=0;
+	int hp = 0;
 };
 
 #endif

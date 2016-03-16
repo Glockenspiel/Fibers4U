@@ -5,74 +5,74 @@
 
 #include <atomic>
 
-//namspace for prioity enum so it can be accessed more easily
-namespace priority{
-	enum Priority { low, medium, high };
-}
+namespace fbr{
+	//namspace for prioity enum so it can be accessed more easily
+	namespace priority{
+		enum Priority { low, medium, high };
+	}
 
-using std::atomic;
-using namespace priority;
+	using std::atomic;
+	using namespace priority;
 
 
 
-class Fiber{
-public:
-	/*
-	possible states for fibers:
+	class Fiber{
+	public:
+		/*
+		possible states for fibers:
 		free = ready for allocation
 		acquired = the fiber can be set or currently is being set
 		prepared = fiber ready to be run or is running on a worker thread
-	*/
-	enum State { free, acquired, prepared };
+		*/
+		enum State { free, acquired, prepared };
 
-	//constructor 
-	Fiber(unsigned short id);
+		//constructor 
+		Fiber(unsigned short id);
 
-	~Fiber();
+		~Fiber();
 
-	//run the current task and then frees the fiber
-	void runAndFree();
-	
-	//set the current task and the priority
-	void setTask(BaseTask* task, priority::Priority p);
+		//run the current task and then frees the fiber
+		void runAndFree();
 
-	//returns the id of this fiber
-	unsigned int getID();
+		//set the current task and the priority
+		void setTask(BaseTask* task, priority::Priority p);
 
-	//moves the state from acquired to prepared
-	void setPrepared();
+		//returns the id of this fiber
+		unsigned int getID();
 
-	//waits until the fiber reaches its free state
-	void waitUntilFree();
+		//moves the state from acquired to prepared
+		void setPrepared();
 
-	//returns true if the fiber is in the given state
-	bool inState(State s);
+		//waits until the fiber reaches its free state
+		void waitUntilFree();
 
-	//trys to move the fiber from free to acquired state, returns false if failed
-	bool tryAcquire();
+		//returns true if the fiber is in the given state
+		bool inState(State s);
 
-	//returns the current priority of this fiber
-	priority::Priority getPriority();
-	
-private:
-	//runs the current task
-	void run();
+		//trys to move the fiber from free to acquired state, returns false if failed
+		bool tryAcquire();
 
-	//frees the fiber
-	void freeFiber();
+		//returns the current priority of this fiber
+		priority::Priority getPriority();
 
-	//waits until the fiber reaches the given state
-	void waitForState(State);
+	private:
+		//runs the current task
+		void run();
 
-	//sets the state of the fiber
-	void setState(State);
+		//frees the fiber
+		void freeFiber();
 
-	unsigned int id;
-	atomic<State> state = free;
-	BaseTask *currentTask;
-	Priority currentPriority = Priority::low;
-};
+		//waits until the fiber reaches the given state
+		void waitForState(State);
 
+		//sets the state of the fiber
+		void setState(State);
 
+		unsigned int id;
+		atomic<State> state = free;
+		BaseTask *currentTask;
+		Priority currentPriority = Priority::low;
+	};
+}
 
 #endif

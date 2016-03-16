@@ -1,12 +1,14 @@
 #include "Task.h"
 #include "con_iostream.h"
 
-Task::Task(function<void()>& func){
-	fn = func;
-}
+namespace fbr{
+	Task::Task(function<void()>& func){
+		fn = func;
+	}
 
-Task::~Task(){}
+	Task::~Task(){}
 
-void Task::run(){
-	fn();
+	void Task::run(){
+		fn();
+	}
 }

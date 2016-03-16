@@ -1,16 +1,17 @@
-﻿Build started 13/03/2016 16:17:08.
+﻿Build started 16/03/2016 05:21:22.
      1>Project "C:\Users\Jeoff\fyp\fibers4u\projv2\projv2.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Fiber.cpp Player.cpp Scheduler.cpp SpinLock.cpp Task.cpp Worker.cpp main.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Fiber.cpp Player.cpp Scheduler.cpp Worker.cpp main.cpp
+         main.cpp
          Player.cpp
-     1>c:\users\jeoff\fyp\fibers4u\projv2\concurrent.h(45): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
-                 c:\users\jeoff\fyp\fibers4u\projv2\player.cpp(57) : see reference to function template instantiation 'void concurrent<int>::operator =<T>(T2)' being compiled
+     1>c:\users\jeoff\fyp\fibers4u\projv2\concurrent.h(47): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+                 c:\users\jeoff\fyp\fibers4u\projv2\player.cpp(59) : see reference to function template instantiation 'void fbr::concurrent<int>::operator =<T>(T2)' being compiled
                  with
                  [
                      T=double
          ,            T2=double
                  ]
-                 c:\users\jeoff\fyp\fibers4u\projv2\player.cpp(57) : see reference to function template instantiation 'void concurrent<int>::operator =<T>(T2)' being compiled
+                 c:\users\jeoff\fyp\fibers4u\projv2\player.cpp(59) : see reference to function template instantiation 'void fbr::concurrent<int>::operator =<T>(T2)' being compiled
                  with
                  [
                      T=double
@@ -18,15 +19,13 @@
                  ]
          Generating Code...
          Compiling...
-         main.cpp
-         Worker.cpp
-         Task.cpp
-         SpinLock.cpp
          Scheduler.cpp
-     1>c:\users\jeoff\fyp\fibers4u\projv2\scheduler.cpp(233): warning C4018: '<=' : signed/unsigned mismatch
-     1>c:\users\jeoff\fyp\fibers4u\projv2\scheduler.cpp(262): warning C4018: '>=' : signed/unsigned mismatch
-         Fiber.cpp
+     1>c:\users\jeoff\fyp\fibers4u\projv2\scheduler.cpp(235): warning C4018: '<=' : signed/unsigned mismatch
+     1>c:\users\jeoff\fyp\fibers4u\projv2\scheduler.cpp(264): warning C4018: '>=' : signed/unsigned mismatch
          Generating Code...
+         Skipping... (no relevant changes detected)
+         Worker.cpp
+         Fiber.cpp
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Jeoff\fyp\fibers4u\Debug\projv2.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Jeoff\fyp\fibers4u\Debug\projv2.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Jeoff\fyp\fibers4u\Debug\projv2.lib" /MACHINE:X86 Debug\BaseTask.obj
          Debug\Counter.obj
@@ -46,4 +45,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:04.36
+Time Elapsed 00:00:02.23

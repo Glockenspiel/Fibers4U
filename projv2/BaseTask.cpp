@@ -1,9 +1,11 @@
 #include "BaseTask.h"
 
-bool BaseTask::isReusable(){
-	return reusable;
-}
+namespace fbr{
+	bool BaseTask::isReusable(){
+		return reusable;
+	}
 
-void BaseTask::setReuseable(bool reuse){
-	reusable = reuse;
+	void BaseTask::setReuseable(bool reuse){
+		reusable = reuse;
+	}
 }

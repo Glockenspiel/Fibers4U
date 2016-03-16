@@ -4,33 +4,34 @@
 #include <atomic>
 #include "element.h"
 
-template <class T>
-class con_stack{
-public:
-	void push(T t);
-	T top();
-	void pop();
-	T getPop();
-	bool empty();
-	int size();
+namespace fbr{
+	template <class T>
+	class con_stack{
+	public:
+		void push(T t);
+		T top();
+		void pop();
+		T getPop();
+		bool empty();
+		int size();
 
-private:
-	void getLock();
-	void unlock();
+	private:
+		void getLock();
+		void unlock();
 
-	element<T>	*top_ptr = nullptr,
+		element<T>	*top_ptr = nullptr,
 			*current = nullptr;
 
-	std::atomic_flag lock;
-};
+		std::atomic_flag lock;
+	};
 
-template <class T>
-void con_stack<T>::push(T t){
-	element<T> *e = new element<T>();
-	e->next = nullptr;
-	e->val = t;
+	template <class T>
+	void con_stack<T>::push(T t){
+		element<T> *e = new element<T>();
+		e->next = nullptr;
+		e->val = t;
 
-	getLock();
+		getLock();
 		if (top_ptr == nullptr)
 		{
 			top_ptr = e;
@@ -46,67 +47,67 @@ void con_stack<T>::push(T t){
 			fbr::con_cout << top_ptr->next->val << fbr::endl;
 		else
 			fbr::con_cout << fbr::endl;
-	unlock();
-}
+		unlock();
+	}
 
-template <class T>
-void con_stack<T>::pop(){
-	getLock();
+	template <class T>
+	void con_stack<T>::pop(){
+		getLock();
 		top_ptr = top_ptr->next;
-	unlock();
-}
+		unlock();
+	}
 
-template <class T>
-T con_stack<T>::top(){
-	T t;
-	getLock();
+	template <class T>
+	T con_stack<T>::top(){
+		T t;
+		getLock();
 		t = top_ptr->val;
-	unlock();
-	return t;
-}
+		unlock();
+		return t;
+	}
 
-template <class T>
-T con_stack<T>::getPop(){
-	T t;
-	getLock();
+	template <class T>
+	T con_stack<T>::getPop(){
+		T t;
+		getLock();
 		t = top_ptr->val;
 		top_ptr = top_ptr->next;
-	unlock();
-	return t;
-}
+		unlock();
+		return t;
+	}
 
-template <class T>
-bool con_stack<T>::empty(){
-	bool flag;
-	getLock();
+	template <class T>
+	bool con_stack<T>::empty(){
+		bool flag;
+		getLock();
 		flag = top_ptr == nullptr;
-	unlock();
-	return flag;
-}
+		unlock();
+		return flag;
+	}
 
-template <class T>
-int con_stack<T>::size(){
-	int count = 0;
-	getLock();
+	template <class T>
+	int con_stack<T>::size(){
+		int count = 0;
+		getLock();
 		current = top_ptr;
 
 		do {
 			current = current->next;
 			count++;
 		} while (current != nullptr);
-	unlock();
-	return count;
-}
+		unlock();
+		return count;
+	}
 
-template <class T>
-void con_stack<T>::getLock(){
-	while (lock.test_and_set(std::memory_order_seq_cst));
-}
+	template <class T>
+	void con_stack<T>::getLock(){
+		while (lock.test_and_set(std::memory_order_seq_cst));
+	}
 
-template <class T>
-void con_stack<T>::unlock(){
-	lock.clear(std::memory_order_seq_cst);
+	template <class T>
+	void con_stack<T>::unlock(){
+		lock.clear(std::memory_order_seq_cst);
+	}
 }
-
 
 #endif
