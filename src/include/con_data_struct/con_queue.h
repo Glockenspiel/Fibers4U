@@ -1,15 +1,13 @@
 #ifndef CON_QUEUE_H
 #define CON_QUEUE_H
 
-#include <queue>
-#include <atomic>
 #include "element.h"
-#include "concurrent.h"
+#include "include/con_data_struct/extern_locker.h"
 
 namespace fbr{
 	//concurrent data strcuture usign std::queue which uses FIFO and atomic spinlocks (first in first out)
 	template<class T>
-	class con_queue{
+	class con_queue : public extern_locker{
 	public:
 		//pops the first element off the queue and returns it
 		T getPop();
@@ -32,10 +30,8 @@ namespace fbr{
 		//returns true if the queue is empty
 		bool empty();
 
-
-		void get_lock_extern();
-		void unlock_extern();
-
+		//unsyncronized versions to be used with extern_locker
+		//---------------------------------------------------
 		T getPop_unsync();
 		void pop_unsync();
 		T front_unsync();
@@ -43,6 +39,7 @@ namespace fbr{
 		void push_unsync(T t);
 		int size_unsync();
 		bool empty_unsync();
+		//---------------------------------------------------
 
 	private:
 		void getLock();
@@ -127,8 +124,9 @@ namespace fbr{
 		lock.clear(std::memory_order_seq_cst);
 	}
 
+
 	//----------------------------------------------------------------
-	//unsynced
+	//unsyncronized versions
 	//----------------------------------------------------------------
 
 	template<class T>
@@ -189,21 +187,6 @@ namespace fbr{
 	template<class T>
 	T con_queue<T>::back_unsync(){
 		return = back->val;
-	}
-
-	
-
-	template <class T>
-	void con_queue<T>::get_lock_extern(){
-		while (lock.test_and_set(std::memory_order_seq_cst));
-		locked_externally = true;
-	}
-
-
-	template <class T>
-	void con_queue<T>::unlock_extern(){
-		lock.clear(std::memory_order_seq_cst);
-		locked_externally = false;
 	}
 }
 

@@ -1,16 +1,17 @@
 #ifndef CON_VECTOR_H
 #define CON_VECTOR_H
 
-#include <vector>
-#include <atomic>
+//#include <vector>
+//#include <atomic>
 
 #include "element.h"
-#include "concurrent.h"
+//#include "concurrent.h"
+#include "include/con_data_struct/extern_locker.h"
 
 namespace fbr{
 	//concurrent data structure for std::vector which uses atomic spinlocks
 	template<class T>
-	class con_vector{
+	class con_vector : public extern_locker{
 	public:
 		con_vector(){}
 		con_vector(std::initializer_list<T> elems){
@@ -40,15 +41,11 @@ namespace fbr{
 		void clear();
 
 
-		//These functions allows vector to be locked once externally rather than once each access
+		//These functions allows the vector to be accessed unsyncronized
 		//This allows for the freedom of easily switching between 
 		//a synchronized and unsynchronized vector
+		//to be used with get_lock_extern() and unlock_extern() from the extern_locker class
 		//---------------------------------------------------------------------------
-		void get_lock_extern();
-		void unlock_extern();
-
-		//same functions as above but their unsyncronized counter part
-		//to be used with get_lock_extern() and unlock_extern()
 		void push_back_unsync(T t);
 		unsigned int size_unsync();
 		bool empty_unsync();
@@ -224,26 +221,11 @@ namespace fbr{
 		return t;
 	}
 
-
-
 	template <class T>
 	void con_vector<T>::clear_unsync(){
 		front = nullptr;
 		back = nullptr;
 		totalSize = 0;
-	}
-
-
-	template <class T>
-	void con_vector<T>::get_lock_extern(){
-		while (lock.test_and_set(std::memory_order_seq_cst));
-		locked_externally = true;
-	}
-
-	template <class T>
-	void con_vector<T>::unlock_extern(){
-		lock.clear(std::memory_order_seq_cst);
-		locked_externally = false;
 	}
 }
 

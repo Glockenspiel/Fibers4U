@@ -66,6 +66,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseTask.cpp" />
+    <ClCompile Include="extern_locker.cpp" />
     <ClCompile Include="Counter.cpp" />
     <ClCompile Include="Fiber.cpp" />
     <ClCompile Include="FiberPool.cpp" />
@@ -83,6 +84,7 @@
     <ClInclude Include="demo\Player.h" />
     <ClInclude Include="include\BaseTask.h" />
     <ClInclude Include="include\con_data_struct\concurrent.h" />
+    <ClInclude Include="include\con_data_struct\extern_locker.h" />
     <ClInclude Include="include\con_data_struct\con_queue.h" />
     <ClInclude Include="include\con_data_struct\con_stack.h" />
     <ClInclude Include="include\con_data_struct\con_vector.h" />

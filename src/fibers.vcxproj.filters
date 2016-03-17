@@ -59,6 +59,9 @@
     <ClCompile Include="Player.cpp">
       <Filter>demo</Filter>
     </ClCompile>
+    <ClCompile Include="extern_locker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\fbr.h">
@@ -126,6 +129,9 @@
     </ClInclude>
     <ClInclude Include="demo\Player.h">
       <Filter>demo</Filter>
+    </ClInclude>
+    <ClInclude Include="include\con_data_struct\extern_locker.h">
+      <Filter>Header Files\con_data_struct</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
