@@ -35,6 +35,8 @@ namespace fbr{
 		T at(unsigned int index);
 
 		//operator overloading for element access
+		//this is a syncronized function use 
+		//at_unsync() for unsyncronized element access
 		T operator[](unsigned int index);
 
 		//clears the list
@@ -68,10 +70,7 @@ namespace fbr{
 	
 	template<class T>
 	T con_vector<T>::operator[](unsigned int index){
-		if (isLocked() == false)
-			return at(index);
-		else
-			return at_unsync(index);
+		return at(index);
 	}
 
 
