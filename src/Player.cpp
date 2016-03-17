@@ -6,6 +6,7 @@
 #include "include/con_data_struct/concurrent.h"
 #include "include/Task.h"
 #include "include\con_data_struct\con_queue.h"
+#include "include\con_data_struct\con_stack.h"
 
 using namespace fbr;
 
@@ -60,10 +61,10 @@ void Player::taskInput(){
 	con_vector<int> mylist;
 
 	//access with only 1 lock
-	mylist.get_lock_extern();
+	mylist.getLock();
 		for (unsigned int i = 0; mylist.size_unsync() < 10; i++)
 			mylist.push_back_unsync(aa.get());
-	mylist.unlock_extern();
+	mylist.unlock();
 
 	fbr::con_cout << "myList:" << mylist.at(0) << fbr::endl;
 
@@ -76,15 +77,23 @@ void Player::taskInput(){
 	//snycronized
 	myqueue.push(aa.get());
 
-	myqueue.get_lock_extern();
+	myqueue.getLock();
 	for (unsigned int i = 1; i <= 10; i++)
 		myqueue.push_unsync(i);
 
 	while (myqueue.empty_unsync() == false)
-		con_cout << "popped:" << myqueue.getPop_unsync() << fbr::endl;
-	myqueue.unlock_extern();
+		con_cout << "queue popped:" << myqueue.getPop_unsync() << fbr::endl;
+	myqueue.unlock();
 
-	
+
+	con_stack<int> mystack;
+	mystack.getLock();
+	for (unsigned int i = 1; i <= 10; i++)
+		mystack.push_unsync(i);
+
+	while (mystack.empty_unsync() == false)
+		con_cout << "stack popped:" << mystack.getPop_unsync() << fbr::endl;
+	mystack.unlock();
 
 	std::string s;
 	fbr::con_input(s, "Enter some text:");

@@ -5,7 +5,7 @@
 #include "include/con_data_struct/extern_locker.h"
 
 namespace fbr{
-	//concurrent data strcuture usign std::queue which uses FIFO and atomic spinlocks (first in first out)
+	//concurrent data strcuture using std::queue which uses FIFO and atomic spinlocks (first in first out)
 	template<class T>
 	class con_queue : public extern_locker{
 	public:
@@ -42,15 +42,8 @@ namespace fbr{
 		//---------------------------------------------------
 
 	private:
-		void getLock();
-		void unlock();
-
 		element<T>	*frontptr = nullptr,
 			*backptr = nullptr;
-
-		std::atomic_flag lock;
-
-		concurrent<bool>  locked_externally = false;
 	};
 
 	template<class T>
@@ -114,19 +107,8 @@ namespace fbr{
 		return t;
 	}
 
-	template <class T>
-	void con_queue<T>::getLock(){
-		while (lock.test_and_set(std::memory_order_seq_cst));
-	}
-
-	template <class T>
-	void con_queue<T>::unlock(){
-		lock.clear(std::memory_order_seq_cst);
-	}
-
-
 	//----------------------------------------------------------------
-	//unsyncronized versions
+	//unsyncronized functions
 	//----------------------------------------------------------------
 
 	template<class T>

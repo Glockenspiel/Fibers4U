@@ -56,23 +56,19 @@ namespace fbr{
 
 
 	private:
-		void getLock();
-		void unlock();
-
 		element<T>	*front = nullptr,
 			*back = nullptr,
 			*cur = nullptr;
 
 		unsigned int totalSize = 0;
-		std::atomic_flag lock;
 
-		//flag to determine if the vector has been locked externally, used with the operator[]
-		concurrent<bool> locked_externally = false;
+
 	};
 
+	
 	template<class T>
 	T con_vector<T>::operator[](unsigned int index){
-		if (locked_externally == false)
+		if (isLocked() == false)
 			return at(index);
 		else
 			return at_unsync(index);
@@ -128,15 +124,10 @@ namespace fbr{
 		unlock();
 	}
 
-	template <class T>
-	void con_vector<T>::getLock(){
-		while (lock.test_and_set(std::memory_order_seq_cst));
-	}
+	//---------------------------------
+	//unsyncronized functions
+	//---------------------------------
 
-	template <class T>
-	void con_vector<T>::unlock(){
-		lock.clear(std::memory_order_seq_cst);
-	}
 
 
 	template<class T>

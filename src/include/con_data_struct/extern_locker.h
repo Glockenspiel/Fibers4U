@@ -6,28 +6,26 @@
 
 namespace fbr{
 	/*
-	creates a spin lock which can be used on its own or inherited by a class.
-	
-	for example con_queue, con_stack and con_vector inherit this class so
-	they can be locked externally before calling their unsyncronized functions
-	and then unlocked externally after. 
+	creates a spin lock which can be used by a class or declared by itself to help with syncronization
 	
 	Note: This class makes use of using sequentially consistent ordering 
-		i.e. std::memory_order_seq_con
+		i.e. std::memory_order_seq_cst
 	*/
 	class extern_locker{
 	public:
 		//gets the lock 
-		virtual void get_lock_extern();
+		virtual void getLock();
 
 		//releases the lock
-		virtual void unlock_extern();
+		virtual void unlock();
 
 		//returns the current state of the lock
-		virtual bool getLockState();
+		virtual bool isLocked();
 
 	private:
+		//value for the state as atomic_flag doesn't return a value of it's state
 		concurrent<bool> locked_externally = false;
+	protected:
 		std::atomic_flag lock;
 	};
 }

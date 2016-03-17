@@ -2,18 +2,18 @@
 
 namespace fbr{
 
-	void extern_locker::get_lock_extern(){
+	void extern_locker::getLock(){
 		while (lock.test_and_set(std::memory_order_seq_cst));
 		locked_externally = true;
 	}
 
 
-	void extern_locker::unlock_extern(){
+	void extern_locker::unlock(){
 		lock.clear(std::memory_order_seq_cst);
 		locked_externally = false;
 	}
 
-	bool extern_locker::getLockState(){
+	bool extern_locker::isLocked(){
 		return locked_externally.get();
 	}
 }

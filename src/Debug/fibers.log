@@ -1,29 +1,36 @@
-﻿Build started 17/03/2016 12:06:05.
-     1>Project "C:\Users\Jeoff\fyp\fibers4u\src\fibers.vcxproj" on node 2 (Build target(s)).
+﻿Build started 17/03/2016 12:46:56.
+     1>Project "C:\Users\Jeoff\fyp\fibers4u\src\fibers.vcxproj" on node 2 (Rebuild target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Fiber.cpp Player.cpp Scheduler.cpp Worker.cpp main.cpp
-         Fiber.cpp
-         Generating Code...
-         Compiling...
-         main.cpp
-         Worker.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt BaseTask.cpp extern_locker.cpp Counter.cpp Fiber.cpp FiberPool.cpp ThreadSleeper.cpp WaitingTask.cpp Worker.cpp main.cpp Player.cpp Scheduler.cpp SpinLock.cpp Task.cpp SpinUntil.cpp
+         SpinUntil.cpp
+         Task.cpp
+         SpinLock.cpp
          Scheduler.cpp
      1>c:\users\jeoff\fyp\fibers4u\src\scheduler.cpp(232): warning C4018: '<=' : signed/unsigned mismatch
      1>c:\users\jeoff\fyp\fibers4u\src\scheduler.cpp(261): warning C4018: '>=' : signed/unsigned mismatch
          Player.cpp
      1>c:\users\jeoff\fyp\fibers4u\src\include\con_data_struct\concurrent.h(47): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
-                 c:\users\jeoff\fyp\fibers4u\src\player.cpp(57) : see reference to function template instantiation 'void fbr::concurrent<int>::operator =<T>(T2)' being compiled
+                 c:\users\jeoff\fyp\fibers4u\src\player.cpp(58) : see reference to function template instantiation 'void fbr::concurrent<int>::operator =<T>(T2)' being compiled
                  with
                  [
                      T=double
          ,            T2=double
                  ]
-                 c:\users\jeoff\fyp\fibers4u\src\player.cpp(57) : see reference to function template instantiation 'void fbr::concurrent<int>::operator =<T>(T2)' being compiled
+                 c:\users\jeoff\fyp\fibers4u\src\player.cpp(58) : see reference to function template instantiation 'void fbr::concurrent<int>::operator =<T>(T2)' being compiled
                  with
                  [
                      T=double
          ,            T2=double
                  ]
+         main.cpp
+         Worker.cpp
+         WaitingTask.cpp
+         ThreadSleeper.cpp
+         FiberPool.cpp
+         Fiber.cpp
+         Counter.cpp
+         extern_locker.cpp
+         BaseTask.cpp
          Generating Code...
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Jeoff\fyp\fibers4u\Debug\fibers.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Jeoff\fyp\fibers4u\Debug\fibers.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Jeoff\fyp\fibers4u\Debug\fibers.lib" /MACHINE:X86 Debug\BaseTask.obj
@@ -41,8 +48,8 @@
          Debug\Task.obj
          Debug\SpinUntil.obj
          fibers.vcxproj -> C:\Users\Jeoff\fyp\fibers4u\Debug\fibers.exe
-     1>Done Building Project "C:\Users\Jeoff\fyp\fibers4u\src\fibers.vcxproj" (Build target(s)).
+     1>Done Building Project "C:\Users\Jeoff\fyp\fibers4u\src\fibers.vcxproj" (Rebuild target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:03.21
+Time Elapsed 00:00:05.99
