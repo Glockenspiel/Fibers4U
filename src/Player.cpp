@@ -61,6 +61,7 @@ void Player::taskInput(){
 
 	con_vector<int> mylist;
 
+	//access with only 1 lock
 	mylist.get_lock_extern();
 		for (unsigned int i = 0; mylist.size_unsync() < 10; i++)
 			mylist.push_back_unsync(aa.get());

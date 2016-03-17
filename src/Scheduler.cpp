@@ -4,12 +4,11 @@
 #include "include/Task.h"
 
 using namespace std::placeholders;
+using namespace fbr::priority;
 
 namespace fbr{
-	using namespace priority;
+	
 
-	//varaible used in lambda expression to notify main thread to wake up
-	bool mainAwake = false;
 
 	Scheduler::Scheduler(const unsigned int FIBER_COUNT, const unsigned int THREAD_COUNT,
 		BaseTask* startingTask, bool fiberAreDynamic, bool enableSleeping){

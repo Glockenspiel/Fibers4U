@@ -80,10 +80,10 @@
     <ClCompile Include="SpinUntil.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="demo\Player.h" />
     <ClInclude Include="include\BaseTask.h" />
     <ClInclude Include="include\con_data_struct\concurrent.h" />
     <ClInclude Include="include\con_data_struct\con_queue.h" />
-    <ClInclude Include="include\con_data_struct\con_soa_vector.h" />
     <ClInclude Include="include\con_data_struct\con_stack.h" />
     <ClInclude Include="include\con_data_struct\con_vector.h" />
     <ClInclude Include="include\con_data_struct\Counter.h" />
