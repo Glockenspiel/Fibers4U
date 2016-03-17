@@ -3,7 +3,6 @@
 
 //concurrent data structures
 #include "include/con_data_struct/con_queue.h"
-#include "include/con_data_struct/con_soa_vector.h"
 #include "include/con_data_struct/con_vector.h"
 #include "include/con_data_struct/con_stack.h"
 

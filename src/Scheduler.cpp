@@ -5,15 +5,14 @@
 
 using namespace std::placeholders;
 using namespace fbr::priority;
+using namespace fbr::scheduler;
 
 namespace fbr{
 	
-
-
 	Scheduler::Scheduler(const unsigned int FIBER_COUNT, const unsigned int THREAD_COUNT,
 		BaseTask* startingTask, bool fiberAreDynamic, bool enableSleeping){
 		useDynamicFibers = fiberAreDynamic;
-		isSleepingEnabled = enableSleeping;
+		sleepingEnabled = enableSleeping;
 
 		//do check on fiber and thread count, display error message if true
 		if (FIBER_COUNT < THREAD_COUNT && FIBER_COUNT>0 && useDynamicFibers == false){
@@ -46,13 +45,13 @@ namespace fbr{
 			thread *t;
 			//assign starting task the the first worker thread
 			if (i == 0){
-				fiberPool->fibers[i]->setTask(startingTask, Priority::low);
+				fiberPool->fibers[i]->setTask(startingTask, Priority::low, taskNaming);
 				workers[i]->set(*fiberPool->fibers[i]);
 			}
 			//assign empty tasks to the rest of the worker threads
 			else{
 				Task *emptyTask = new Task(&Scheduler::empty);
-				fiberPool->fibers[i]->setTask(emptyTask, Priority::low);
+				fiberPool->fibers[i]->setTask(emptyTask, Priority::low, taskNaming);
 				workers[i]->set(*fiberPool->fibers[i]);
 			}
 			//fiberPool->workerStarted();
@@ -103,7 +102,7 @@ namespace fbr{
 			}
 		} while (fiber == nullptr);
 
-		fiber->setTask(task, taskPrioirty);
+		fiber->setTask(task, taskPrioirty, taskNaming);
 		fiberPool->pushToQueue(*fiber);
 		taskCounter++;
 	}
@@ -278,7 +277,13 @@ namespace fbr{
 		taskCounter--;
 	}
 
-	bool Scheduler::sleepingEnabled(){
-		return isSleepingEnabled.get();
+	bool Scheduler::isSleepingEnabled(){
+		return sleepingEnabled.get();
+	}
+
+	void Scheduler::setTaskNaming(std::string name){
+		while(taskNamingLock.test_and_set(std::memory_order_seq_cst));
+			taskNaming = name;
+		taskNamingLock.clear(std::memory_order_seq_cst);
 	}
 }

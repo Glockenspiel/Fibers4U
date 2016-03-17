@@ -44,6 +44,7 @@ int main(){
 	//vector<BaseTask*> allTasks = { printHP, move, update,longTask };
 	//scheduler->runTasks(allTasks, priority::low);
 	//example with variadic function
+	Scheduler::setTaskNaming("my tasks");
 	Scheduler::runTasks(priority::low, 4, printHP, move, update, longTask);
 
 	//scheduler->waitAllFibersFree();  

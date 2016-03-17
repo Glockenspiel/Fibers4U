@@ -31,7 +31,7 @@ namespace fbr{
 			}
 
 			//don't sleep if sleeping is disabled
-			if (Scheduler::sleepingEnabled()){
+			if (Scheduler::isSleepingEnabled()){
 				timeNow = high_resolution_clock::now();
 				timeSinceLastRun = timeNow - lastRun;
 				if (timeSinceLastRun > timeUntilSleep){
@@ -98,7 +98,7 @@ namespace fbr{
 
 	//wake up worker thread if it is asleep
 	void Worker::wakeUp(){
-		if (isSleepingEnabled.get())
+		if (Scheduler::isSleepingEnabled())
 			threadSleeper.wakeUp();
 	}
 

@@ -7,8 +7,11 @@
 #include <vector>
 
 namespace fbr{
-	//atomic spinlock flag, used for accessing the queue atomically
-	static std::atomic_flag queueLock = ATOMIC_FLAG_INIT;
+
+	namespace fiberpool{
+		//atomic spinlock flag, used for accessing the queue atomically
+		static std::atomic_flag queueLock = ATOMIC_FLAG_INIT;
+	}
 
 	class FiberPool{
 		friend class Scheduler;

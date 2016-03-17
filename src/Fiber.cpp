@@ -17,10 +17,9 @@ namespace fbr{
 	void Fiber::run(){
 		waitForState(prepared);
 
-		fbr::con_cout << "Exe..." << id << fbr::endl;
+		fbr::con_cout << "Exe..." << currentTaskNaming << ":" << id << fbr::endl;
 		currentTask->run();
 		fbr::con_cout << "Com..." << id << fbr::endl;
-
 	}
 
 	//alert the scheduler that this task has completed and is ready for reallocation
@@ -38,7 +37,8 @@ namespace fbr{
 	}
 
 	//sets the current task of the fiber and the fibers priority
-	void Fiber::setTask(BaseTask* task, Priority p){
+	void Fiber::setTask(BaseTask* task, Priority p, std::string taskNaming){
+		currentTaskNaming = taskNaming;
 		currentPriority = p;
 		currentTask = task;
 

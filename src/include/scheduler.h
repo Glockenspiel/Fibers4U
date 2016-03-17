@@ -20,32 +20,38 @@ using std::mutex;
 using std::vector;
 
 namespace fbr{
-	//boolean to detect if the scheduler should use dynamic fibers
-	static bool useDynamicFibers;
 
-	static FiberPool *fiberPool;
+	namespace scheduler{
+		//boolean to detect if the scheduler should use dynamic fibers
+		static bool useDynamicFibers;
 
-	//queue for waiting before excution
-	static con_vector<WaitingTask *> waitingTasks;
+		static FiberPool *fiberPool;
 
-	//workers
-	static con_vector<Worker *> workers;
+		//queue for waiting before excution
+		static con_vector<WaitingTask *> waitingTasks;
+
+		//workers
+		static con_vector<Worker *> workers;
 
 
-	//atomic flag for accessing waitingTasks
-	static std::atomic_flag waitingLock = ATOMIC_FLAG_INIT;
+		//atomic flag for accessing waitingTasks
+		static std::atomic_flag waitingLock = ATOMIC_FLAG_INIT;
 
-	//lock for adding dynamic fibers
-	static std::atomic_flag dynamicFiberLock = ATOMIC_FLAG_INIT;
+		//lock for adding dynamic fibers
+		static std::atomic_flag dynamicFiberLock = ATOMIC_FLAG_INIT;
 
-	//enables or disables thread sleeping
-	static concurrent<bool> isSleepingEnabled = true;
+		//enables or disables thread sleeping
+		static concurrent<bool> sleepingEnabled = true;
 
-	//allows the main thread sleep
-	static ThreadSleeper mainThreadSleeper;
+		//allows the main thread sleep
+		static ThreadSleeper mainThreadSleeper;
 
-	//counter for number of tasks being executed
-	static Counter taskCounter;
+		//counter for number of tasks being executed
+		static Counter taskCounter;
+
+		static std::string taskNaming="";
+		static std::atomic_flag taskNamingLock = ATOMIC_FLAG_INIT;
+	}
 
 	class Scheduler{
 	public:
@@ -95,8 +101,12 @@ namespace fbr{
 		//notifies the task counter that a task has completed
 		static void notifyTaskFinished();
 
-		static bool sleepingEnabled();
+		//returns the true if sleeping is enabled 
+		static bool isSleepingEnabled();
 
+		//sets the name of fibers as they get allocated tasks to taskNaming. 
+		//This is to help increase visibility of runtime debugging
+		static void setTaskNaming(std::string name);
 	private:
 		//adds a task to the task queue
 		static void addToQueue(BaseTask *task, priority::Priority taskPrioirty);

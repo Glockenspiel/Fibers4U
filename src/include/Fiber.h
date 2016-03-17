@@ -4,6 +4,7 @@
 #include "BaseTask.h"
 
 #include <atomic>
+#include <string>
 
 namespace fbr{
 	//namspace for prioity enum so it can be accessed more easily
@@ -35,7 +36,7 @@ namespace fbr{
 		void runAndFree();
 
 		//set the current task and the priority
-		void setTask(BaseTask* task, priority::Priority p);
+		void setTask(BaseTask* task, priority::Priority p, std::string taskNaming);
 
 		//returns the id of this fiber
 		unsigned int getID();
@@ -72,6 +73,7 @@ namespace fbr{
 		atomic<State> state = free;
 		BaseTask *currentTask;
 		Priority currentPriority = Priority::low;
+		std::string currentTaskNaming;
 	};
 }
 

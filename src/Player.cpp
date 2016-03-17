@@ -3,9 +3,9 @@
 #include "include/con_iostream.h"
 #include "include/SpinUntil.h"
 #include "include/Scheduler.h"
-#include "include/con_data_struct/con_soa_vector.h"
 #include "include/con_data_struct/concurrent.h"
 #include "include/Task.h"
+#include "include\con_data_struct\con_queue.h"
 
 using namespace fbr;
 
@@ -50,8 +50,6 @@ void Player::longTask(){
 }
 
 void Player::taskInput(){
-	con_soa_vector<int, double> soalist;
-	soalist.add(1, 3.5);
 
 	concurrent<int> aa = 10;
 	concurrent<double> dd = 5.5;
@@ -71,6 +69,22 @@ void Player::taskInput(){
 
 	
 	fbr::con_cout << "CONCURRENT VALUE:" << ptr->get() << fbr::endl;
+
+	//push 10 values and pop all off, using a single lock
+	con_queue<int> myqueue;
+
+	//snycronized
+	myqueue.push(aa.get());
+
+	myqueue.get_lock_extern();
+	for (unsigned int i = 1; i <= 10; i++)
+		myqueue.push_unsync(i);
+
+	while (myqueue.empty_unsync() == false)
+		con_cout << "popped:" << myqueue.getPop_unsync() << fbr::endl;
+	myqueue.unlock_extern();
+
+	
 
 	std::string s;
 	fbr::con_input(s, "Enter some text:");
