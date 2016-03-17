@@ -55,7 +55,7 @@ void Player::taskInput(){
 	concurrent<int> aa = 10;
 	concurrent<double> dd = 5.5;
 	++dd;
-	aa = dd.get() + 10;
+	aa = (int)dd.get() + 10;
 	concurrent<int>* ptr = &aa;
 
 	con_vector<int> mylist;
