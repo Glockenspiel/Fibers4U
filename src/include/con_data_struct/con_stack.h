@@ -1,12 +1,12 @@
 #ifndef CON_STACK_H
 #define CON_STACK_H
 
-#include "include/con_data_struct/extern_locker.h"
+#include "include/locker.h"
 #include "element.h"
 
 namespace fbr{
 	template <class T>
-	class con_stack : public extern_locker{
+	class con_stack : public Locker{
 	public:
 		void push(T t);
 		T top();

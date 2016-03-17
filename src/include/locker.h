@@ -11,7 +11,7 @@ namespace fbr{
 	Note: This class makes use of using sequentially consistent ordering 
 		i.e. std::memory_order_seq_cst
 	*/
-	class extern_locker{
+	class Locker{
 	public:
 		//gets the lock 
 		virtual void getLock();

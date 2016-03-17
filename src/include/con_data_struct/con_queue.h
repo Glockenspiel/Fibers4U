@@ -2,12 +2,12 @@
 #define CON_QUEUE_H
 
 #include "element.h"
-#include "include/con_data_struct/extern_locker.h"
+#include "include/locker.h"
 
 namespace fbr{
 	//concurrent data strcuture using std::queue which uses FIFO and atomic spinlocks (first in first out)
 	template<class T>
-	class con_queue : public extern_locker{
+	class con_queue : public Locker{
 	public:
 		//pops the first element off the queue and returns it
 		T getPop();

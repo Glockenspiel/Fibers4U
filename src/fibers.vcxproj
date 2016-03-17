@@ -66,7 +66,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseTask.cpp" />
-    <ClCompile Include="extern_locker.cpp" />
+    <ClCompile Include="locker.cpp" />
     <ClCompile Include="Counter.cpp" />
     <ClCompile Include="Fiber.cpp" />
     <ClCompile Include="FiberPool.cpp" />
@@ -76,7 +76,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Scheduler.cpp" />
-    <ClCompile Include="SpinLock.cpp" />
     <ClCompile Include="Task.cpp" />
     <ClCompile Include="SpinUntil.cpp" />
   </ItemGroup>
@@ -84,7 +83,7 @@
     <ClInclude Include="demo\Player.h" />
     <ClInclude Include="include\BaseTask.h" />
     <ClInclude Include="include\con_data_struct\concurrent.h" />
-    <ClInclude Include="include\con_data_struct\extern_locker.h" />
+    <ClInclude Include="include\con_data_struct\locker.h" />
     <ClInclude Include="include\con_data_struct\con_queue.h" />
     <ClInclude Include="include\con_data_struct\con_stack.h" />
     <ClInclude Include="include\con_data_struct\con_vector.h" />
@@ -96,7 +95,6 @@
     <ClInclude Include="include\fiberpool.h" />
     <ClInclude Include="include\Nothing.h" />
     <ClInclude Include="include\scheduler.h" />
-    <ClInclude Include="include\SpinLock.h" />
     <ClInclude Include="include\SpinUntil.h" />
     <ClInclude Include="include\Task.h" />
     <ClInclude Include="include\TaskArgs.h" />

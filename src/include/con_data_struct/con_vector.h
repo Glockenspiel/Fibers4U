@@ -1,17 +1,13 @@
 #ifndef CON_VECTOR_H
 #define CON_VECTOR_H
 
-//#include <vector>
-//#include <atomic>
-
 #include "element.h"
-//#include "concurrent.h"
-#include "include/con_data_struct/extern_locker.h"
+#include "include/locker.h"
 
 namespace fbr{
 	//concurrent data structure for std::vector which uses atomic spinlocks
 	template<class T>
-	class con_vector : public extern_locker{
+	class con_vector : public Locker{
 	public:
 		con_vector(){}
 		con_vector(std::initializer_list<T> elems){
@@ -63,8 +59,6 @@ namespace fbr{
 			*cur = nullptr;
 
 		unsigned int totalSize = 0;
-
-
 	};
 
 	
@@ -72,8 +66,6 @@ namespace fbr{
 	T con_vector<T>::operator[](unsigned int index){
 		return at(index);
 	}
-
-
 
 	template<class T>
 	unsigned int con_vector<T>::size(){

@@ -5,8 +5,8 @@
 #include "include/Scheduler.h"
 #include "include/con_data_struct/concurrent.h"
 #include "include/Task.h"
-#include "include\con_data_struct\con_queue.h"
-#include "include\con_data_struct\con_stack.h"
+#include "include/con_data_struct/con_queue.h"
+#include "include/con_data_struct/con_stack.h"
 
 using namespace fbr;
 
