@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\con_data_struct">
+      <UniqueIdentifier>{0da5f053-66a0-41bb-8923-c5db2bcb2b19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\task">
+      <UniqueIdentifier>{b6e381aa-e649-4971-9b91-2875cf2d4315}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Task.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scheduler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Fiber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpinLock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Worker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FiberPool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WaitingTask.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Counter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadSleeper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseTask.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpinUntil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\fbr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\con_iostream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Fiber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fiberpool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Nothing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scheduler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SpinLock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SpinUntil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\thread_sleeper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Worker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\con_data_struct\con_queue.h">
+      <Filter>Header Files\con_data_struct</Filter>
+    </ClInclude>
+    <ClInclude Include="include\con_data_struct\con_soa_vector.h">
+      <Filter>Header Files\con_data_struct</Filter>
+    </ClInclude>
+    <ClInclude Include="include\con_data_struct\con_stack.h">
+      <Filter>Header Files\con_data_struct</Filter>
+    </ClInclude>
+    <ClInclude Include="include\con_data_struct\con_vector.h">
+      <Filter>Header Files\con_data_struct</Filter>
+    </ClInclude>
+    <ClInclude Include="include\con_data_struct\concurrent.h">
+      <Filter>Header Files\con_data_struct</Filter>
+    </ClInclude>
+    <ClInclude Include="include\con_data_struct\Counter.h">
+      <Filter>Header Files\con_data_struct</Filter>
+    </ClInclude>
+    <ClInclude Include="include\con_data_struct\element.h">
+      <Filter>Header Files\con_data_struct</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BaseTask.h">
+      <Filter>Header Files\task</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WaitingTask.h">
+      <Filter>Header Files\task</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TaskArgsCopy.h">
+      <Filter>Header Files\task</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TaskArgs.h">
+      <Filter>Header Files\task</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Task.h">
+      <Filter>Header Files\task</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
