@@ -2,11 +2,14 @@
 #define COUTNER_H
 
 #include <atomic>
+#include <string>
 
 namespace fbr{
 	//concurrent data structure for an integer
 	class Counter{
 	public:
+		Counter(std::string name);
+
 		//add value to counter
 		void add(int a);
 
@@ -37,9 +40,13 @@ namespace fbr{
 			return *this;
 		}
 
+		std::string getName();
+
 	private:
-		int count;
+		int count=0;
 		std::atomic_flag lock;
+		int id;
+		std::string name;
 	};
 }
 #endif

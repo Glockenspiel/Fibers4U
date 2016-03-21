@@ -83,7 +83,6 @@
     <ClInclude Include="demo\Player.h" />
     <ClInclude Include="include\BaseTask.h" />
     <ClInclude Include="include\con_data_struct\concurrent.h" />
-    <ClInclude Include="include\con_data_struct\locker.h" />
     <ClInclude Include="include\con_data_struct\con_queue.h" />
     <ClInclude Include="include\con_data_struct\con_stack.h" />
     <ClInclude Include="include\con_data_struct\con_vector.h" />
@@ -93,6 +92,7 @@
     <ClInclude Include="include\fbr.h" />
     <ClInclude Include="include\Fiber.h" />
     <ClInclude Include="include\fiberpool.h" />
+    <ClInclude Include="include\locker.h" />
     <ClInclude Include="include\Nothing.h" />
     <ClInclude Include="include\scheduler.h" />
     <ClInclude Include="include\SpinUntil.h" />

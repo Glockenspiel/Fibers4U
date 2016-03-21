@@ -5,7 +5,7 @@
 
 using namespace std::placeholders;
 using namespace fbr::priority;
-using namespace fbr::scheduler;
+using namespace scheduler_vars;
 
 namespace fbr{
 	
@@ -59,6 +59,9 @@ namespace fbr{
 			fiberPool->fibers[i]->setPrepared();
 			threads.push_back(t);
 		}
+
+		counters.push_back(&taskCounter);
+
 		waitAllFibersFree();
 	}
 
@@ -221,7 +224,9 @@ namespace fbr{
 		else{
 			fbr::con_cout << "queue is empty" << fbr::endl;
 		}
-		fbr::con_cout << "Task completed: " << taskCounter.get() << fbr::endl;
+		//prints the value of the task counter around the same time it runs a task
+		//int counterVal = taskCounter.get();
+		//fbr::con_cout << "Task Counter: " << counterVal << fbr::endl;
 	}
 
 	//allows a task to wait until counter reaches a point without spinlocking a worker thread
@@ -285,5 +290,26 @@ namespace fbr{
 		while(taskNamingLock.test_and_set(std::memory_order_seq_cst));
 			taskNaming = name;
 		taskNamingLock.clear(std::memory_order_seq_cst);
+	}
+
+	void Scheduler::addCounter(Counter& counter){
+		counters.push_back(&counter);
+	}
+
+	int Scheduler::getCounterValByName(std::string name){
+		int count=-1;
+		bool found = false;
+		counters.getLock();
+		for (unsigned int i = 0; i < counters.size_unsync() && !found; i++){
+			
+			if (counters.at_unsync(i)->getName() == name)
+			{
+				count = counters.at_unsync(i)->get();
+				found = true;
+			}
+		}
+		counters.unlock();
+
+		return count;
 	}
 }

@@ -20,6 +20,7 @@ Player::~Player(){
 
 void Player::update(){
 	fbr::con_cout << "updating player" << fbr::endl;
+	Scheduler::setTaskNaming("SUPER SPECIAL TASK!!!");
 }
 
 void Player::addHp(int amount){

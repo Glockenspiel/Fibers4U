@@ -19,39 +19,44 @@ using std::thread;
 using std::mutex;
 using std::vector;
 
+
+namespace scheduler_vars{
+	using namespace fbr;
+
+	//boolean to detect if the scheduler should use dynamic fibers
+	static bool useDynamicFibers;
+
+	static FiberPool *fiberPool;
+
+	//queue for waiting before excution
+	static con_vector<WaitingTask *> waitingTasks;
+
+	//workers
+	static con_vector<Worker *> workers;
+
+
+	//atomic flag for accessing waitingTasks
+	static std::atomic_flag waitingLock = ATOMIC_FLAG_INIT;
+
+	//lock for adding dynamic fibers
+	static std::atomic_flag dynamicFiberLock = ATOMIC_FLAG_INIT;
+
+	//enables or disables thread sleeping
+	static concurrent<bool> sleepingEnabled = true;
+
+	//allows the main thread sleep
+	static ThreadSleeper mainThreadSleeper;
+
+	//counter for number of tasks being executed
+	static Counter taskCounter("task");
+
+	static std::string taskNaming = "";
+	static std::atomic_flag taskNamingLock = ATOMIC_FLAG_INIT;
+
+	static con_vector<Counter*> counters;
+}
+
 namespace fbr{
-
-	namespace scheduler{
-		//boolean to detect if the scheduler should use dynamic fibers
-		static bool useDynamicFibers;
-
-		static FiberPool *fiberPool;
-
-		//queue for waiting before excution
-		static con_vector<WaitingTask *> waitingTasks;
-
-		//workers
-		static con_vector<Worker *> workers;
-
-
-		//atomic flag for accessing waitingTasks
-		static std::atomic_flag waitingLock = ATOMIC_FLAG_INIT;
-
-		//lock for adding dynamic fibers
-		static std::atomic_flag dynamicFiberLock = ATOMIC_FLAG_INIT;
-
-		//enables or disables thread sleeping
-		static concurrent<bool> sleepingEnabled = true;
-
-		//allows the main thread sleep
-		static ThreadSleeper mainThreadSleeper;
-
-		//counter for number of tasks being executed
-		static Counter taskCounter;
-
-		static std::string taskNaming="";
-		static std::atomic_flag taskNamingLock = ATOMIC_FLAG_INIT;
-	}
 
 	class Scheduler{
 	public:
@@ -107,6 +112,10 @@ namespace fbr{
 		//sets the name of fibers as they get allocated tasks to taskNaming. 
 		//This is to help increase visibility of runtime debugging
 		static void setTaskNaming(std::string name);
+
+		static void addCounter(Counter& counter);
+
+		static int getCounterValByName(std::string name);
 	private:
 		//adds a task to the task queue
 		static void addToQueue(BaseTask *task, priority::Priority taskPrioirty);
@@ -124,5 +133,7 @@ namespace fbr{
 		bool isConstructed = true;
 	};
 }
+
+
 
 #endif

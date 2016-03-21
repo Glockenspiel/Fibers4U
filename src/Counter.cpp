@@ -1,6 +1,11 @@
 #include "include/con_data_struct/Counter.h"
 
+
 namespace fbr{
+	Counter::Counter(std::string name){
+		this->name = name;
+	}
+
 	void Counter::add(int a){
 		while (lock.test_and_set(std::memory_order_seq_cst));
 		count += a;
@@ -19,5 +24,9 @@ namespace fbr{
 		a = count;
 		lock.clear(std::memory_order_seq_cst);
 		return a;
+	}
+
+	std::string Counter::getName(){
+		return name;
 	}
 }

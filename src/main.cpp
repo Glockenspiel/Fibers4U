@@ -4,10 +4,16 @@
 using namespace std;
 using namespace fbr;
 
+Counter ctr("test");
 
 int main(){
+	ctr.add(1);
+	Scheduler::addCounter(ctr);
+	con_cout << "count:" << Scheduler::getCounterValByName("test") << fbr::endl;
+
 	Player *p = new Player();
 	BaseTask *printHP = new TaskArgs<>(&Player::printHp, p);
+	printHP->setReuseable(true);
 
 	TaskArgs<int> *taskArg = new TaskArgs<int>(&Player::addHp, p);
 	int a = 20;
@@ -45,12 +51,16 @@ int main(){
 	//scheduler->runTasks(allTasks, priority::low);
 	//example with variadic function
 	Scheduler::setTaskNaming("my tasks");
-	Scheduler::runTasks(priority::low, 4, printHP, move, update, longTask);
+	Scheduler::runTasks(priority::low, 3, printHP, move, update);
+	//Scheduler::runTasks(priority::low, 1, inputtask);
+	//Scheduler::runTasks(priority::low, 1, inputtask);
+	//scheduler->waitAllFibersFree(); 
+	//Scheduler::waitForCounter(0, printHP);
+	//Scheduler::waitForCounter(0, printHP);
+	Scheduler::waitForCounter(0, inputtask);
 
-	//scheduler->waitAllFibersFree();  
-	//Scheduler::waitForCounter(0, inputtask);
-	//Scheduler::waitForCounter(0, inputtask);
 
+	Scheduler::waitForCounter(0, longTask);
 
 	//puts main thread to wait and doesn't cunsume cpu time
 	//wakes up when endTask is run
