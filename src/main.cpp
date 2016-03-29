@@ -1,5 +1,6 @@
 #include "include/fbr.h"
 #include "demo/Player.h"
+#include "DelTask.h"
 
 using namespace std;
 using namespace fbr;
@@ -10,8 +11,30 @@ int main(){
 	ctr.add(1);
 	Scheduler::addCounter(ctr);
 	con_cout << "count:" << Scheduler::getCounterValByName("test") << fbr::endl;
+	
+
 
 	Player *p = new Player();
+
+	DelTask<int> *delTask2 = new DelTask<int>(std::bind(&Player::addHp, p,_1));
+	delTask2->set(10);
+	delTask2->run();
+
+
+	DelTask<> *delTask = new DelTask<>(std::bind(&Player::printHp, p));
+	delTask->set();
+	delTask->run();
+
+	vector<BaseTask*> testing;
+	testing.push_back(delTask2);
+	testing.push_back(delTask);
+	for (BaseTask* bt : testing)
+		bt->run();
+	
+	
+
+	
+
 	BaseTask *printHP = new TaskArgs<>(&Player::printHp, p);
 	printHP->setReuseable(true);
 

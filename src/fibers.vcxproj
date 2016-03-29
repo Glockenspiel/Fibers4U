@@ -80,6 +80,7 @@
     <ClCompile Include="SpinUntil.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DelTask.h" />
     <ClInclude Include="demo\Player.h" />
     <ClInclude Include="include\BaseTask.h" />
     <ClInclude Include="include\con_data_struct\concurrent.h" />
