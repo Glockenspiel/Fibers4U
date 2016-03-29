@@ -30,15 +30,15 @@ namespace fbr{
 		//returns true if the queue is empty
 		bool empty();
 
-		//unsyncronized versions to be used with extern_locker
+		//asyncronous versions to be used with extern_locker
 		//---------------------------------------------------
-		T getPop_unsync();
-		void pop_unsync();
-		T front_unsync();
-		T back_unsync();
-		void push_unsync(T t);
-		int size_unsync();
-		bool empty_unsync();
+		T getPop_async();
+		void pop_async();
+		T front_async();
+		T back_async();
+		void push_async(T t);
+		int size_async();
+		bool empty_async();
 		//---------------------------------------------------
 
 	private:
@@ -50,7 +50,7 @@ namespace fbr{
 	T con_queue<T>::getPop(){
 		T t;
 		getLock();
-		t = getPop_unsync();
+		t = getPop_async();
 		unlock();
 		return t;
 	}
@@ -59,7 +59,7 @@ namespace fbr{
 	template<class T>
 	void con_queue<T>::pop(){
 		getLock();
-		getPop_unsync();
+		getPop_async();
 		unlock();
 	}
 
@@ -68,7 +68,7 @@ namespace fbr{
 	T con_queue<T>::front(){
 		T t;
 		getLock();
-		t = front_unsync();
+		t = front_async();
 		unlock();
 		return t;
 	}
@@ -76,7 +76,7 @@ namespace fbr{
 	template<class T>
 	void con_queue<T>::push(T t){
 		getLock();
-		push_unsync(t);
+		push_async(t);
 		unlock();
 	}
 
@@ -84,7 +84,7 @@ namespace fbr{
 	int con_queue<T>::size(){
 		int count = 0;
 		getLock();
-		count = size_unsync();
+		count = size_async();
 		unlock();
 		return count;
 	}
@@ -93,7 +93,7 @@ namespace fbr{
 	bool con_queue<T>::empty(){
 		bool flag;
 		getLock();
-		flag = empty_unsync();
+		flag = empty_async();
 		unlock();
 		return flag;
 	}
@@ -102,17 +102,17 @@ namespace fbr{
 	T con_queue<T>::back(){
 		T t;
 		getLock();
-		t = back_unsync();
+		t = back_async();
 		unlock();
 		return t;
 	}
 
 	//----------------------------------------------------------------
-	//unsyncronized functions
+	//asyncronous functions
 	//----------------------------------------------------------------
 
 	template<class T>
-	T con_queue<T>::getPop_unsync(){
+	T con_queue<T>::getPop_async(){
 		T t;
 		t = frontptr->val;
 		frontptr = frontptr->next;
@@ -121,18 +121,18 @@ namespace fbr{
 
 	//pop function with locking
 	template<class T>
-	void con_queue<T>::pop_unsync(){
+	void con_queue<T>::pop_async(){
 		frontptr = frontptr->next;
 	}
 
 
 	template<class T>
-	T con_queue<T>::front_unsync(){
+	T con_queue<T>::front_async(){
 		return frontptr->val;
 	}
 
 	template<class T>
-	void con_queue<T>::push_unsync(T t){
+	void con_queue<T>::push_async(T t){
 		element<T> *e = new element<T>();
 		e->next = nullptr;
 		e->val = t;
@@ -149,7 +149,7 @@ namespace fbr{
 	}
 
 	template<class T>
-	int con_queue<T>::size_unsync(){
+	int con_queue<T>::size_async(){
 		int count = 0;
 		element<T> *ptr = frontptr;
 
@@ -162,12 +162,12 @@ namespace fbr{
 	}
 
 	template<class T>
-	bool con_queue<T>::empty_unsync(){
+	bool con_queue<T>::empty_async(){
 		return frontptr == nullptr;
 	}
 
 	template<class T>
-	T con_queue<T>::back_unsync(){
+	T con_queue<T>::back_async(){
 		return = back->val;
 	}
 }

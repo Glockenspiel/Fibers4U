@@ -300,11 +300,11 @@ namespace fbr{
 		int count=-1;
 		bool found = false;
 		counters.getLock();
-		for (unsigned int i = 0; i < counters.size_unsync() && !found; i++){
+		for (unsigned int i = 0; i < counters.size_async() && !found; i++){
 			
-			if (counters.at_unsync(i)->getName() == name)
+			if (counters.at_async(i)->getName() == name)
 			{
-				count = counters.at_unsync(i)->get();
+				count = counters.at_async(i)->get();
 				found = true;
 			}
 		}

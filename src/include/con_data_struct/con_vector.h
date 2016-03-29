@@ -32,24 +32,24 @@ namespace fbr{
 
 		//operator overloading for element access
 		//this is a syncronized function use 
-		//at_unsync() for unsyncronized element access
+		//at_async() for asyncronous element access
 		T operator[](unsigned int index);
 
 		//clears the list
 		void clear();
 
 
-		//These functions allows the vector to be accessed unsyncronized
+		//These functions allows the vector to be accessed asyncronously
 		//This allows for the freedom of easily switching between 
-		//a synchronized and unsynchronized vector
+		//a synchronized and asynchronized vector
 		//to be used with get_lock_extern() and unlock_extern() from the extern_locker class
 		//---------------------------------------------------------------------------
-		void push_back_unsync(T t);
-		unsigned int size_unsync();
-		bool empty_unsync();
-		void erase_unsync(unsigned int index);
-		T at_unsync(unsigned int index);
-		void clear_unsync();
+		void push_back_async(T t);
+		unsigned int size_async();
+		bool empty_async();
+		void erase_async(unsigned int index);
+		T at_async(unsigned int index);
+		void clear_async();
 		//---------------------------------------------------------------------------
 
 
@@ -71,7 +71,7 @@ namespace fbr{
 	unsigned int con_vector<T>::size(){
 		unsigned int count;
 		getLock();
-		count = size_unsync();
+		count = size_async();
 		unlock();
 		return count;
 	}
@@ -79,7 +79,7 @@ namespace fbr{
 	template<class T>
 	void con_vector<T>::push_back(T t){
 		getLock();
-		push_back_unsync(t);
+		push_back_async(t);
 		unlock();
 	}
 
@@ -87,7 +87,7 @@ namespace fbr{
 	bool con_vector<T>::empty(){
 		bool flag;
 		getLock();
-		flag = empty_unsync;
+		flag = empty_async;
 		unlock();
 		return flag;
 	}
@@ -95,7 +95,7 @@ namespace fbr{
 	template<class T>
 	void con_vector<T>::erase(unsigned int index){
 		getLock();
-		erase_unsync(index);
+		erase_async(index);
 		unlock();
 	}
 
@@ -103,7 +103,7 @@ namespace fbr{
 	T con_vector<T>::at(unsigned int index){
 		T t;
 		getLock();
-		t = at_unsync(index);
+		t = at_async(index);
 		unlock();
 		return t;
 	}
@@ -111,25 +111,25 @@ namespace fbr{
 	template <class T>
 	void con_vector<T>::clear(){
 		getLock();
-		clear_unsync();
+		clear_async();
 		unlock();
 	}
 
 	//---------------------------------
-	//unsyncronized functions
+	//asyncronous functions
 	//---------------------------------
 
 
 
 	template<class T>
-	unsigned int con_vector<T>::size_unsync(){
+	unsigned int con_vector<T>::size_async(){
 		unsigned int count;
 		count = totalSize;
 		return count;
 	}
 
 	template<class T>
-	void con_vector<T>::push_back_unsync(T t){
+	void con_vector<T>::push_back_async(T t){
 		element<T>* e = new element<T>();
 		e->val = t;
 		e->next = nullptr;
@@ -146,14 +146,14 @@ namespace fbr{
 	}
 
 	template<class T>
-	bool con_vector<T>::empty_unsync(){
+	bool con_vector<T>::empty_async(){
 		bool flag;
 		flag = front == nullptr;
 		return flag;
 	}
 
 	template<class T>
-	void con_vector<T>::erase_unsync(unsigned int index){
+	void con_vector<T>::erase_async(unsigned int index){
 		//remove front element
 		if (index == 0){
 			//keep back up to date if only 1 element
@@ -187,7 +187,7 @@ namespace fbr{
 	}
 
 	template<class T>
-	T con_vector<T>::at_unsync(unsigned int index){
+	T con_vector<T>::at_async(unsigned int index){
 		T t;
 
 		cur = front;
@@ -204,7 +204,7 @@ namespace fbr{
 	}
 
 	template <class T>
-	void con_vector<T>::clear_unsync(){
+	void con_vector<T>::clear_async(){
 		front = nullptr;
 		back = nullptr;
 		totalSize = 0;

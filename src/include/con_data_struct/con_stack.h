@@ -15,14 +15,14 @@ namespace fbr{
 		bool empty();
 		int size();
 
-		//unsyncronized versions
+		//asyncronous versions
 		//--------------------------
-		void push_unsync(T t);
-		T top_unsync();
-		void pop_unsync();
-		T getPop_unsync();
-		bool empty_unsync();
-		int size_unsync();
+		void push_async(T t);
+		T top_async();
+		void pop_async();
+		T getPop_async();
+		bool empty_async();
+		int size_async();
 		//--------------------------
 
 	private:
@@ -33,14 +33,14 @@ namespace fbr{
 	template <class T>
 	void con_stack<T>::push(T t){
 		getLock();
-		push_unsync(t);
+		push_async(t);
 		unlock();
 	}
 
 	template <class T>
 	void con_stack<T>::pop(){
 		getLock();
-		top_ptr = pop_unsync();
+		top_ptr = pop_async();
 		unlock();
 	}
 
@@ -48,7 +48,7 @@ namespace fbr{
 	T con_stack<T>::top(){
 		T t;
 		getLock();
-		t = top_unsync();
+		t = top_async();
 		unlock();
 		return t;
 	}
@@ -57,7 +57,7 @@ namespace fbr{
 	T con_stack<T>::getPop(){
 		T t;
 		getLock();
-		top_ptr = getPop_unsync();
+		top_ptr = getPop_async();
 		unlock();
 		return t;
 	}
@@ -66,7 +66,7 @@ namespace fbr{
 	bool con_stack<T>::empty(){
 		bool flag;
 		getLock();
-		flag = empty_unsync();
+		flag = empty_async();
 		unlock();
 		return flag;
 	}
@@ -75,17 +75,17 @@ namespace fbr{
 	int con_stack<T>::size(){
 		int count = 0;
 		getLock();
-		count = size_unsync();
+		count = size_async();
 		unlock();
 		return count;
 	}
 
 	//------------------------
-	//unsyncronized functions
+	//asyncronous functions
 	//------------------------
 
 	template <class T>
-	void con_stack<T>::push_unsync(T t){
+	void con_stack<T>::push_async(T t){
 		element<T> *e = new element<T>();
 		e->next = nullptr;
 		e->val = t;
@@ -102,17 +102,17 @@ namespace fbr{
 	}
 
 	template <class T>
-	void con_stack<T>::pop_unsync(){
+	void con_stack<T>::pop_async(){
 		top_ptr = top_ptr->next;
 	}
 
 	template <class T>
-	T con_stack<T>::top_unsync(){
+	T con_stack<T>::top_async(){
 		return top_ptr->val;
 	}
 
 	template <class T>
-	T con_stack<T>::getPop_unsync(){
+	T con_stack<T>::getPop_async(){
 		T t;
 		t = top_ptr->val;
 		top_ptr = top_ptr->next;
@@ -120,12 +120,12 @@ namespace fbr{
 	}
 
 	template <class T>
-	bool con_stack<T>::empty_unsync(){
+	bool con_stack<T>::empty_async(){
 		return top_ptr == nullptr;
 	}
 
 	template <class T>
-	int con_stack<T>::size_unsync(){
+	int con_stack<T>::size_async(){
 		int count = 0;
 		current = top_ptr;
 

@@ -63,8 +63,8 @@ void Player::taskInput(){
 
 	//access with only 1 lock
 	mylist.getLock();
-		for (unsigned int i = 0; mylist.size_unsync() < 10; i++)
-			mylist.push_back_unsync(aa.get());
+		for (unsigned int i = 0; mylist.size_async() < 10; i++)
+			mylist.push_back_async(aa.get());
 	mylist.unlock();
 
 	fbr::con_cout << "myList:" << mylist.at(0) << fbr::endl;
@@ -80,20 +80,20 @@ void Player::taskInput(){
 
 	myqueue.getLock();
 	for (unsigned int i = 1; i <= 10; i++)
-		myqueue.push_unsync(i);
+		myqueue.push_async(i);
 
-	while (myqueue.empty_unsync() == false)
-		con_cout << "queue popped:" << myqueue.getPop_unsync() << fbr::endl;
+	while (myqueue.empty_async() == false)
+		con_cout << "queue popped:" << myqueue.getPop_async() << fbr::endl;
 	myqueue.unlock();
 
 
 	con_stack<int> mystack;
 	mystack.getLock();
 	for (unsigned int i = 1; i <= 10; i++)
-		mystack.push_unsync(i);
+		mystack.push_async(i);
 
-	while (mystack.empty_unsync() == false)
-		con_cout << "stack popped:" << mystack.getPop_unsync() << fbr::endl;
+	while (mystack.empty_async() == false)
+		con_cout << "stack popped:" << mystack.getPop_async() << fbr::endl;
 	mystack.unlock();
 
 	std::string s;
