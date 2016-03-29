@@ -1,15 +1,14 @@
 #include "include/WaitingTask.h"
 
 namespace fbr{
-	WaitingTask::WaitingTask(BaseTask* task, unsigned int count){
-		this->task = task;
-		this->count = count;
-	}
 
-	WaitingTask::WaitingTask(BaseTask* task, unsigned int count, Priority taskPriority){
+	WaitingTask::WaitingTask(Counter* ctr, BaseTask* task, unsigned int count,
+		Priority taskPriority, Counter* taskCtr){
 		this->task = task;
 		this->count = count;
 		this->taskPriority = taskPriority;
+		this->ctr = ctr;
+		this->taskCtr = taskCtr;
 	}
 
 	WaitingTask::~WaitingTask(){}

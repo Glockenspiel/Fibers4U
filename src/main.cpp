@@ -80,10 +80,10 @@ int main(){
 	//scheduler->waitAllFibersFree(); 
 	//Scheduler::waitForCounter(0, printHP);
 	//Scheduler::waitForCounter(0, printHP);
-	Scheduler::waitForCounter(0, inputtask);
+	Scheduler::waitForCounter(&scheduler_vars::taskCounter, 0, inputtask, &ctr);
 
 
-	Scheduler::waitForCounter(0, longTask);
+	Scheduler::waitForCounter(&scheduler_vars::taskCounter, 0, longTask, &ctr);
 
 	//puts main thread to wait and doesn't cunsume cpu time
 	//wakes up when endTask is run

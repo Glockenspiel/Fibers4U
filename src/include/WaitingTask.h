@@ -3,6 +3,7 @@
 
 #include "BaseTask.h"
 #include "Fiber.h"
+#include "con_data_struct\Counter.h"
 
 namespace fbr{
 	class WaitingTask{
@@ -10,7 +11,8 @@ namespace fbr{
 		//waiting task with low priority
 		WaitingTask(BaseTask* task, unsigned int count);
 		//waiting task with a given prioirty
-		WaitingTask(BaseTask* task, unsigned int count, Priority taskPriority);
+		WaitingTask(Counter* ctr, BaseTask* task, unsigned int count, 
+			Priority taskPriority, Counter* taskCtr);
 		~WaitingTask();
 
 		//returns the waiting count
@@ -21,10 +23,15 @@ namespace fbr{
 
 		//returns the priority
 		Priority getPriority();
+
+		//get task counter
+		Counter& getTaskCounter();
 	private:
 		BaseTask* task;
 		unsigned int count;
 		priority::Priority taskPriority = priority::high;
+		Counter* ctr;
+		Counter* taskCtr;
 	};
 }
 

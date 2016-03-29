@@ -87,7 +87,7 @@ namespace fbr{
 		static void waitForCounter(WaitingTask& task);
 
 		//constructs a WaitingTask object and calls waitForCounter
-		static void waitForCounter(unsigned int count, BaseTask* task);
+		static void waitForCounter(Counter* ctr, unsigned int count, BaseTask* task, Counter* taskCtr);
 
 		//checks the waiting queue to see if any of the tasks should be woken up
 		static void checkWaitingTasks();

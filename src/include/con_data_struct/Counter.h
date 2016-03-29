@@ -1,5 +1,5 @@
 #ifndef COUNTER_H
-#define COUTNER_H
+#define COUNTER_H
 
 #include <atomic>
 #include <string>

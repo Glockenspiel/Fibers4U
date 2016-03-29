@@ -250,8 +250,8 @@ namespace fbr{
 	}
 
 	//abbreviated version of waitForCounter
-	void Scheduler::waitForCounter(unsigned int count, BaseTask* task){
-		WaitingTask* wt = new WaitingTask(task, count, Priority::high);
+	void Scheduler::waitForCounter(Counter* ctr, unsigned int count, BaseTask* task, Counter* taskCtr){
+		WaitingTask* wt = new WaitingTask(ctr, task, count, Priority::high, taskCtr);
 		waitForCounter(*wt);
 	}
 
