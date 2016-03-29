@@ -37,20 +37,17 @@ namespace fbr{
 	}
 
 	//sets the current task of the fiber and the fibers priority
-	void Fiber::setTask(BaseTask* task, Priority p, std::string taskNaming){
+	void Fiber::setTask(BaseTask* task, Priority p, std::string taskNaming, Counter* ctr){
 		currentTaskNaming = taskNaming;
 		currentPriority = p;
 		currentTask = task;
-
-
+		m_ctr = ctr;
 	}
 
 	//runs the current task and frees it
 	void Fiber::runAndFree(){
 		run();
 		freeFiber();
-
-
 	}
 
 	//returns the current id

@@ -5,6 +5,7 @@
 
 #include <atomic>
 #include <string>
+#include "con_data_struct\Counter.h"
 
 namespace fbr{
 	//namspace for prioity enum so it can be accessed more easily
@@ -36,7 +37,7 @@ namespace fbr{
 		void runAndFree();
 
 		//set the current task and the priority
-		void setTask(BaseTask* task, priority::Priority p, std::string taskNaming);
+		void setTask(BaseTask* task, priority::Priority p, std::string taskNaming,  Counter* ctr);
 
 		//returns the id of this fiber
 		unsigned int getID();
@@ -74,6 +75,7 @@ namespace fbr{
 		BaseTask *currentTask;
 		Priority currentPriority = Priority::low;
 		std::string currentTaskNaming;
+		Counter* m_ctr;
 	};
 }
 

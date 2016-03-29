@@ -74,7 +74,7 @@ int main(){
 	//scheduler->runTasks(allTasks, priority::low);
 	//example with variadic function
 	Scheduler::setTaskNaming("my tasks");
-	Scheduler::runTasks(priority::low, 4, delTask2, printHP, move, update);
+	Scheduler::runTasks(priority::low, &ctr, 4, delTask2, printHP, move, update);
 	//Scheduler::runTasks(priority::low, 1, inputtask);
 	//Scheduler::runTasks(priority::low, 1, inputtask);
 	//scheduler->waitAllFibersFree(); 

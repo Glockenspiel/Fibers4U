@@ -68,10 +68,12 @@ namespace fbr{
 		~Scheduler();
 
 		//puts all the tasks into a queue and runs them
-		static void runTasks(vector<BaseTask*> tasks, Priority taskPriority);
+		static void runTasks(vector<BaseTask*> tasks, 
+			Priority taskPriority, Counter* ctr);
 
 		//run tasks variadic function overload
-		static void runTasks(Priority prio, unsigned int count, BaseTask*...);
+		static void runTasks(Priority prio, Counter* ctr, 
+			unsigned int count, BaseTask*...);
 
 		//waits for all queued fibers to complete and then joins the threads 
 		//(must be called before deconstructor)
@@ -118,7 +120,8 @@ namespace fbr{
 		static int getCounterValByName(std::string name);
 	private:
 		//adds a task to the task queue
-		static void addToQueue(BaseTask *task, priority::Priority taskPrioirty);
+		static void addToQueue(BaseTask *task, 
+			priority::Priority taskPrioirty, Counter* ctr);
 
 		//tries to acquire a free worker, return nullptr if failed
 		static Worker* tryAcquireFreeWorker();

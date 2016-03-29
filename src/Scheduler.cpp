@@ -45,13 +45,13 @@ namespace fbr{
 			thread *t;
 			//assign starting task the the first worker thread
 			if (i == 0){
-				fiberPool->fibers[i]->setTask(startingTask, Priority::low, taskNaming);
+				fiberPool->fibers[i]->setTask(startingTask, Priority::low, taskNaming, &taskCounter);
 				workers[i]->set(*fiberPool->fibers[i]);
 			}
 			//assign empty tasks to the rest of the worker threads
 			else{
 				Task *emptyTask = new Task(&Scheduler::empty);
-				fiberPool->fibers[i]->setTask(emptyTask, Priority::low, taskNaming);
+				fiberPool->fibers[i]->setTask(emptyTask, Priority::low, taskNaming, &taskCounter);
 				workers[i]->set(*fiberPool->fibers[i]);
 			}
 			//fiberPool->workerStarted();
@@ -81,7 +81,7 @@ namespace fbr{
 	}
 
 	//adds a taks to the queue with the given priority
-	void Scheduler::addToQueue(BaseTask *task, Priority taskPrioirty){
+	void Scheduler::addToQueue(BaseTask *task, Priority taskPrioirty, Counter* ctr){
 		Fiber* fiber;
 
 		//aquire free fiber
@@ -105,7 +105,7 @@ namespace fbr{
 			}
 		} while (fiber == nullptr);
 
-		fiber->setTask(task, taskPrioirty, taskNaming);
+		fiber->setTask(task, taskPrioirty, taskNaming, ctr);
 		fiberPool->pushToQueue(*fiber);
 		taskCounter++;
 	}
@@ -113,9 +113,9 @@ namespace fbr{
 	//adds the tasks to the queue and then run them
 	//this also clears the vector passed in
 	//the tasks will be cleaned up by the scheduler
-	void Scheduler::runTasks(vector<BaseTask*> tasks, Priority taskPriority){
+	void Scheduler::runTasks(vector<BaseTask*> tasks, Priority taskPriority, Counter* ctr){
 		for (BaseTask* task : tasks)
-			addToQueue(task, taskPriority);
+			addToQueue(task, taskPriority, ctr);
 
 		//only notify the free workers
 		notifyFreeWorkers(tasks.size());
@@ -125,14 +125,14 @@ namespace fbr{
 	}
 
 	//variadic function overload of runTasks()
-	void Scheduler::runTasks(Priority prio, unsigned int count, BaseTask*...){
+	void Scheduler::runTasks(Priority prio, Counter* ctr, unsigned int count, BaseTask*...){
 		int curCount = count;
 		va_list args;
 		va_start(args, count);
 
 		while (curCount > 0){
 			BaseTask * bt = va_arg(args, BaseTask*);
-			addToQueue(bt, prio);
+			addToQueue(bt, prio, ctr);
 			curCount--;
 		}
 		va_end(args);
@@ -235,7 +235,7 @@ namespace fbr{
 	void Scheduler::waitForCounter(WaitingTask& task){
 		//if all workers are free, just run rather than waiting
 		if (taskCounter.get() <= task.getWaitingCount()){
-			runTasks({ task.getTask() }, task.getPriority());
+			runTasks({ task.getTask() }, task.getPriority(), task.getTaskCounter());
 		}
 		//send to waiting queue
 		else{
@@ -265,7 +265,7 @@ namespace fbr{
 			//if waiting count >= counter, run the task with high priority
 			if (waitingTasks[i]->getWaitingCount() >= taskCounter.get()){
 
-				addToQueue(waitingTasks.at(i)->getTask(), Priority::high);
+				addToQueue(waitingTasks.at(i)->getTask(), Priority::high, waitingTasks.at(i)->getTaskCounter());
 
 				//remove waiting task from vector
 				delete waitingTasks[i];

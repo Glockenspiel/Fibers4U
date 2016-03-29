@@ -27,4 +27,8 @@ namespace fbr{
 	Priority WaitingTask::getPriority(){
 		return taskPriority;
 	}
+
+	Counter* WaitingTask::getTaskCounter(){
+		return taskCtr;
+	}
 }

@@ -25,7 +25,7 @@ namespace fbr{
 		Priority getPriority();
 
 		//get task counter
-		Counter& getTaskCounter();
+		Counter* getTaskCounter();
 	private:
 		BaseTask* task;
 		unsigned int count;
