@@ -17,19 +17,19 @@ int main(){
 	Player *p = new Player();
 
 	DelTask<int> *delTask2 = new DelTask<int>(std::bind(&Player::addHp, p,_1));
-	delTask2->set(10);
-	delTask2->run();
+	delTask2->set(100);
+	//delTask2->run();
 
 
 	DelTask<> *delTask = new DelTask<>(std::bind(&Player::printHp, p));
 	delTask->set();
-	delTask->run();
+	//delTask->run();
 
 	vector<BaseTask*> testing;
 	testing.push_back(delTask2);
 	testing.push_back(delTask);
-	for (BaseTask* bt : testing)
-		bt->run();
+	//for (BaseTask* bt : testing)
+		//bt->run();
 	
 	
 
@@ -74,7 +74,7 @@ int main(){
 	//scheduler->runTasks(allTasks, priority::low);
 	//example with variadic function
 	Scheduler::setTaskNaming("my tasks");
-	Scheduler::runTasks(priority::low, 3, printHP, move, update);
+	Scheduler::runTasks(priority::low, 4, delTask2, printHP, move, update);
 	//Scheduler::runTasks(priority::low, 1, inputtask);
 	//Scheduler::runTasks(priority::low, 1, inputtask);
 	//scheduler->waitAllFibersFree(); 
