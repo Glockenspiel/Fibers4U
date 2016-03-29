@@ -48,6 +48,8 @@ namespace fbr{
 	void Fiber::runAndFree(){
 		run();
 		freeFiber();
+		m_ctr->sub(1);
+		fbr::con_cout << "Counter " << m_ctr->getName() << ": " << m_ctr->get() << fbr::endl;
 	}
 
 	//returns the current id

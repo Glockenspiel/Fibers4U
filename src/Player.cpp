@@ -48,7 +48,7 @@ void Player::longTask(){
 	SpinUntil *t = new SpinUntil();
 	t->wait(2);
 	Task *inputtask = new Task(&Player::taskInput, this);
-	Scheduler::waitForCounter(&scheduler_vars::taskCounter, 0, inputtask, &scheduler_vars::taskCounter);
+	//Scheduler::waitForCounter(, 0, inputtask, );
 }
 
 void Player::taskInput(){

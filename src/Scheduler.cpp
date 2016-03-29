@@ -36,6 +36,8 @@ namespace fbr{
 			fiberPool = new FiberPool(FIBER_COUNT);
 
 		taskCounter += THREAD_COUNT;
+		Counter testctr("teeee");
+		testctr += THREAD_COUNT;
 
 		//create worker threads
 		for (unsigned int i = 0; i < THREAD_COUNT; i++){
@@ -45,13 +47,13 @@ namespace fbr{
 			thread *t;
 			//assign starting task the the first worker thread
 			if (i == 0){
-				fiberPool->fibers[i]->setTask(startingTask, Priority::low, taskNaming, &taskCounter);
+				fiberPool->fibers[i]->setTask(startingTask, Priority::low, taskNaming, &testctr);
 				workers[i]->set(*fiberPool->fibers[i]);
 			}
 			//assign empty tasks to the rest of the worker threads
 			else{
 				Task *emptyTask = new Task(&Scheduler::empty);
-				fiberPool->fibers[i]->setTask(emptyTask, Priority::low, taskNaming, &taskCounter);
+				fiberPool->fibers[i]->setTask(emptyTask, Priority::low, taskNaming, &testctr);
 				workers[i]->set(*fiberPool->fibers[i]);
 			}
 			//fiberPool->workerStarted();
@@ -114,6 +116,8 @@ namespace fbr{
 	//this also clears the vector passed in
 	//the tasks will be cleaned up by the scheduler
 	void Scheduler::runTasks(vector<BaseTask*> tasks, Priority taskPriority, Counter* ctr){
+		ctr->add(tasks.size());
+
 		for (BaseTask* task : tasks)
 			addToQueue(task, taskPriority, ctr);
 
@@ -126,6 +130,7 @@ namespace fbr{
 
 	//variadic function overload of runTasks()
 	void Scheduler::runTasks(Priority prio, Counter* ctr, unsigned int count, BaseTask*...){
+		ctr->add(count);
 		int curCount = count;
 		va_list args;
 		va_start(args, count);
@@ -239,6 +244,9 @@ namespace fbr{
 		}
 		//send to waiting queue
 		else{
+			//increment the counter 
+			//task.getTaskCounter()->add(1);
+
 			//acquire lock for accessing waitingTasks
 			while (waitingLock.test_and_set(std::memory_order_seq_cst));
 
@@ -263,9 +271,9 @@ namespace fbr{
 
 		for (unsigned int i = 0; i < waitingTasks.size(); i++){
 			//if waiting count >= counter, run the task with high priority
-			if (waitingTasks[i]->getWaitingCount() >= taskCounter.get()){
+			if (waitingTasks[i]->isReadyToRun()){
 
-				addToQueue(waitingTasks.at(i)->getTask(), Priority::high, waitingTasks.at(i)->getTaskCounter());
+				addToQueue(waitingTasks.at(i)->getTask(), waitingTasks.at(i)->getPriority(), waitingTasks.at(i)->getTaskCounter());
 
 				//remove waiting task from vector
 				delete waitingTasks[i];

@@ -6,9 +6,10 @@ using namespace std;
 using namespace fbr;
 
 Counter ctr("test");
+Counter ctr2("test2");
 
 int main(){
-	ctr.add(1);
+	//ctr.add(1);
 	Scheduler::addCounter(ctr);
 	con_cout << "count:" << Scheduler::getCounterValByName("test") << fbr::endl;
 	
@@ -80,10 +81,11 @@ int main(){
 	//scheduler->waitAllFibersFree(); 
 	//Scheduler::waitForCounter(0, printHP);
 	//Scheduler::waitForCounter(0, printHP);
-	Scheduler::waitForCounter(&scheduler_vars::taskCounter, 0, inputtask, &ctr);
+	
 
+	Scheduler::waitForCounter(&ctr, 0, longTask, &ctr2);
 
-	Scheduler::waitForCounter(&scheduler_vars::taskCounter, 0, longTask, &ctr);
+	Scheduler::waitForCounter(&ctr2, 0, inputtask, &ctr);
 
 	//puts main thread to wait and doesn't cunsume cpu time
 	//wakes up when endTask is run

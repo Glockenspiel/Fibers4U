@@ -8,10 +8,8 @@
 namespace fbr{
 	class WaitingTask{
 	public:
-		//waiting task with low priority
-		WaitingTask(BaseTask* task, unsigned int count);
 		//waiting task with a given prioirty
-		WaitingTask(Counter* ctr, BaseTask* task, unsigned int count, 
+		WaitingTask(Counter* waitingCtr, BaseTask* task, unsigned int count, 
 			Priority taskPriority, Counter* taskCtr);
 		~WaitingTask();
 
@@ -26,11 +24,15 @@ namespace fbr{
 
 		//get task counter
 		Counter* getTaskCounter();
+
+		//returns true if waiting counter is equal or below the count
+		bool isReadyToRun();
+
 	private:
 		BaseTask* task;
 		unsigned int count;
 		priority::Priority taskPriority = priority::high;
-		Counter* ctr;
+		Counter* waitingCtr;
 		Counter* taskCtr;
 	};
 }

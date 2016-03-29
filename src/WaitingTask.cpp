@@ -2,12 +2,12 @@
 
 namespace fbr{
 
-	WaitingTask::WaitingTask(Counter* ctr, BaseTask* task, unsigned int count,
+	WaitingTask::WaitingTask(Counter* waitingCtr, BaseTask* task, unsigned int count,
 		Priority taskPriority, Counter* taskCtr){
 		this->task = task;
 		this->count = count;
 		this->taskPriority = taskPriority;
-		this->ctr = ctr;
+		this->waitingCtr = waitingCtr;
 		this->taskCtr = taskCtr;
 	}
 
@@ -30,5 +30,9 @@ namespace fbr{
 
 	Counter* WaitingTask::getTaskCounter(){
 		return taskCtr;
+	}
+
+	bool WaitingTask::isReadyToRun(){
+		return waitingCtr->get() <= count;
 	}
 }
