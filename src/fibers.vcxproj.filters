@@ -20,9 +20,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Task.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Scheduler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -112,22 +109,13 @@
     <ClInclude Include="include\WaitingTask.h">
       <Filter>Header Files\task</Filter>
     </ClInclude>
-    <ClInclude Include="include\TaskArgsCopy.h">
-      <Filter>Header Files\task</Filter>
-    </ClInclude>
-    <ClInclude Include="include\TaskArgs.h">
-      <Filter>Header Files\task</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Task.h">
-      <Filter>Header Files\task</Filter>
-    </ClInclude>
     <ClInclude Include="demo\Player.h">
       <Filter>demo</Filter>
     </ClInclude>
     <ClInclude Include="include\locker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DelTask.h">
+    <ClInclude Include="include\DelTask.h">
       <Filter>Header Files\task</Filter>
     </ClInclude>
   </ItemGroup>

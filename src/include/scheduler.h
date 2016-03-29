@@ -13,11 +13,13 @@
 #include "con_data_struct/Counter.h"
 #include <stdarg.h>
 #include "thread_sleeper.h"
+#include "DelTask.h"
 
 
 using std::thread;
 using std::mutex;
 using std::vector;
+using namespace std::placeholders;
 
 
 namespace scheduler_vars{

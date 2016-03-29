@@ -4,7 +4,6 @@
 #include "include/SpinUntil.h"
 #include "include/Scheduler.h"
 #include "include/con_data_struct/concurrent.h"
-#include "include/Task.h"
 #include "include/con_data_struct/con_queue.h"
 #include "include/con_data_struct/con_stack.h"
 
@@ -47,7 +46,7 @@ void Player::move(int x, int y, int z){
 void Player::longTask(){
 	SpinUntil *t = new SpinUntil();
 	t->wait(2);
-	Task *inputtask = new Task(&Player::taskInput, this);
+	//Task *inputtask = new Task(&Player::taskInput, this);
 	//Scheduler::waitForCounter(, 0, inputtask, );
 }
 

@@ -1,6 +1,5 @@
 #include "include/fbr.h"
 #include "demo/Player.h"
-#include "DelTask.h"
 
 using namespace std;
 using namespace fbr;
@@ -16,15 +15,15 @@ int main(){
 
 
 	Player *p = new Player();
+	DelTask<> *delTask = new DelTask<>(std::bind(&Player::printHp, p));
+	
+
+
 
 	DelTask<int> *delTask2 = new DelTask<int>(std::bind(&Player::addHp, p,_1));
-	delTask2->set(100);
-	//delTask2->run();
+	int amount = 100;
+	delTask2->set(amount);
 
-
-	DelTask<> *delTask = new DelTask<>(std::bind(&Player::printHp, p));
-	delTask->set();
-	//delTask->run();
 
 	vector<BaseTask*> testing;
 	testing.push_back(delTask2);
@@ -36,23 +35,23 @@ int main(){
 
 	
 
-	BaseTask *printHP = new TaskArgs<>(&Player::printHp, p);
+	BaseTask *printHP = new DelTask<>(std::bind(&Player::printHp, p));
 	printHP->setReuseable(true);
 
-	TaskArgs<int> *taskArg = new TaskArgs<int>(&Player::addHp, p);
-	int a = 20;
-	taskArg->setArgs(a);
+	DelTask<int> *taskArg = new DelTask<int>(std::bind(&Player::addHp, p,_1));
+	int a=20;
+	taskArg->set(a);
 
-	TaskArgs<int, bool> *test = new TaskArgs<int, bool>(&Player::damage, p);
+	DelTask<int, bool> *test = new DelTask<int, bool>(std::bind(&Player::damage, p, _1, _2));
 	int b = 5;
 	bool isMagic=false;
-	test->setArgs(b, isMagic);
+	test->set(b, isMagic);
 
-	TaskArgsCopy<int, int, int> *move = new TaskArgsCopy<int, int, int>(&Player::move, p);
+	DelTask<int, int, int> *move = new DelTask<int, int, int>(std::bind(&Player::move, p, _1, _2, _3));
 	int c = 0;
-	move->setArgs(54, c, std::thread::hardware_concurrency());
+	move->set(54, c, std::thread::hardware_concurrency());
 
-	Task *inputtask = new Task(&Player::taskInput, p);
+	DelTask<> *inputtask = new DelTask<>(std::bind(&Player::taskInput, p));
 	inputtask->setReuseable(true);
 
 	Scheduler *scheduler = new Scheduler(0,4, taskArg,true,true);
@@ -62,13 +61,13 @@ int main(){
 
 	fbr::con_cout << "All workers ready! " << fbr::endl;
 
-	Task *update = new Task(&Player::update, p);
+	DelTask<> *update = new DelTask<>(std::bind(&Player::update, p));
 	
 
 	//wake up main thread
-	Task *endTask = new Task(&Scheduler::wakeUpMain);
+	DelTask<> *endTask = new DelTask<>(&Scheduler::wakeUpMain);
 
-	Task *longTask = new Task(&Player::longTask, p);
+	DelTask<> *longTask = new DelTask<>(std::bind(&Player::longTask, p));
 	//run all task unsyncronized
 	//example with vector
 	//vector<BaseTask*> allTasks = { printHP, move, update,longTask };

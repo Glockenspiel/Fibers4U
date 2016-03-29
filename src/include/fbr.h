@@ -6,11 +6,6 @@
 #include "include/con_data_struct/con_vector.h"
 #include "include/con_data_struct/con_stack.h"
 
-//tasks
-#include "Task.h"
-#include "TaskArgs.h"
-#include "TaskArgsCopy.h"
-
 //scheduler
 #include "Scheduler.h"
 

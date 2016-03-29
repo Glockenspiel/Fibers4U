@@ -1,7 +1,6 @@
 #include "include/Scheduler.h"
 #include <iostream>
 #include <functional>
-#include "include/Task.h"
 
 using namespace std::placeholders;
 using namespace fbr::priority;
@@ -52,7 +51,7 @@ namespace fbr{
 			}
 			//assign empty tasks to the rest of the worker threads
 			else{
-				Task *emptyTask = new Task(&Scheduler::empty);
+				DelTask<> *emptyTask = new DelTask<>(&Scheduler::empty);
 				fiberPool->fibers[i]->setTask(emptyTask, Priority::low, taskNaming, &testctr);
 				workers[i]->set(*fiberPool->fibers[i]);
 			}

@@ -31,7 +31,7 @@ public:
 	{}
 
 	//set the arguments
-	void set(Params&&... args)
+	void set(Params... args)
 	{
 		m_args = std::make_tuple(std::forward<Params>(args)...);
 	}
