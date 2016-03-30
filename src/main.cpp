@@ -7,51 +7,52 @@ using namespace fbr;
 Counter ctr("test");
 Counter ctr2("test2");
 
-int main(){
+int main()
+	{
+
+	Player *p = new Player();
+
+	Task<> *printHpTask = new Task<>(std::bind(&Player::printHp, p));
+
+	Task<int> *addHpTask = new Task<int>(std::bind(&Player::addHp, p,_1));
+
+	int amount = 100;
+	addHpTask->set(amount);
+
+
+	vector<BaseTask*> myTaskList;
+	myTaskList.push_back(printHpTask);
+	myTaskList.push_back(addHpTask);
+	myTaskList.push_back(printHpTask);
+
+	for (unsigned int i = 0; i < myTaskList.size(); i++)
+		myTaskList[i]->run();
+	
+	
+
+
 	//ctr.add(1);
 	Scheduler::addCounter(ctr);
 	con_cout << "count:" << Scheduler::getCounterValByName("test") << fbr::endl;
 	
 
-
-	Player *p = new Player();
-	DelTask<> *delTask = new DelTask<>(std::bind(&Player::printHp, p));
-	
-
-
-
-	DelTask<int> *delTask2 = new DelTask<int>(std::bind(&Player::addHp, p,_1));
-	int amount = 100;
-	delTask2->set(amount);
-
-
-	vector<BaseTask*> testing;
-	testing.push_back(delTask2);
-	testing.push_back(delTask);
-	//for (BaseTask* bt : testing)
-		//bt->run();
-	
-	
-
-	
-
-	BaseTask *printHP = new DelTask<>(std::bind(&Player::printHp, p));
+	BaseTask *printHP = new Task<>(std::bind(&Player::printHp, p));
 	printHP->setReuseable(true);
 
-	DelTask<int> *taskArg = new DelTask<int>(std::bind(&Player::addHp, p,_1));
+	Task<int> *taskArg = new Task<int>(std::bind(&Player::addHp, p,_1));
 	int a=20;
 	taskArg->set(a);
 
-	DelTask<int, bool> *test = new DelTask<int, bool>(std::bind(&Player::damage, p, _1, _2));
+	Task<int, bool> *test = new Task<int, bool>(std::bind(&Player::damage, p, _1, _2));
 	int b = 5;
 	bool isMagic=false;
 	test->set(b, isMagic);
 
-	DelTask<int, int, int> *move = new DelTask<int, int, int>(std::bind(&Player::move, p, _1, _2, _3));
+	Task<int, int, int> *move = new Task<int, int, int>(std::bind(&Player::move, p, _1, _2, _3));
 	int c = 0;
 	move->set(54, c, std::thread::hardware_concurrency());
 
-	DelTask<> *inputtask = new DelTask<>(std::bind(&Player::taskInput, p));
+	Task<> *inputtask = new Task<>(std::bind(&Player::taskInput, p));
 	inputtask->setReuseable(true);
 
 	Scheduler *scheduler = new Scheduler(0,4, taskArg,true,true);
@@ -61,20 +62,20 @@ int main(){
 
 	fbr::con_cout << "All workers ready! " << fbr::endl;
 
-	DelTask<> *update = new DelTask<>(std::bind(&Player::update, p));
+	Task<> *update = new Task<>(std::bind(&Player::update, p));
 	
 
 	//wake up main thread
-	DelTask<> *endTask = new DelTask<>(&Scheduler::wakeUpMain);
+	Task<> *endTask = new Task<>(&Scheduler::wakeUpMain);
 
-	DelTask<> *longTask = new DelTask<>(std::bind(&Player::longTask, p));
+	Task<> *longTask = new Task<>(std::bind(&Player::longTask, p));
 	//run all task unsyncronized
 	//example with vector
 	//vector<BaseTask*> allTasks = { printHP, move, update,longTask };
 	//scheduler->runTasks(allTasks, priority::low);
 	//example with variadic function
 	Scheduler::setTaskNaming("my tasks");
-	Scheduler::runTasks(priority::low, &ctr, 4, delTask2, printHP, move, update);
+	Scheduler::runTasks(priority::low, &ctr, 4, addHpTask, printHP, move, update);
 	//Scheduler::runTasks(priority::low, 1, inputtask);
 	//Scheduler::runTasks(priority::low, 1, inputtask);
 	//scheduler->waitAllFibersFree(); 
@@ -84,7 +85,8 @@ int main(){
 
 	Scheduler::waitForCounter(&ctr, 0, longTask, &ctr2);
 
-	Scheduler::waitForCounter(&ctr2, 0, inputtask, &ctr);
+	Counter cc("test3");
+	Scheduler::waitForCounter(&ctr2, 0, inputtask, &cc);
 
 	//puts main thread to wait and doesn't cunsume cpu time
 	//wakes up when endTask is run

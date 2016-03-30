@@ -1,5 +1,5 @@
-#ifndef DEL_TASK_H
-#define DEL_TASK_H
+#ifndef TASK_H
+#define TASK_H
 
 #include "include\BaseTask.h"
 #include <tuple>
@@ -20,14 +20,14 @@ namespace helper
 }
 
 template <typename... Params>
-class DelTask : public BaseTask
+class Task : public BaseTask
 {
 private:
 	std::function<void(Params...)> m_func;
 	std::tuple<Params...> m_args;
 public:
 	//construct the task 
-	DelTask(std::function<void(Params...)> func) : m_func(func)
+	Task(std::function<void(Params...)> func) : m_func(func)
 	{}
 
 	//set the arguments

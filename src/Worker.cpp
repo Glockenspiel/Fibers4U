@@ -25,7 +25,10 @@ namespace fbr{
 			if (state.load(std::memory_order_relaxed) == State::prepared){
 				currentFiber->runAndFree();
 				setState(State::free);
-				Scheduler::notifyTaskFinished();
+				currentFiber->getCounter()->sub(1);
+
+				fbr::con_cout << "Counter, " << currentFiber->getCounter()->getName() << ": " << 
+					currentFiber->getCounter()->get() << fbr::endl;
 				Scheduler::notifyWorkerBeenFreed(this);
 				lastRun = steady_clock::now();
 			}

@@ -13,7 +13,7 @@
 #include "con_data_struct/Counter.h"
 #include <stdarg.h>
 #include "thread_sleeper.h"
-#include "DelTask.h"
+#include "Task.h"
 
 
 using std::thread;

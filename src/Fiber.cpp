@@ -48,8 +48,6 @@ namespace fbr{
 	void Fiber::runAndFree(){
 		run();
 		freeFiber();
-		m_ctr->sub(1);
-		fbr::con_cout << "Counter " << m_ctr->getName() << ": " << m_ctr->get() << fbr::endl;
 	}
 
 	//returns the current id
@@ -96,5 +94,9 @@ namespace fbr{
 	//returns the fibers current priority
 	Priority Fiber::getPriority(){
 		return currentPriority;
+	}
+
+	Counter* Fiber::getCounter(){
+		return m_ctr;
 	}
 }

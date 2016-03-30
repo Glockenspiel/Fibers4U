@@ -57,6 +57,8 @@ namespace fbr{
 		//returns the current priority of this fiber
 		priority::Priority getPriority();
 
+		Counter* getCounter();
+
 	private:
 		//runs the current task
 		void run();

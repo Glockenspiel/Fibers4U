@@ -45,7 +45,7 @@ void Player::move(int x, int y, int z){
 
 void Player::longTask(){
 	SpinUntil *t = new SpinUntil();
-	t->wait(2);
+	t->wait(3);
 	//Task *inputtask = new Task(&Player::taskInput, this);
 	//Scheduler::waitForCounter(, 0, inputtask, );
 }

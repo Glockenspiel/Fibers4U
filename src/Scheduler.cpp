@@ -35,8 +35,8 @@ namespace fbr{
 			fiberPool = new FiberPool(FIBER_COUNT);
 
 		taskCounter += THREAD_COUNT;
-		Counter testctr("teeee");
-		testctr += THREAD_COUNT;
+		Counter constuctorCtr("Constructor");
+		constuctorCtr += THREAD_COUNT;
 
 		//create worker threads
 		for (unsigned int i = 0; i < THREAD_COUNT; i++){
@@ -46,13 +46,13 @@ namespace fbr{
 			thread *t;
 			//assign starting task the the first worker thread
 			if (i == 0){
-				fiberPool->fibers[i]->setTask(startingTask, Priority::low, taskNaming, &testctr);
+				fiberPool->fibers[i]->setTask(startingTask, Priority::low, taskNaming, &constuctorCtr);
 				workers[i]->set(*fiberPool->fibers[i]);
 			}
 			//assign empty tasks to the rest of the worker threads
 			else{
-				DelTask<> *emptyTask = new DelTask<>(&Scheduler::empty);
-				fiberPool->fibers[i]->setTask(emptyTask, Priority::low, taskNaming, &testctr);
+				Task<> *emptyTask = new Task<>(&Scheduler::empty);
+				fiberPool->fibers[i]->setTask(emptyTask, Priority::low, taskNaming, &constuctorCtr);
 				workers[i]->set(*fiberPool->fibers[i]);
 			}
 			//fiberPool->workerStarted();
@@ -61,9 +61,10 @@ namespace fbr{
 			threads.push_back(t);
 		}
 
-		counters.push_back(&taskCounter);
+		//counters.push_back(&taskCounter);
 
-		waitAllFibersFree();
+		while (constuctorCtr.get() > 0);
+		//waitAllFibersFree();
 	}
 
 	//destructor
@@ -172,7 +173,8 @@ namespace fbr{
 	//waits in a spinlock until all current tasks are completed i.e. when the counter reaches zero
 	//note: this will consume the current thread which calls this function
 	void Scheduler::waitAllFibersFree(){
-		while (taskCounter.get()>0);
+		for (unsigned int i = 0; i < counters.size(); i++)
+			while (counters[i]->get() > 0);
 	}
 
 
@@ -225,12 +227,12 @@ namespace fbr{
 			worker->set(*nextFiber);
 			nextFiber->setPrepared();
 		}
+		/*
+		//queue is empty
 		else{
 			fbr::con_cout << "queue is empty" << fbr::endl;
 		}
-		//prints the value of the task counter around the same time it runs a task
-		//int counterVal = taskCounter.get();
-		//fbr::con_cout << "Task Counter: " << counterVal << fbr::endl;
+		*/
 	}
 
 	//allows a task to wait until counter reaches a point without spinlocking a worker thread
@@ -244,7 +246,7 @@ namespace fbr{
 		//send to waiting queue
 		else{
 			//increment the counter 
-			//task.getTaskCounter()->add(1);
+			task.getTaskCounter()->add(1);
 
 			//acquire lock for accessing waitingTasks
 			while (waitingLock.test_and_set(std::memory_order_seq_cst));

@@ -115,7 +115,7 @@
     <ClInclude Include="include\locker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\DelTask.h">
+    <ClInclude Include="include\Task.h">
       <Filter>Header Files\task</Filter>
     </ClInclude>
   </ItemGroup>

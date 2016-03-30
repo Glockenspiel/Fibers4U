@@ -88,7 +88,6 @@
     <ClInclude Include="include\con_data_struct\Counter.h" />
     <ClInclude Include="include\con_data_struct\element.h" />
     <ClInclude Include="include\con_iostream.h" />
-    <ClInclude Include="include\DelTask.h" />
     <ClInclude Include="include\fbr.h" />
     <ClInclude Include="include\Fiber.h" />
     <ClInclude Include="include\fiberpool.h" />
@@ -96,6 +95,7 @@
     <ClInclude Include="include\Nothing.h" />
     <ClInclude Include="include\scheduler.h" />
     <ClInclude Include="include\SpinUntil.h" />
+    <ClInclude Include="include\Task.h" />
     <ClInclude Include="include\thread_sleeper.h" />
     <ClInclude Include="include\WaitingTask.h" />
     <ClInclude Include="include\Worker.h" />
