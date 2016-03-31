@@ -173,8 +173,9 @@ namespace fbr{
 	//waits in a spinlock until all current tasks are completed i.e. when the counter reaches zero
 	//note: this will consume the current thread which calls this function
 	void Scheduler::waitAllFibersFree(){
-		for (unsigned int i = 0; i < counters.size(); i++)
-			while (counters[i]->get() > 0);
+		//for (unsigned int i = 0; i < counters.size(); i++)
+		//	while (counters[i]->get() > 0);
+		while (taskCounter.get()>0);
 	}
 
 
