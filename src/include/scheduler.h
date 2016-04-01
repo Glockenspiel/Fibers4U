@@ -50,7 +50,7 @@ namespace scheduler_vars{
 	static ThreadSleeper mainThreadSleeper;
 
 	//counter for number of tasks being executed
-	static Counter taskCounter("task");
+	//static Counter taskCounter("task");
 
 	static std::string taskNaming = "";
 	static std::atomic_flag taskNamingLock = ATOMIC_FLAG_INIT;
@@ -106,9 +106,6 @@ namespace fbr{
 		//then check the waiting queue and 
 		//then run the next task in the queue if any
 		static void notifyWorkerBeenFreed(Worker* worker);
-
-		//notifies the task counter that a task has completed
-		static void notifyTaskFinished();
 
 		//returns the true if sleeping is enabled 
 		static bool isSleepingEnabled();

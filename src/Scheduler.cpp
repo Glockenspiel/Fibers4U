@@ -34,7 +34,6 @@ namespace fbr{
 		else
 			fiberPool = new FiberPool(FIBER_COUNT);
 
-		taskCounter += THREAD_COUNT;
 		Counter constuctorCtr("Constructor");
 		constuctorCtr += THREAD_COUNT;
 
@@ -61,10 +60,7 @@ namespace fbr{
 			threads.push_back(t);
 		}
 
-		//counters.push_back(&taskCounter);
-
 		while (constuctorCtr.get() > 0);
-		//waitAllFibersFree();
 	}
 
 	//destructor
@@ -109,7 +105,6 @@ namespace fbr{
 
 		fiber->setTask(task, taskPrioirty, taskNaming, ctr);
 		fiberPool->pushToQueue(*fiber);
-		taskCounter++;
 	}
 
 	//adds the tasks to the queue and then run them
@@ -173,9 +168,8 @@ namespace fbr{
 	//waits in a spinlock until all current tasks are completed i.e. when the counter reaches zero
 	//note: this will consume the current thread which calls this function
 	void Scheduler::waitAllFibersFree(){
-		//for (unsigned int i = 0; i < counters.size(); i++)
-		//	while (counters[i]->get() > 0);
-		while (taskCounter.get()>0);
+		for (unsigned int i = 0; i < counters.size(); i++)
+			while (counters[i]->get() > 0);
 	}
 
 
@@ -241,7 +235,7 @@ namespace fbr{
 	//if the counter is less than or equal to the waiting tasks waiting count, the task will just be run.
 	void Scheduler::waitForCounter(WaitingTask& task){
 		//if all workers are free, just run rather than waiting
-		if (taskCounter.get() <= task.getWaitingCount()){
+		if (task.isReadyToRun()){
 			runTasks({ task.getTask() }, task.getPriority(), task.getTaskCounter());
 		}
 		//send to waiting queue
@@ -285,11 +279,6 @@ namespace fbr{
 
 		//release waitingTasks
 		waitingLock.clear(std::memory_order_relaxed);
-	}
-
-	//worker threads can notify the scheduler that a task has finished
-	void Scheduler::notifyTaskFinished(){
-		taskCounter--;
 	}
 
 	bool Scheduler::isSleepingEnabled(){

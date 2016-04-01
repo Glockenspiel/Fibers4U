@@ -27,9 +27,9 @@ namespace fbr{
 				setState(State::free);
 				currentFiber->getCounter()->sub(1);
 
-				Scheduler::notifyTaskFinished();
 				fbr::con_cout << "Counter, " << currentFiber->getCounter()->getName() << ": " << 
 					currentFiber->getCounter()->get() << fbr::endl;
+
 				Scheduler::notifyWorkerBeenFreed(this);
 				lastRun = steady_clock::now();
 			}
