@@ -43,6 +43,9 @@ namespace fbr{
 		std::string getName();
 
 	private:
+		void getLock();
+		void unlock();
+
 		int count=0;
 		std::atomic_flag lock;
 		int id;

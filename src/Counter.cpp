@@ -7,26 +7,38 @@ namespace fbr{
 	}
 
 	void Counter::add(int a){
-		while (lock.test_and_set(std::memory_order_seq_cst));
-		count += a;
-		lock.clear(std::memory_order_seq_cst);
+		getLock();
+			count += a;
+		unlock();
 	}
 
 	void Counter::sub(int a){
-		while (lock.test_and_set(std::memory_order_seq_cst));
+		getLock();
 		count -= a;
-		lock.clear(std::memory_order_seq_cst);
+		unlock();
 	}
 
 	int Counter::get(){
 		int a;
-		while (lock.test_and_set(std::memory_order_seq_cst));
-		a = count;
-		lock.clear(std::memory_order_seq_cst);
+		getLock();
+			a = count;
+		unlock();
 		return a;
 	}
 
 	std::string Counter::getName(){
-		return name;
+		std::string val;
+		getLock();
+			val = name;
+		unlock();
+		return val;
+	}
+
+	void Counter::getLock(){
+		while (lock.test_and_set(std::memory_order_seq_cst));
+	}
+
+	void Counter::unlock(){
+		lock.clear(std::memory_order_seq_cst);
 	}
 }
