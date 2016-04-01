@@ -45,16 +45,16 @@ namespace fbr{
 			thread *t;
 			//assign starting task the the first worker thread
 			if (i == 0){
-				fiberPool->fibers[i]->setTask(startingTask, Priority::low, taskNaming, &constuctorCtr);
+				fiberPool->fibers[i]->setTask(startingTask, Priority::low, &constuctorCtr);
 				workers[i]->set(*fiberPool->fibers[i]);
 			}
 			//assign empty tasks to the rest of the worker threads
 			else{
 				Task<> *emptyTask = new Task<>(&Scheduler::empty);
-				fiberPool->fibers[i]->setTask(emptyTask, Priority::low, taskNaming, &constuctorCtr);
+				fiberPool->fibers[i]->setTask(emptyTask, Priority::low, &constuctorCtr);
 				workers[i]->set(*fiberPool->fibers[i]);
 			}
-			//fiberPool->workerStarted();
+
 			t = new thread(&Worker::run, workers[i]);
 			fiberPool->fibers[i]->setPrepared();
 			threads.push_back(t);
@@ -103,7 +103,7 @@ namespace fbr{
 			}
 		} while (fiber == nullptr);
 
-		fiber->setTask(task, taskPrioirty, taskNaming, ctr);
+		fiber->setTask(task, taskPrioirty, ctr);
 		fiberPool->pushToQueue(*fiber);
 	}
 
@@ -283,12 +283,6 @@ namespace fbr{
 
 	bool Scheduler::isSleepingEnabled(){
 		return sleepingEnabled.get();
-	}
-
-	void Scheduler::setTaskNaming(std::string name){
-		while(taskNamingLock.test_and_set(std::memory_order_seq_cst));
-			taskNaming = name;
-		taskNamingLock.clear(std::memory_order_seq_cst);
 	}
 
 	void Scheduler::addCounter(Counter& counter){

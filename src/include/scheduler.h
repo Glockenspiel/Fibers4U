@@ -49,12 +49,7 @@ namespace scheduler_vars{
 	//allows the main thread sleep
 	static ThreadSleeper mainThreadSleeper;
 
-	//counter for number of tasks being executed
-	//static Counter taskCounter("task");
-
-	static std::string taskNaming = "";
-	static std::atomic_flag taskNamingLock = ATOMIC_FLAG_INIT;
-
+	//counters used for keeping track of tasks
 	static con_vector<Counter*> counters;
 }
 
@@ -110,13 +105,13 @@ namespace fbr{
 		//returns the true if sleeping is enabled 
 		static bool isSleepingEnabled();
 
-		//sets the name of fibers as they get allocated tasks to taskNaming. 
-		//This is to help increase visibility of runtime debugging
-		static void setTaskNaming(std::string name);
-
+		//adds a counter to the scheduler for ease of access
+		//in different tasks
 		static void addCounter(Counter& counter);
 
+		//returns the current value of the counter 
 		static int getCounterValByName(std::string name);
+
 	private:
 		//adds a task to the task queue
 		static void addToQueue(BaseTask *task, 

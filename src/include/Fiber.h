@@ -4,7 +4,6 @@
 #include "BaseTask.h"
 
 #include <atomic>
-#include <string>
 #include "con_data_struct\Counter.h"
 
 namespace fbr{
@@ -37,7 +36,7 @@ namespace fbr{
 		void runAndFree();
 
 		//set the current task and the priority
-		void setTask(BaseTask* task, priority::Priority p, std::string taskNaming,  Counter* ctr);
+		void setTask(BaseTask* task, priority::Priority p, Counter* ctr);
 
 		//returns the id of this fiber
 		unsigned int getID();
@@ -76,7 +75,6 @@ namespace fbr{
 		atomic<State> state = free;
 		BaseTask *currentTask;
 		Priority currentPriority = Priority::low;
-		std::string currentTaskNaming;
 		Counter* m_ctr;
 	};
 }

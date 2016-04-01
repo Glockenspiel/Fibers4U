@@ -4,8 +4,8 @@
 using namespace std;
 using namespace fbr;
 
-Counter ctr("test");
-Counter ctr2("test2");
+Counter ctr("player status");
+Counter ctr2("input value example");
 
 int main()
 	{
@@ -27,14 +27,6 @@ int main()
 
 	for (unsigned int i = 0; i < myTaskList.size(); i++)
 		myTaskList[i]->run();
-	
-	
-
-
-	//ctr.add(1);
-	Scheduler::addCounter(ctr);
-	con_cout << "count:" << Scheduler::getCounterValByName("test") << fbr::endl;
-	
 
 	BaseTask *printHP = new Task<>(std::bind(&Player::printHp, p));
 	printHP->setReuseable(true);
@@ -51,6 +43,7 @@ int main()
 	Task<int, int, int> *move = new Task<int, int, int>(std::bind(&Player::move, p, _1, _2, _3));
 	int c = 0;
 	move->set(54, c, std::thread::hardware_concurrency());
+	move->setReuseable(true);
 
 	Task<> *inputtask = new Task<>(std::bind(&Player::taskInput, p));
 	inputtask->setReuseable(true);
@@ -69,23 +62,20 @@ int main()
 	Task<> *endTask = new Task<>(&Scheduler::wakeUpMain);
 
 	Task<> *longTask = new Task<>(std::bind(&Player::longTask, p));
+
 	//run all task unsyncronized
+
 	//example with vector
-	//vector<BaseTask*> allTasks = { printHP, move, update,longTask };
-	//scheduler->runTasks(allTasks, priority::low);
+	vector<BaseTask*> allTasks = { addHpTask, printHP, move, update };
+	Scheduler::runTasks(allTasks, priority::low, &ctr);
+
 	//example with variadic function
-	Scheduler::setTaskNaming("my tasks");
-	Scheduler::runTasks(priority::low, &ctr, 4, addHpTask, printHP, move, update);
-	//Scheduler::runTasks(priority::low, 1, inputtask);
-	//Scheduler::runTasks(priority::low, 1, inputtask);
-	//scheduler->waitAllFibersFree(); 
-	//Scheduler::waitForCounter(0, printHP);
-	//Scheduler::waitForCounter(0, printHP);
+	//Scheduler::runTasks(priority::low, &ctr, 4, addHpTask, printHP, move, update);
 	
 
 	Scheduler::waitForCounter(&ctr, 0, longTask, &ctr2);
 
-	Counter cc("test3");
+	Counter cc("end task");
 	Scheduler::waitForCounter(&ctr2, 0, inputtask, &cc);
 
 	//puts main thread to wait and doesn't cunsume cpu time

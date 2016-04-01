@@ -4,6 +4,11 @@
 #include "include\BaseTask.h"
 #include <tuple>
 
+/*
+This is a variadic template class which takes varying amouts of parameters and of varying types
+It makes copy of the arguments passed in
+Refrences and pointers are not valid parameter types
+*/
 
 //sequence generator
 //this finds the sequece of the parameters

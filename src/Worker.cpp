@@ -34,6 +34,7 @@ namespace fbr{
 				lastRun = steady_clock::now();
 			}
 
+			//sleeps the worker thread if it hasnt being doing anything for a long time
 			//don't sleep if sleeping is disabled
 			if (Scheduler::isSleepingEnabled()){
 				timeNow = high_resolution_clock::now();
