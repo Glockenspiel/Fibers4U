@@ -9,48 +9,20 @@
 
 using namespace fbr;
 
-Player::Player(){
+Player::Player(){}
 
-}
-
-Player::~Player(){
-
-}
-
-void Player::update(){
-	fbr::con_cout << "updating player" << fbr::endl;
-}
-
-void Player::addHp(int amount){
-	hp += amount;
-}
-
-void Player::printHp(){
-	fbr::con_cout << "player hp: " << hp << fbr::endl;
-}
+Player::~Player(){}
 
 void Player::empty(){}
 
-void Player::damage(int amount, bool isMagic){
-	if (isMagic)
-		hp -= amount * 2;
-	else 
-		hp -= amount;
-}
-
-void Player::move(int x, int y, int z){
-	fbr::con_cout << "x:" << x << " y:" << y << " z:" << z << fbr::endl;
-}
-
-void Player::longTask(){
+//delaying task
+void Player::longCall(){
 	SpinUntil *t = new SpinUntil();
 	t->wait(3);
-	//Task *inputtask = new Task(&Player::taskInput, this);
-	//Scheduler::waitForCounter(, 0, inputtask, );
 }
 
-void Player::taskInput(){
-
+void Player::testing(){
+	//concurrent primitive types testing
 	concurrent<int> aa = 10;
 	concurrent<double> dd = 5.5;
 	++dd;
@@ -59,9 +31,10 @@ void Player::taskInput(){
 
 	con_vector<int> mylist;
 
-	//access with only 1 lock
+	//access con_bvector with with only 1 lock
+	const int size = 5;
 	mylist.getLock();
-		for (unsigned int i = 0; mylist.size_async() < 10; i++)
+		for (unsigned int i = 0; mylist.size_async() < size; i++)
 			mylist.push_back_async(aa.get());
 	mylist.unlock();
 
@@ -70,14 +43,15 @@ void Player::taskInput(){
 	
 	fbr::con_cout << "CONCURRENT VALUE:" << ptr->get() << fbr::endl;
 
-	//push 10 values and pop all off, using a single lock
+	//push 5 values and pop all off, using a single lock
 	con_queue<int> myqueue;
 
 	//snycronized
 	myqueue.push(aa.get());
 
+	//testing concurrent queue
 	myqueue.getLock();
-	for (unsigned int i = 1; i <= 10; i++)
+	for (unsigned int i = 1; i <= size; i++)
 		myqueue.push_async(i);
 
 	while (myqueue.empty_async() == false)
@@ -85,17 +59,45 @@ void Player::taskInput(){
 	myqueue.unlock();
 
 
+	//testing concurrent stack
 	con_stack<int> mystack;
 	mystack.getLock();
-	for (unsigned int i = 1; i <= 10; i++)
+	for (unsigned int i = 1; i <= size; i++)
 		mystack.push_async(i);
 
 	while (mystack.empty_async() == false)
 		con_cout << "stack popped:" << mystack.getPop_async() << fbr::endl;
 	mystack.unlock();
+}
 
-	std::string s;
-	fbr::con_input(s, "Enter some text:");
-	fbr::con_cout << s << fbr::endl;
+
+void Player::addHealth(int amount){
+	health += amount;
+}
+
+void Player::printHealth(){
+	con_cout << "player health: " << health << fbr::endl;
+}
+
+void Player::movePos(int x, int y, int z){
+	this->x += x;
+	this->y += y;
+	this->z += z;
+
+	con_cout << "pos: " << this->x << ", " << this->y << ", " << this->z << fbr::endl;
+}
+
+void Player::showIdentity(std::string name, int age){
+	con_cout << "Name: " << name << fbr::endl << "Age: " << age << fbr::endl;
+}
+
+
+void Player::endScheduler(){
 	Scheduler::wakeUpMain();
+}
+
+void Player::takeInput(){
+	std::string str;
+	fbr::con_input(str, "Enter some text:");
+	fbr::con_cout << str << fbr::endl;
 }

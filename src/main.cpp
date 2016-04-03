@@ -7,89 +7,83 @@ using namespace fbr;
 Counter ctr("player status");
 Counter ctr2("input value example");
 
+Counter sampleCtr("sample");
+Counter sampleEndCtr("endOfSample");
+
+Counter inputCtr("input");
+Counter endCounter("ending");
+
+static Player staticPlayer;
+
+//task entry point
+static void task_entry_point_sample(){
+	con_cout << "SAMPLE" << fbr::endl;
+
+	//task with no paramaters
+	Task<> *printHealthTask = new Task<>(std::bind(&Player::printHealth, staticPlayer));
+
+	//task with paramaters
+	Task<int, int, int> *movePosTask = new Task<int, int, int>(std::bind(&Player::movePos, staticPlayer, _1, _2, _3));
+	int y = 15;
+	movePosTask->set(-10, y, 1);
+
+	//task with parameters of different types
+	Task<std::string, int> *showIdentityTask = new Task<std::string, int>(std::bind(&Player::showIdentity, _1, _2));
+	showIdentityTask->set("john doe", 32);
+
+	//full syntax example
+	std::function<void()> testingFunc = &Player::testing;
+	Task<> *testingTask = new Task<>(testingFunc);
+	
+	//short hand example
+	Task<> *longTask = new Task<>(&Player::longCall);
+
+	//run these tasks asynchronously
+	Scheduler::runTasks({ showIdentityTask, movePosTask, testingTask, longTask}, Priority::low, &sampleCtr);
+	//same call but with the overloaded function making use of variadic functions
+	//Scheduler::runTasks(Priority::low, &sampleCtr, 2, showIdentityTask, movePosTask);
+
+	//wait for these tasks to end when call printHealthTask
+	Scheduler::waitForCounter(&sampleCtr, 0, printHealthTask, &sampleEndCtr);
+}
+
+
 int main()
 	{
+	staticPlayer.addHealth(100);
+	Player *player_ptr = new Player();
 
-	Player *p = new Player();
+	//declaring tasks
+	Task<> *emptyTask = new Task<>(std::bind(&Player::empty, player_ptr));
+	Task<> *endTask = new Task<>(std::bind(&Player::endScheduler, player_ptr));
+	Task<> *inputTask = new Task<>(std::bind(&Player::takeInput, player_ptr));
 
-	Task<> *printHpTask = new Task<>(std::bind(&Player::printHp, p));
+	//constructing scheduler
+	Scheduler *scheduler = new Scheduler(0,4, emptyTask,true,true);
 
-	Task<int> *addHpTask = new Task<int>(std::bind(&Player::addHp, p,_1));
-
-	int amount = 100;
-	addHpTask->set(amount);
-
-
-	vector<BaseTask*> myTaskList;
-	myTaskList.push_back(printHpTask);
-	myTaskList.push_back(addHpTask);
-	myTaskList.push_back(printHpTask);
-
-	for (unsigned int i = 0; i < myTaskList.size(); i++)
-		myTaskList[i]->run();
-
-	BaseTask *printHP = new Task<>(std::bind(&Player::printHp, p));
-	printHP->setReuseable(true);
-
-	Task<int> *taskArg = new Task<int>(std::bind(&Player::addHp, p,_1));
-	int a=20;
-	taskArg->set(a);
-
-	Task<int, bool> *test = new Task<int, bool>(std::bind(&Player::damage, p, _1, _2));
-	int b = 5;
-	bool isMagic=false;
-	test->set(b, isMagic);
-
-	Task<int, int, int> *move = new Task<int, int, int>(std::bind(&Player::move, p, _1, _2, _3));
-	int c = 0;
-	move->set(54, c, std::thread::hardware_concurrency());
-	move->setReuseable(true);
-
-	Task<> *inputtask = new Task<>(std::bind(&Player::taskInput, p));
-	inputtask->setReuseable(true);
-
-	Scheduler *scheduler = new Scheduler(0,4, taskArg,true,true);
-	if (scheduler->getIsConstructed() == false){
+	//check if scheduler was constructed correctly
+	if (scheduler->getIsConstructed() == false){ 
 		return 0;
 	}
-
+	
 	fbr::con_cout << "All workers ready! " << fbr::endl;
 
-	Task<> *update = new Task<>(std::bind(&Player::update, p));
+	//task entry point example
+	task_entry_point_sample();
 	
-
-	//wake up main thread
-	Task<> *endTask = new Task<>(&Scheduler::wakeUpMain);
-
-	Task<> *longTask = new Task<>(std::bind(&Player::longTask, p));
-
-	//run all task unsyncronized
-
-	//example with vector
-	vector<BaseTask*> allTasks = { addHpTask, printHP, move, update };
-	Scheduler::runTasks(allTasks, priority::low, &ctr);
-
-	//example with variadic function
-	//Scheduler::runTasks(priority::low, &ctr, 4, addHpTask, printHP, move, update);
+	//running tasks synchronously
+	Scheduler::waitForCounter(&sampleEndCtr, 0, inputTask, &inputCtr); //this task takes input
+	Scheduler::waitForCounter(&inputCtr, 0, endTask, &endCounter); //this task end the scheduler
 	
-
-	Scheduler::waitForCounter(&ctr, 0, longTask, &ctr2);
-
-	Counter cc("end task");
-	Scheduler::waitForCounter(&ctr2, 0, inputtask, &cc);
-
-	//puts main thread to wait and doesn't cunsume cpu time
+	//puts main thread to wait and doesn't consume cpu time
 	//wakes up when endTask is run
 	Scheduler::waitMain();
 
 	scheduler->close();
-	
-	
-	//system("pause");
-	//delete scheduler and display msg
+
+	//delete scheduler and display msg for 2 seconds
 	delete scheduler;
 	
-	//fbr::log << "here" << Log::endl;
 	fbr::con_cout << "Scheduler deleted" << fbr::endl;
 	SpinUntil *timer = new SpinUntil();
 	timer->wait(2);

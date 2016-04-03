@@ -43,8 +43,8 @@ namespace fbr{
 
 			fiberPool->fibers[i]->tryAcquire();
 			thread *t;
-			//assign starting task the the first worker thread
-			if (i == 0){
+			//assign starting task the the last worker thread
+			if (i == THREAD_COUNT-1){
 				fiberPool->fibers[i]->setTask(startingTask, Priority::low, &constuctorCtr);
 				workers[i]->set(*fiberPool->fibers[i]);
 			}
