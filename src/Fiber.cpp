@@ -17,9 +17,9 @@ namespace fbr{
 	void Fiber::run(){
 		waitForState(prepared);
 
-		fbr::con_cout << "Executing fiber: " << id << fbr::endl;
+		//fbr::con_cout << "Executing fiber: " << id << fbr::endl;
 		currentTask->run();
-		fbr::con_cout << "Completed fiber: " << id << fbr::endl;
+		//fbr::con_cout << "Completed fiber: " << id << fbr::endl;
 	}
 
 	//alert the scheduler that this task has completed and is ready for reallocation
@@ -32,7 +32,7 @@ namespace fbr{
 
 			delete temp;
 		}
-		fbr::con_cout << "freed:" << id << fbr::endl;
+		//fbr::con_cout << "freed:" << id << fbr::endl;
 		setState(free);
 	}
 

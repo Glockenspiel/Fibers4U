@@ -27,8 +27,8 @@ namespace fbr{
 				setState(State::free);
 				currentFiber->getCounter()->sub(1);
 
-				fbr::con_cout << "Counter, " << currentFiber->getCounter()->getName() << ": " << 
-					currentFiber->getCounter()->get() << fbr::endl;
+				//fbr::con_cout << "Counter, " << currentFiber->getCounter()->getName() << ": " << 
+				//	currentFiber->getCounter()->get() << fbr::endl;
 
 				Scheduler::notifyWorkerBeenFreed(this);
 				lastRun = steady_clock::now();
@@ -40,11 +40,11 @@ namespace fbr{
 				timeNow = high_resolution_clock::now();
 				timeSinceLastRun = timeNow - lastRun;
 				if (timeSinceLastRun > timeUntilSleep){
-					fbr::con_cout << "WORKER ASLEEP: " << getID() << fbr::endl;
+					//fbr::con_cout << "WORKER ASLEEP: " << getID() << fbr::endl;
 
 					threadSleeper.sleep();
 
-					fbr::con_cout << "WORKER AWAKE:" << id << fbr::endl;
+					//fbr::con_cout << "WORKER AWAKE:" << id << fbr::endl;
 				}
 			}
 		}
