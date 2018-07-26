@@ -50,7 +50,7 @@ fbr::con_input(s, "Enter some text:");
 fbr::con_cout << s << fbr::endl;
 //notify the scheduler about the end of the input event
 Scheduler::wakeUpMain(); 
-``
+```
 
 
 ## How the scheduler works
