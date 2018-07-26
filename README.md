@@ -108,5 +108,5 @@ mylist.unlock_extern();
 ```
 
 ## Full Paper
-[Link[(https://drive.google.com/file/d/0B5jMZRuZwkSrWWJuWmhwSFZTRW8/view)
+[Link](https://drive.google.com/file/d/0B5jMZRuZwkSrWWJuWmhwSFZTRW8/view)
 
