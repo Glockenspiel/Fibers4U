@@ -18,7 +18,7 @@ int main(){
   //assume we have a class named Person
   Person *a = new Person();
   
-  //create a task suing a binded function which takes a string argument
+  //create a task using a binded function which takes a string argument
   Task<string> *task = new Task<string>(std::bind(&Person:setName, a));
   string name = "John";
   taskArg->setArgs(name);
@@ -38,7 +38,7 @@ int main(){
 }
 ```
 
-Usually you will want to print to the console asynchronously so there is also concurrent input and output
+Usually you will want to print to the console asynchronously and thus there is concurrent input and output
 ```c++
 //asynchronous output
 fbr::con_cout << "Hello ";
@@ -107,5 +107,6 @@ mylist.get_lock_extern();
 mylist.unlock_extern();
 ```
 
-
+## Full Paper
+[Link[(https://drive.google.com/file/d/0B5jMZRuZwkSrWWJuWmhwSFZTRW8/view)
 
