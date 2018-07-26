@@ -1,9 +1,9 @@
 # Fibers
-An alternative implmentation of co-routines with use of concurrent data structures in C++11
+An alternative implementation of co-routines with use of concurrent data structures in C++11
 
 ## How it works
 - Create a task you want to run in parallel
-- Construct the scheduler giving it the inital task
+- Construct the scheduler giving it the initial task
 - Give the scheduler more tasks or have tasks create new tasks
 - Keep track of the order of execution with counters
 - Close threads and Deconstruct
