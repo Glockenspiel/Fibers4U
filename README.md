@@ -39,7 +39,7 @@ int main(){
 ```
 
 Usually you will want to print to the console asynchronously so there is also concurrent input and output
-```
+```c++
 //asynchronous output
 fbr::con_cout << "Hello ";
 fbr::con_cout << "World!" << fbr::endl;
@@ -66,6 +66,11 @@ Scheduler::wakeUpMain();
 ## Counters
 Counters are used to decide the order at which functions should be executed. They might seem overly simple but are very effective and easy to use.
 
+- Create a counter
+- Run a single task or a group of tasks on the scheduler
+- This task or task group will have a set counter matching the number of tasks left to be completed
+- Once all the tasks are completed the counter will have reached zero
+
 ```c++
 Counter a("taskGroupName");
 Counter b("ending");
@@ -73,7 +78,9 @@ Counter b("ending");
 //run multiple tasks async with high priority using the counter a
 Scheduler::runTasks({ myTask1, myTask2, myTask3 }, Priority::high, &a);
 
-//the counter will be se to the number of tasks in this group and each time one of these task are completed the counter will decrement the counter
+//the counter will be set to the number of tasks in this group
+//and each time one of these task are completed the counter
+//will decrement the counter
 
 //wait for counter "a" to reach zero
 Scheduler::waitForCounter(&a, 0, myNextTask, &b);
@@ -94,8 +101,9 @@ fbr::concurrent<bool> b = false;
 //populating a concurrent vector
 fbr::con_vector<int> mylist;
 mylist.get_lock_extern();
-		for (unsigned int i = 0; mylist.size_unsync() < 10; i++)
-			mylist.push_back_unsync(i);
+  for (unsigned int i = 0; mylist.size_unsync() < 10; i++){
+    mylist.push_back_unsync(i);
+  }
 mylist.unlock_extern();
 ```
 
