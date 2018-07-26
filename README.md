@@ -1,5 +1,5 @@
 # Fibers
-An alternative implementation of co-routines with use of concurrent data structures in C++11
+A thread pool library with use of concurrent data structures in C++11
 
 ## How it works
 - Create a task you want to run in parallel
